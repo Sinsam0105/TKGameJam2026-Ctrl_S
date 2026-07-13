@@ -30,27 +30,61 @@ namespace ControlS
         }
     }
 
-    internal sealed class VirtualDesktop : MonoBehaviour
+    public sealed class VirtualDesktop : MonoBehaviour
     {
-        private ControlSBootstrap game;
+        private ControlSSceneController game;
         private ControlSState state;
-        private Canvas canvas;
-        private RectTransform desktopRoot;
-        private RectTransform iconLayer;
-        private RectTransform windowLayer;
-        private Text taskbarClock;
+        [SerializeField] private Canvas canvas;
+        [SerializeField] private RectTransform desktopRoot;
+        [SerializeField] private RectTransform iconLayer;
+        [SerializeField] private RectTransform windowLayer;
+        [SerializeField] private Text taskbarClock;
         private readonly Dictionary<string, RectTransform> openWindows = new Dictionary<string, RectTransform>();
 
         public bool IsOpen => desktopRoot != null && desktopRoot.gameObject.activeSelf;
 
-        public void Initialize(ControlSBootstrap owner, ControlSState gameState)
+        public void Initialize(ControlSSceneController owner, ControlSState gameState)
         {
             game = owner;
             state = gameState;
-            BuildCanvas();
+            if (canvas == null || desktopRoot == null || iconLayer == null || windowLayer == null || taskbarClock == null)
+            {
+                Debug.LogError("Virtual Desktop scene references are incomplete. Rebuild SampleScene from Tools > CONTROL S > Rebuild SampleScene.", this);
+                enabled = false;
+                return;
+            }
+            BindSceneButtons();
             state.Changed += RefreshIcons;
             RefreshIcons();
             desktopRoot.gameObject.SetActive(false);
+        }
+
+        public void BuildSceneLayout()
+        {
+            if (canvas != null) DestroyImmediate(canvas.gameObject);
+            BuildCanvas();
+            BuildScenePreviewIcons();
+            desktopRoot.gameObject.SetActive(false);
+        }
+
+        private void BuildScenePreviewIcons()
+        {
+            for (var i = iconLayer.childCount - 1; i >= 0; i--) DestroyImmediate(iconLayer.GetChild(i).gameObject);
+            AddIcon("README.txt", "TXT", null, 0);
+            AddIcon("RECOVERY", "DIR", null, 1);
+            AddIcon("dark_photo.img", "IMG", null, 2);
+            AddIcon("Recycle Bin", "BIN", null, 3);
+            AddIcon("ARCHIVE", "LOCK", null, 4);
+        }
+
+        private void BindSceneButtons()
+        {
+            var buttonTransform = desktopRoot.Find("Taskbar/Leave Computer");
+            if (buttonTransform == null) return;
+            var button = buttonTransform.GetComponent<Button>();
+            if (button == null) return;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(Close);
         }
 
         public void Open()

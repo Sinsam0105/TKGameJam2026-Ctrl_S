@@ -40,11 +40,13 @@ namespace ControlS.Editor
             var started = SessionState.GetFloat(StartedKey, 0f);
             if (EditorApplication.timeSinceStartup - started < 2.5d) return;
 
-            var bootstrap = UnityEngine.Object.FindFirstObjectByType<ControlSBootstrap>();
+            var controller = UnityEngine.Object.FindFirstObjectByType<ControlSSceneController>();
             var player = GameObject.Find("Player");
             var desktop = GameObject.Find("Virtual Desktop Canvas");
             var hud = GameObject.Find("Room HUD Canvas");
-            var valid = bootstrap != null && player != null && desktop != null && hud != null &&
+            var sceneRoot = GameObject.Find("CONTROL S - Scene Root");
+            var room = GameObject.Find("Room");
+            var valid = controller != null && sceneRoot != null && room != null && player != null && desktop != null && hud != null &&
                         player.GetComponent<Rigidbody2D>() != null;
             if (!valid)
             {
@@ -61,7 +63,7 @@ namespace ControlS.Editor
                 !SessionState.GetBool(CapturedKey, false))
             {
                 var captureDesktop = Array.Exists(commandLine, argument => argument == "-controlSDesktop");
-                if (captureDesktop) bootstrap.OpenDesktop();
+                if (captureDesktop) controller.OpenDesktop();
                 var path = Path.GetFullPath(captureDesktop
                     ? "Logs/control-s-desktop.png"
                     : "Logs/control-s-room.png");

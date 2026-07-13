@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace ControlS
 {
-    internal static class RuntimeUI
+    public static class RuntimeUI
     {
         private static Font font;
         private static Sprite whiteSprite;
@@ -14,6 +14,11 @@ namespace ControlS
             get
             {
                 if (font != null) return font;
+                if (!Application.isPlaying)
+                {
+                    font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+                    return font;
+                }
                 font = Font.CreateDynamicFontFromOSFont(
                     new[] { "Malgun Gothic", "맑은 고딕", "Noto Sans CJK KR", "Arial" }, 24);
                 if (font == null) font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -25,6 +30,8 @@ namespace ControlS
         {
             get
             {
+                if (whiteSprite != null) return whiteSprite;
+                whiteSprite = Resources.Load<Sprite>("ControlS/WhitePixel");
                 if (whiteSprite != null) return whiteSprite;
                 var texture = new Texture2D(1, 1, TextureFormat.RGBA32, false)
                 {
@@ -38,6 +45,12 @@ namespace ControlS
                 whiteSprite.name = "ControlS_WhiteSprite";
                 return whiteSprite;
             }
+        }
+
+        public static void ResetCachedAssets()
+        {
+            font = null;
+            whiteSprite = null;
         }
 
         public static RectTransform Rect(string name, Transform parent)

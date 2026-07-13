@@ -1,63 +1,83 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace ControlS
 {
     /// <summary>
-    /// Turns the empty Unity template scene into a complete playable vertical slice.
-    /// Keeping the prototype runtime-generated lets art replace each prop later without
-    /// coupling the game logic to temporary scene assets.
+    /// Runs the game using objects and UI references authored directly in SampleScene.
+    /// It intentionally does not create the room, player, HUD, desktop, camera or event system.
     /// </summary>
-    public sealed class ControlSBootstrap : MonoBehaviour
+    public sealed class ControlSSceneController : MonoBehaviour
     {
         private ControlSState state;
-        private RoomWorld room;
-        private VirtualDesktop desktop;
-        private Canvas hudCanvas;
-        private Text objectiveText;
-        private Text promptText;
-        private Text messageText;
-        private Image messagePanel;
-        private RectTransform modalLayer;
-        private Image glitchOverlay;
-        private RectTransform glitchStripes;
+
+        [Header("Scene Systems")]
+        [SerializeField] private RoomSceneView room;
+        [SerializeField] private VirtualDesktop desktop;
+        [SerializeField] private Camera worldCamera;
+
+        [Header("HUD References")]
+        [SerializeField] private Canvas hudCanvas;
+        [SerializeField] private Text objectiveText;
+        [SerializeField] private Text promptText;
+        [SerializeField] private Text messageText;
+        [SerializeField] private Image messagePanel;
+        [SerializeField] private RectTransform modalLayer;
+        [SerializeField] private Image glitchOverlay;
+        [SerializeField] private RectTransform glitchStripes;
+
+        [Header("Audio Sources")]
+        [SerializeField] private AudioSource droneSource;
+        [SerializeField] private AudioSource uiSource;
+
         private Coroutine messageRoutine;
         private Coroutine glitchRoutine;
         private bool modalOpen;
         private bool ending;
-        private Camera worldCamera;
-        private AudioSource droneSource;
-        private AudioSource uiSource;
 
         public bool BlocksRoomInput => modalOpen || ending || (desktop != null && desktop.IsOpen);
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void CreatePrototype()
+        public void ConfigureSceneReferences(RoomSceneView roomView, VirtualDesktop desktopView, Camera sceneCamera,
+            Canvas sceneHud, Text objective, Text prompt, Text narration, Image narrationPanel,
+            RectTransform modal, Image glitch, RectTransform stripes, AudioSource drone, AudioSource ui)
         {
-            if (FindFirstObjectByType<ControlSBootstrap>() != null) return;
-            var root = new GameObject("CONTROL S - Game Runtime");
-            root.AddComponent<ControlSBootstrap>();
+            room = roomView;
+            desktop = desktopView;
+            worldCamera = sceneCamera;
+            hudCanvas = sceneHud;
+            objectiveText = objective;
+            promptText = prompt;
+            messageText = narration;
+            messagePanel = narrationPanel;
+            modalLayer = modal;
+            glitchOverlay = glitch;
+            glitchStripes = stripes;
+            droneSource = drone;
+            uiSource = ui;
         }
 
         private void Awake()
         {
+            if (room == null || desktop == null || worldCamera == null || hudCanvas == null ||
+                objectiveText == null || promptText == null || messageText == null || messagePanel == null ||
+                modalLayer == null || glitchOverlay == null || glitchStripes == null)
+            {
+                Debug.LogError("CONTROL S scene references are incomplete. Rebuild SampleScene from Tools > CONTROL S > Rebuild SampleScene.", this);
+                enabled = false;
+                return;
+            }
+
             state = new ControlSState();
             state.MessageRequested += ShowMessage;
             state.GlitchRequested += TriggerGlitch;
             state.Changed += UpdateObjective;
 
-            SetupEventSystem();
-            SetupCamera();
-            SetupHud();
             SetupAudio();
-
-            desktop = gameObject.AddComponent<VirtualDesktop>();
             desktop.Initialize(this, state);
-            room = new RoomWorld(transform, this, state);
+            room.Initialize(this, state);
+            ApplyRuntimeFonts();
             UpdateObjective();
             StartCoroutine(IntroRoutine());
         }
@@ -159,115 +179,13 @@ namespace ControlS
             Destroy(clip, duration + .2f);
         }
 
-        private void SetupEventSystem()
-        {
-            if (EventSystem.current != null) return;
-            var eventSystem = new GameObject("EventSystem", typeof(EventSystem));
-            var module = eventSystem.AddComponent<InputSystemUIInputModule>();
-            module.AssignDefaultActions();
-        }
-
-        private void SetupCamera()
-        {
-            worldCamera = Camera.main;
-            if (worldCamera == null)
-            {
-                var cameraObject = new GameObject("Main Camera", typeof(Camera), typeof(AudioListener));
-                cameraObject.tag = "MainCamera";
-                worldCamera = cameraObject.GetComponent<Camera>();
-            }
-            worldCamera.orthographic = true;
-            worldCamera.orthographicSize = 5.1f;
-            worldCamera.transform.position = new Vector3(0, 0, -10);
-            worldCamera.transform.rotation = Quaternion.identity;
-            worldCamera.backgroundColor = new Color(.012f, .016f, .021f, 1f);
-            worldCamera.clearFlags = CameraClearFlags.SolidColor;
-        }
-
-        private void SetupHud()
-        {
-            var canvasObject = new GameObject("Room HUD Canvas", typeof(RectTransform), typeof(Canvas),
-                typeof(CanvasScaler), typeof(GraphicRaycaster));
-            canvasObject.transform.SetParent(transform, false);
-            hudCanvas = canvasObject.GetComponent<Canvas>();
-            hudCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            hudCanvas.sortingOrder = 20;
-            var scaler = canvasObject.GetComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1920, 1080);
-            scaler.matchWidthOrHeight = .5f;
-
-            // Vignette-like flat edge strips keep the generated room moody.
-            var topShade = RuntimeUI.Panel("Top shade", hudCanvas.transform, new Color(0, 0, 0, .42f),
-                new Vector2(0, .88f), Vector2.one, Vector2.zero, Vector2.zero);
-            topShade.raycastTarget = false;
-            var bottomShade = RuntimeUI.Panel("Bottom shade", hudCanvas.transform, new Color(0, 0, 0, .5f),
-                Vector2.zero, new Vector2(1, .13f), Vector2.zero, Vector2.zero);
-            bottomShade.raycastTarget = false;
-            var leftShade = RuntimeUI.Panel("Left shade", hudCanvas.transform, new Color(0, 0, 0, .25f),
-                Vector2.zero, new Vector2(.055f, 1), Vector2.zero, Vector2.zero);
-            leftShade.raycastTarget = false;
-            var rightShade = RuntimeUI.Panel("Right shade", hudCanvas.transform, new Color(0, 0, 0, .25f),
-                new Vector2(.945f, 0), Vector2.one, Vector2.zero, Vector2.zero);
-            rightShade.raycastTarget = false;
-
-            var objectiveBar = RuntimeUI.Panel("Objective", hudCanvas.transform, new Color(.02f, .026f, .032f, .9f),
-                new Vector2(.5f, 1), new Vector2(.5f, 1), new Vector2(-660, -90), new Vector2(660, -20));
-            objectiveText = RuntimeUI.Text("Text", objectiveBar.transform, string.Empty, 24,
-                new Color(.72f, .86f, .82f), TextAnchor.MiddleCenter);
-
-            var controls = RuntimeUI.Text("Controls", hudCanvas.transform,
-                "WASD / 방향키  이동    E / Enter  조사    ESC  컴퓨터 닫기", 18,
-                new Color(.61f, .67f, .66f), TextAnchor.UpperLeft);
-            controls.rectTransform.anchorMin = new Vector2(0, 1);
-            controls.rectTransform.anchorMax = new Vector2(0, 1);
-            controls.rectTransform.pivot = new Vector2(0, 1);
-            controls.rectTransform.anchoredPosition = new Vector2(28, -22);
-            controls.rectTransform.sizeDelta = new Vector2(700, 40);
-
-            promptText = RuntimeUI.Text("Interaction Prompt", hudCanvas.transform, string.Empty, 28,
-                new Color(.91f, .87f, .67f), TextAnchor.MiddleCenter);
-            promptText.fontStyle = FontStyle.Bold;
-            promptText.rectTransform.anchorMin = new Vector2(.5f, 0);
-            promptText.rectTransform.anchorMax = new Vector2(.5f, 0);
-            promptText.rectTransform.pivot = new Vector2(.5f, 0);
-            promptText.rectTransform.anchoredPosition = new Vector2(0, 38);
-            promptText.rectTransform.sizeDelta = new Vector2(900, 52);
-
-            messagePanel = RuntimeUI.Panel("Narration", hudCanvas.transform, new Color(.018f, .021f, .025f, .94f),
-                new Vector2(.5f, .5f), new Vector2(.5f, .5f), new Vector2(-650, -365), new Vector2(650, -190));
-            messageText = RuntimeUI.Text("Narration Text", messagePanel.transform, string.Empty, 27,
-                new Color(.88f, .9f, .86f), TextAnchor.MiddleCenter);
-            messageText.rectTransform.offsetMin = new Vector2(28, 14);
-            messageText.rectTransform.offsetMax = new Vector2(-28, -14);
-            messagePanel.gameObject.SetActive(false);
-
-            modalLayer = RuntimeUI.Rect("Modal Layer", hudCanvas.transform);
-            RuntimeUI.Stretch(modalLayer);
-            modalLayer.gameObject.SetActive(false);
-
-            glitchOverlay = RuntimeUI.Panel("Glitch Overlay", hudCanvas.transform, new Color(.32f, 0, 0, 0),
-                Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            glitchOverlay.raycastTarget = false;
-            glitchStripes = RuntimeUI.Rect("Glitch Stripes", glitchOverlay.transform);
-            RuntimeUI.Stretch(glitchStripes);
-            for (var i = 0; i < 13; i++)
-            {
-                var stripe = RuntimeUI.Panel("Noise " + i, glitchStripes,
-                    i % 3 == 0 ? new Color(.6f, .03f, .025f, .5f) : new Color(.72f, .78f, .75f, .16f),
-                    new Vector2(0, 0), new Vector2(1, 0), Vector2.zero, new Vector2(0, 8));
-                stripe.raycastTarget = false;
-                stripe.gameObject.SetActive(false);
-            }
-        }
-
         private void SetupAudio()
         {
-            uiSource = gameObject.AddComponent<AudioSource>();
+            if (uiSource == null) uiSource = gameObject.AddComponent<AudioSource>();
             uiSource.playOnAwake = false;
             uiSource.volume = .8f;
 
-            droneSource = gameObject.AddComponent<AudioSource>();
+            if (droneSource == null) droneSource = gameObject.AddComponent<AudioSource>();
             droneSource.loop = true;
             droneSource.playOnAwake = false;
             droneSource.volume = .08f;
@@ -286,6 +204,19 @@ namespace ControlS
             clip.SetData(data, 0);
             droneSource.clip = clip;
             droneSource.Play();
+        }
+
+        private void ApplyRuntimeFonts()
+        {
+            var dynamicFont = RuntimeUI.Font;
+            if (hudCanvas != null)
+            {
+                foreach (var text in hudCanvas.GetComponentsInChildren<Text>(true)) text.font = dynamicFont;
+            }
+            if (desktop != null)
+            {
+                foreach (var text in desktop.GetComponentsInChildren<Text>(true)) text.font = dynamicFont;
+            }
         }
 
         private IEnumerator IntroRoutine()
