@@ -15,6 +15,7 @@ namespace ControlS.Editor
         private const string FailedKey = "ControlS.Validation.Failed";
         private const string StartedKey = "ControlS.Validation.Started";
         private const string CapturedKey = "ControlS.Validation.Captured";
+        private const string PhaseKey = "ControlS.Validation.Phase";
 
         static ControlSPlayModeValidation()
         {
@@ -29,6 +30,7 @@ namespace ControlS.Editor
             SessionState.SetBool(ActiveKey, true);
             SessionState.SetBool(FailedKey, false);
             SessionState.SetBool(CapturedKey, false);
+            SessionState.SetInt(PhaseKey, 0);
             SessionState.SetFloat(StartedKey, (float)EditorApplication.timeSinceStartup);
             EditorSceneManager.OpenScene("Assets/Scenes/SampleScene.unity", OpenSceneMode.Single);
             EditorApplication.isPlaying = true;
@@ -38,24 +40,55 @@ namespace ControlS.Editor
         {
             if (!SessionState.GetBool(ActiveKey, false) || !EditorApplication.isPlaying) return;
             var started = SessionState.GetFloat(StartedKey, 0f);
-            if (EditorApplication.timeSinceStartup - started < 2.5d) return;
+            var phase = SessionState.GetInt(PhaseKey, 0);
+            if (EditorApplication.timeSinceStartup - started < (phase == 0 ? 2.5d : .2d)) return;
 
             var controller = UnityEngine.Object.FindFirstObjectByType<ControlSSceneController>();
+            var hudController = UnityEngine.Object.FindFirstObjectByType<ControlSHudController>();
+            var atmosphere = UnityEngine.Object.FindFirstObjectByType<ControlSAtmosphereController>();
+            var drawer = UnityEngine.Object.FindFirstObjectByType<DrawerKeypadContent>();
+            var sequences = UnityEngine.Object.FindObjectsByType<InteractionSequence>(FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            var endingRoot = FindObjectIncludingInactive("Ending UI");
             var player = GameObject.Find("Player");
             var desktop = GameObject.Find("Virtual Desktop Canvas");
             var hud = GameObject.Find("Room HUD Canvas");
             var sceneRoot = GameObject.Find("CONTROL S - Scene Root");
             var room = GameObject.Find("Room");
-            var valid = controller != null && sceneRoot != null && room != null && player != null && desktop != null && hud != null &&
-                        player.GetComponent<Rigidbody2D>() != null;
+            var interactionBindingsValid = ValidateInteractionBindings();
+            var valid = controller != null && controller.enabled && controller.Content != null &&
+                        hudController != null && hudController.ValidateReferences() &&
+                        atmosphere != null && atmosphere.ValidateReferences() &&
+                        drawer != null && drawer.ValidateReferences() && drawer.Root != null && !drawer.Root.activeSelf &&
+                        sequences.Length == 2 && Array.TrueForAll(sequences, sequence => sequence.Actions.Count > 0) &&
+                        endingRoot != null && !endingRoot.activeSelf && ValidateContentButtons() &&
+                        sceneRoot != null && room != null && player != null && desktop != null && hud != null &&
+                        player.GetComponent<Rigidbody2D>() != null && interactionBindingsValid;
             if (!valid)
             {
                 SessionState.SetBool(FailedKey, true);
                 Debug.LogError("[CONTROL_S_VALIDATION] Runtime objects were not created correctly.");
             }
+            else if (phase == 0)
+            {
+                RoomInteractable clock = null;
+                var interactions = UnityEngine.Object.FindObjectsByType<RoomInteractable>(FindObjectsInactive.Include,
+                    FindObjectsSortMode.None);
+                foreach (var interaction in interactions)
+                    if (interaction.Kind == RoomInteractionKind.Clock) clock = interaction;
+                clock?.Interact(player);
+                SessionState.SetInt(PhaseKey, 1);
+                SessionState.SetFloat(StartedKey, (float)EditorApplication.timeSinceStartup);
+                return;
+            }
+            else if (!controller.State.ClockInspected)
+            {
+                SessionState.SetBool(FailedKey, true);
+                Debug.LogError("[CONTROL_S_VALIDATION] Serialized clock rule did not execute.");
+            }
             else
             {
-                Debug.Log("[CONTROL_S_VALIDATION] PASS — room, player, HUD and virtual desktop initialized.");
+                Debug.Log("[CONTROL_S_VALIDATION] PASS — serialized rules and sequences initialized and executed.");
             }
 
             var commandLine = Environment.GetCommandLineArgs();
@@ -63,7 +96,7 @@ namespace ControlS.Editor
                 !SessionState.GetBool(CapturedKey, false))
             {
                 var captureDesktop = Array.Exists(commandLine, argument => argument == "-controlSDesktop");
-                if (captureDesktop) controller.OpenDesktop();
+                if (captureDesktop) UnityEngine.Object.FindFirstObjectByType<VirtualDesktop>()?.Open();
                 var path = Path.GetFullPath(captureDesktop
                     ? "Logs/control-s-desktop.png"
                     : "Logs/control-s-room.png");
@@ -78,6 +111,60 @@ namespace ControlS.Editor
             var failed = SessionState.GetBool(FailedKey, false);
             EditorApplication.isPlaying = false;
             EditorApplication.delayCall += () => EditorApplication.Exit(failed ? 1 : 0);
+        }
+
+        private static bool ValidateInteractionBindings()
+        {
+            var interactions = UnityEngine.Object.FindObjectsByType<RoomInteractable>(FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            if (interactions.Length != 5) return false;
+            foreach (var interaction in interactions)
+            {
+                if (interaction.Rules == null || interaction.Rules.Count == 0) return false;
+                var expectedRuleCount = interaction.Kind switch
+                {
+                    RoomInteractionKind.Computer => 1,
+                    RoomInteractionKind.Clock => 4,
+                    RoomInteractionKind.Drawer => 2,
+                    RoomInteractionKind.Photo => 2,
+                    RoomInteractionKind.Door => 2,
+                    _ => 0
+                };
+                if (interaction.Rules.Count != expectedRuleCount) return false;
+                foreach (var rule in interaction.Rules)
+                    if (rule == null || rule.Actions.Count == 0) return false;
+                if (interaction.OnInteract.GetPersistentEventCount() != 0 ||
+                    interaction.OnInteractNarration.GetPersistentEventCount() != 0 ||
+                    interaction.OnInteractGameObject.GetPersistentEventCount() != 0) return false;
+            }
+            return true;
+        }
+
+        private static GameObject FindObjectIncludingInactive(string objectName)
+        {
+            var transforms = UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            foreach (var item in transforms)
+                if (item.name == objectName) return item.gameObject;
+            return null;
+        }
+
+        private static bool ValidateContentButtons()
+        {
+            UnityEngine.UI.Button submit = null;
+            UnityEngine.UI.Button cancel = null;
+            UnityEngine.UI.Button restart = null;
+            var buttons = UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Button>(FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            foreach (var button in buttons)
+            {
+                if (button.name == "Submit") submit = button;
+                else if (button.name == "Cancel") cancel = button;
+                else if (button.name == "Restart") restart = button;
+            }
+            return submit != null && submit.onClick.GetPersistentEventCount() > 0 &&
+                   cancel != null && cancel.onClick.GetPersistentEventCount() > 0 &&
+                   restart != null && restart.onClick.GetPersistentEventCount() > 0;
         }
 
         private static void CaptureFrame(string path)

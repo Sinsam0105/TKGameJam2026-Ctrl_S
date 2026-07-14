@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff16e12ddaeabd4ca82f212fb4d3665, type: 3}
+  m_Name: Drawer Already Opened
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.NarrationSO
+  narrationId: drawer_already_opened
+  text: "\uC11C\uB78D \uC548\uC5D0\uB294 \uBA54\uBAA8 \uC790\uAD6D\uB9CC \uB0A8\uC544
+    \uC788\uB2E4.\nFAMILY.PNG\uB9CC \uBCF5\uC6D0\uD560 \uAC83."
+  duration: 3.5

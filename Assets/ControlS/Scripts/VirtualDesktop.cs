@@ -34,6 +34,7 @@ namespace ControlS
     {
         private ControlSSceneController game;
         private ControlSState state;
+        [SerializeField] private InteractionSequence endingSequence;
         [SerializeField] private Canvas canvas;
         [SerializeField] private RectTransform desktopRoot;
         [SerializeField] private RectTransform iconLayer;
@@ -42,6 +43,7 @@ namespace ControlS
         private readonly Dictionary<string, RectTransform> openWindows = new Dictionary<string, RectTransform>();
 
         public bool IsOpen => desktopRoot != null && desktopRoot.gameObject.activeSelf;
+        public GameObject DesktopUI => desktopRoot != null ? desktopRoot.gameObject : null;
 
         public void Initialize(ControlSSceneController owner, ControlSState gameState)
         {
@@ -59,22 +61,25 @@ namespace ControlS
             desktopRoot.gameObject.SetActive(false);
         }
 
-        public void BuildSceneLayout()
+        public void ConfigureEndingSequence(InteractionSequence sequence) => endingSequence = sequence;
+
+        public void BuildSceneLayout(ControlSContent content)
         {
             if (canvas != null) DestroyImmediate(canvas.gameObject);
-            BuildCanvas();
-            BuildScenePreviewIcons();
+            BuildCanvas(content);
+            BuildScenePreviewIcons(content);
             desktopRoot.gameObject.SetActive(false);
         }
 
-        private void BuildScenePreviewIcons()
+        private void BuildScenePreviewIcons(ControlSContent content)
         {
             for (var i = iconLayer.childCount - 1; i >= 0; i--) DestroyImmediate(iconLayer.GetChild(i).gameObject);
-            AddIcon("README.txt", "TXT", null, 0);
-            AddIcon("RECOVERY", "DIR", null, 1);
-            AddIcon("dark_photo.img", "IMG", null, 2);
-            AddIcon("Recycle Bin", "BIN", null, 3);
-            AddIcon("ARCHIVE", "LOCK", null, 4);
+            var d = content.desktop;
+            AddIcon(d.readmeIcon, "TXT", null, 0);
+            AddIcon(d.recoveryIcon, "DIR", null, 1);
+            AddIcon(d.darkPhotoIcon, "IMG", null, 2);
+            AddIcon(d.recycleBinIcon, "BIN", null, 3);
+            AddIcon(d.archiveIcon, "LOCK", null, 4);
         }
 
         private void BindSceneButtons()
@@ -111,7 +116,7 @@ namespace ControlS
             if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) Close();
         }
 
-        private void BuildCanvas()
+        private void BuildCanvas(ControlSContent content)
         {
             var canvasGo = new GameObject("Virtual Desktop Canvas", typeof(RectTransform), typeof(Canvas),
                 typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -135,7 +140,7 @@ namespace ControlS
                 new Vector2(.38f, .08f), new Vector2(.39f, .93f), Vector2.zero, Vector2.zero).raycastTarget = false;
             RuntimeUI.Panel("Wallpaper line B", desktopRoot, new Color(.11f, .37f, .36f, .25f),
                 new Vector2(.38f, .57f), new Vector2(.92f, .58f), Vector2.zero, Vector2.zero).raycastTarget = false;
-            var watermark = RuntimeUI.Text("Watermark", desktopRoot, "CTRL_S RECOVERY ENVIRONMENT\nROOM INSTANCE 02:17",
+            var watermark = RuntimeUI.Text("Watermark", desktopRoot, content.desktop.watermark,
                 34, new Color(.18f, .48f, .45f, .2f), TextAnchor.LowerRight);
             watermark.rectTransform.offsetMin = new Vector2(0, 64);
             watermark.rectTransform.offsetMax = new Vector2(-46, -32);
@@ -148,7 +153,7 @@ namespace ControlS
 
             var taskbar = RuntimeUI.Panel("Taskbar", desktopRoot, new Color(.025f, .03f, .038f, .98f),
                 new Vector2(0, 0), new Vector2(1, 0), Vector2.zero, new Vector2(0, 58));
-            var home = RuntimeUI.Button("Leave Computer", taskbar.transform, "▣  방으로 돌아가기", Close,
+            var home = RuntimeUI.Button("Leave Computer", taskbar.transform, content.desktop.exitButton, Close,
                 new Color(.08f, .11f, .12f, 1f), new Color(.12f, .28f, .26f, 1f), 19);
             var homeRt = home.GetComponent<RectTransform>();
             homeRt.anchorMin = new Vector2(0, 0);
@@ -170,13 +175,14 @@ namespace ControlS
             for (var i = iconLayer.childCount - 1; i >= 0; i--) Destroy(iconLayer.GetChild(i).gameObject);
 
             var row = 0;
-            AddIcon("README.txt", "TXT", OpenReadme, row++);
-            AddIcon("RECOVERY", "DIR", OpenRecovery, row++);
-            AddIcon("dark_photo.img", "IMG", OpenDarkPhoto, row++);
-            AddIcon("Recycle Bin", "BIN", OpenRecycleBin, row++);
-            AddIcon("ARCHIVE", state.SaveFileRepaired ? "DIR" : "LOCK", OpenArchive, row++);
+            var d = state.Content.desktop;
+            AddIcon(d.readmeIcon, "TXT", OpenReadme, row++);
+            AddIcon(d.recoveryIcon, "DIR", OpenRecovery, row++);
+            AddIcon(d.darkPhotoIcon, "IMG", OpenDarkPhoto, row++);
+            AddIcon(d.recycleBinIcon, "BIN", OpenRecycleBin, row++);
+            AddIcon(d.archiveIcon, state.SaveFileRepaired ? "DIR" : "LOCK", OpenArchive, row++);
             if (state.ArchiveSequenceSolved)
-                AddIcon("RECOVERED.save", "SAVE", OpenRecovered, row++);
+                AddIcon(d.recoveredIcon, "SAVE", OpenRecovered, row++);
         }
 
         private void AddIcon(string label, string type, UnityEngine.Events.UnityAction action, int row)
@@ -238,15 +244,9 @@ namespace ControlS
         private void OpenReadme()
         {
             game.PlayUiTone(600f, .04f);
-            var content = CreateWindow("readme", "README.txt — Notepad", new Vector2(720, 530), new Vector2(80, 70));
-            var text = RuntimeUI.Text("Document", content,
-                "CTRL_S 자동 복구 안내\n\n" +
-                "저장 실패 감지: 02:17:00\n복구 대상: occupant_session.save\n임시 조각: 4\n\n" +
-                "1. 방 안의 마지막 정상 상태를 확인하십시오.\n" +
-                "2. RECOVERY 폴더의 생성 시각 잠금을 해제하십시오.\n" +
-                "3. 손상된 파일명은 물리 입력 장치와 대조하십시오.\n\n" +
-                "※ 복구 도중 방에 없던 물건이 보이더라도 만지지 마십시오.\n" +
-                "※ 화면 속 방과 현재 방이 다를 경우, 현재 방이 잘못된 것입니다.",
+            var d = state.Content.desktop;
+            var content = CreateWindow("readme", d.readmeTitle, new Vector2(720, 530), new Vector2(80, 70));
+            var text = RuntimeUI.Text("Document", content, d.readmeBody,
                 25, new Color(.8f, .86f, .84f), TextAnchor.UpperLeft);
             text.rectTransform.offsetMin = new Vector2(14, 10);
             text.rectTransform.offsetMax = new Vector2(-14, -10);
@@ -255,22 +255,22 @@ namespace ControlS
         private void OpenRecovery()
         {
             game.PlayUiTone(460f, .05f);
-            var content = CreateWindow("recovery", "C:\\RECOVERY", new Vector2(780, 500), new Vector2(35, 30));
+            var d = state.Content.desktop;
+            var content = CreateWindow("recovery", d.recoveryTitle, new Vector2(780, 500), new Vector2(35, 30));
             if (!state.TimePasswordSolved)
             {
-                var info = RuntimeUI.Text("Info", content,
-                    "보호된 폴더\n생성 시각(HHMM)을 입력하십시오.\n힌트: 현실 공간의 정지된 시간",
+                var info = RuntimeUI.Text("Info", content, d.recoveryLocked,
                     24, new Color(.78f, .86f, .84f), TextAnchor.UpperLeft);
                 info.rectTransform.anchorMin = new Vector2(0, .48f);
                 info.rectTransform.anchorMax = Vector2.one;
                 info.rectTransform.offsetMin = new Vector2(24, 0);
                 info.rectTransform.offsetMax = new Vector2(-24, -20);
 
-                var input = RuntimeUI.Input("Password", content, "HHMM");
+                var input = RuntimeUI.Input("Password", content, d.passwordPlaceholder);
                 Place(input.GetComponent<RectTransform>(), 0, -38, 430, 62);
                 input.characterLimit = 4;
                 input.contentType = InputField.ContentType.IntegerNumber;
-                var unlock = RuntimeUI.Button("Unlock", content, "잠금 해제", () =>
+                var unlock = RuntimeUI.Button("Unlock", content, d.unlockButton, () =>
                 {
                     if (state.TryTimePassword(input.text)) OpenRecovery();
                 }, new Color(.08f, .36f, .32f, 1f), new Color(.12f, .56f, .48f, 1f));
@@ -282,8 +282,7 @@ namespace ControlS
 
             if (!state.KeycapCollected)
             {
-                var waiting = RuntimeUI.Text("Waiting", content,
-                    "SAVE_?.tmp\n\nSTATUS: 파일명 손상\n누락된 문자: 물리 키보드와 대조 필요\n\n시계 아래에서 입력 장치 조각이 감지되었습니다.",
+                var waiting = RuntimeUI.Text("Waiting", content, d.recoveryWaiting,
                     26, new Color(.76f, .86f, .82f), TextAnchor.UpperLeft);
                 waiting.rectTransform.offsetMin = new Vector2(26, 20);
                 waiting.rectTransform.offsetMax = new Vector2(-26, -20);
@@ -292,16 +291,15 @@ namespace ControlS
 
             if (!state.SaveFileRepaired)
             {
-                var info = RuntimeUI.Text("Repair Info", content,
-                    "손상된 파일명을 완성하십시오.\n확장자를 포함한 전체 이름이 필요합니다.",
+                var info = RuntimeUI.Text("Repair Info", content, d.repairPrompt,
                     24, new Color(.78f, .86f, .84f), TextAnchor.UpperLeft);
                 info.rectTransform.anchorMin = new Vector2(0, .53f);
                 info.rectTransform.anchorMax = Vector2.one;
                 info.rectTransform.offsetMin = new Vector2(24, 0);
                 info.rectTransform.offsetMax = new Vector2(-24, -20);
-                var fileName = RuntimeUI.Input("FileName", content, "SAVE_?.tmp", "SAVE_?.tmp");
+                var fileName = RuntimeUI.Input("FileName", content, d.fileNamePlaceholder, d.fileNamePlaceholder);
                 Place(fileName.GetComponent<RectTransform>(), 0, -28, 500, 64);
-                var repair = RuntimeUI.Button("Repair", content, "파일명 변경 및 복구", () =>
+                var repair = RuntimeUI.Button("Repair", content, d.repairButton, () =>
                 {
                     if (state.TryRepairSaveName(fileName.text)) OpenRecovery();
                 }, new Color(.08f, .36f, .32f, 1f), new Color(.12f, .56f, .48f, 1f));
@@ -309,8 +307,7 @@ namespace ControlS
                 return;
             }
 
-            var complete = RuntimeUI.Text("Complete", content,
-                "✓ SAVE_S.tmp\n\n복구 상태: 정상\n수정 시각: 02:17\n내용: 다음 조각의 위치는 이미지 캐시에 있음\n\nC:\\CACHE\\dark_photo.img",
+            var complete = RuntimeUI.Text("Complete", content, d.repairComplete,
                 26, new Color(.55f, .9f, .76f), TextAnchor.UpperLeft);
             complete.rectTransform.offsetMin = new Vector2(26, 20);
             complete.rectTransform.offsetMax = new Vector2(-26, -20);
@@ -319,17 +316,19 @@ namespace ControlS
         private void OpenDarkPhoto()
         {
             game.PlayUiTone(390f, .05f);
-            var content = CreateWindow("photo", "dark_photo.img — Image Inspector", new Vector2(830, 620), new Vector2(120, -10));
+            var d = state.Content.desktop;
+            var content = CreateWindow("photo", d.photoTitle, new Vector2(830, 620), new Vector2(120, -10));
             var preview = RuntimeUI.Panel("Preview", content, new Color(.018f, .019f, .022f, 1f),
                 new Vector2(.08f, .3f), new Vector2(.92f, .94f), Vector2.zero, Vector2.zero);
             var silhouette = RuntimeUI.Panel("Drawer silhouette", preview.transform, new Color(.025f, .027f, .03f, 1f),
                 new Vector2(.5f, .18f), new Vector2(.86f, .76f), Vector2.zero, Vector2.zero);
             silhouette.raycastTarget = false;
-            var clue = RuntimeUI.Text("Hidden clue", preview.transform, "DRAWER\n4 3 1 2", 42,
+            var clue = RuntimeUI.Text("Hidden clue", preview.transform, d.photoHiddenClue, 42,
                 new Color(.12f, .02f, .02f, 0), TextAnchor.MiddleCenter);
             clue.fontStyle = FontStyle.Bold;
 
-            var label = RuntimeUI.Text("Brightness Label", content, "BRIGHTNESS  08%", 21,
+            var label = RuntimeUI.Text("Brightness Label", content,
+                string.Format(d.brightnessFormat, 8), 21,
                 new Color(.76f, .84f, .82f), TextAnchor.MiddleLeft);
             label.rectTransform.anchorMin = new Vector2(.08f, .2f);
             label.rectTransform.anchorMax = new Vector2(.92f, .28f);
@@ -344,8 +343,8 @@ namespace ControlS
                 preview.color = new Color(light * .55f, light * .58f, light * .63f, 1f);
                 silhouette.color = new Color(light * .34f, light * .29f, light * .27f, 1f);
                 clue.color = new Color(.48f, .055f, .045f, Mathf.InverseLerp(.68f, .86f, value));
-                label.text = $"BRIGHTNESS  {Mathf.RoundToInt(value * 100):00}%";
-                if (value >= .82f) state.RevealPhotoClue();
+                label.text = string.Format(d.brightnessFormat, Mathf.RoundToInt(value * 100));
+                if (value >= state.Content.puzzles.photoBrightnessThreshold) state.RevealPhotoClue();
             });
             slider.onValueChanged.Invoke(slider.value);
         }
@@ -353,9 +352,10 @@ namespace ControlS
         private void OpenRecycleBin()
         {
             game.PlayUiTone(330f, .05f);
-            var content = CreateWindow("trash", "Recycle Bin", new Vector2(760, 520), new Vector2(-15, -15));
+            var d = state.Content.desktop;
+            var content = CreateWindow("trash", d.recycleTitle, new Vector2(760, 520), new Vector2(-15, -15));
             var info = RuntimeUI.Text("Info", content,
-                state.DrawerOpened ? "삭제된 항목 2개 — 서랍의 메모와 대조하십시오." : "삭제된 항목 2개 — 복원 대상 불명",
+                state.DrawerOpened ? d.recycleKnown : d.recycleUnknown,
                 23, new Color(.78f, .85f, .84f), TextAnchor.UpperLeft);
             info.rectTransform.anchorMin = new Vector2(0, .78f);
             info.rectTransform.anchorMax = Vector2.one;
@@ -364,19 +364,18 @@ namespace ControlS
 
             if (state.FamilyPhotoRestored)
             {
-                var done = RuntimeUI.Text("Empty", content,
-                    "FAMILY.PNG가 원래 위치로 복원되었습니다.\n\n남은 항목:\nDO_NOT_RESTORE.exe  0 KB",
+                var done = RuntimeUI.Text("Empty", content, d.recycleDone,
                     27, new Color(.57f, .86f, .73f), TextAnchor.UpperLeft);
                 done.rectTransform.offsetMin = new Vector2(24, 26);
                 done.rectTransform.offsetMax = new Vector2(-24, -85);
                 return;
             }
 
-            AddFileRow(content, "FAMILY.PNG", "1.8 MB  |  삭제: 02:16", .36f, () =>
+            AddFileRow(content, d.familyFile, d.familyDetail, .36f, () =>
             {
                 if (state.TryRestoreFile(true)) OpenRecycleBin();
             });
-            AddFileRow(content, "DO_NOT_RESTORE.exe", "0 KB  |  삭제: 02:17", -.08f, () => state.TryRestoreFile(false));
+            AddFileRow(content, d.occupantFile, d.occupantDetail, -.08f, () => state.TryRestoreFile(false));
         }
 
         private void AddFileRow(RectTransform content, string name, string detail, float yNormalized,
@@ -389,7 +388,7 @@ namespace ControlS
                 new Color(.8f, .87f, .85f), TextAnchor.MiddleLeft);
             text.rectTransform.offsetMin = new Vector2(16, 4);
             text.rectTransform.offsetMax = new Vector2(-180, -4);
-            var restore = RuntimeUI.Button("Restore", row.transform, "복원", action,
+            var restore = RuntimeUI.Button("Restore", row.transform, state.Content.desktop.restoreButton, action,
                 new Color(.09f, .29f, .27f, 1f), new Color(.13f, .49f, .43f, 1f), 20);
             restore.GetComponent<RectTransform>().anchorMin = new Vector2(1, .18f);
             restore.GetComponent<RectTransform>().anchorMax = new Vector2(1, .82f);
@@ -400,31 +399,29 @@ namespace ControlS
         private void OpenArchive()
         {
             game.PlayUiTone(420f, .05f);
-            var content = CreateWindow("archive", "C:\\ARCHIVE", new Vector2(820, 560), new Vector2(65, 18));
+            var d = state.Content.desktop;
+            var content = CreateWindow("archive", d.archiveTitle, new Vector2(820, 560), new Vector2(65, 18));
             if (!state.SaveFileRepaired)
             {
-                var locked = RuntimeUI.Text("Locked", content,
-                    "🔒 ARCHIVE\n\n의존 파일 SAVE_?.tmp가 손상되어 폴더를 열 수 없습니다.", 28,
+                RuntimeUI.Text("Locked", content, d.archiveLocked, 28,
                     new Color(.76f, .45f, .4f), TextAnchor.MiddleCenter);
                 return;
             }
             if (!state.PhotoSequenceDiscovered)
             {
-                var unknown = RuntimeUI.Text("Unknown", content,
-                    "손상 로그 조각 4개가 발견되었습니다.\n실행 순서를 알 수 없습니다.\n\n복원된 현실 오브젝트에 인덱스가 기록되어 있습니다.", 27,
+                RuntimeUI.Text("Unknown", content, d.archiveUnknown, 27,
                     new Color(.76f, .83f, .81f), TextAnchor.MiddleCenter);
                 return;
             }
             if (state.ArchiveSequenceSolved)
             {
-                var solved = RuntimeUI.Text("Solved", content,
-                    "✓ 조각 결합 완료\n\nRECOVERED.save가 바탕화면에 생성되었습니다.", 30,
+                RuntimeUI.Text("Solved", content, d.archiveSolved, 30,
                     new Color(.52f, .91f, .73f), TextAnchor.MiddleCenter);
                 return;
             }
 
             var sequence = new List<int>();
-            var status = RuntimeUI.Text("Sequence", content, "실행 순서: _  _  _  _", 27,
+            var status = RuntimeUI.Text("Sequence", content, d.archiveSequencePrefix + d.archiveEmpty, 27,
                 new Color(.74f, .86f, .82f), TextAnchor.MiddleCenter);
             status.rectTransform.anchorMin = new Vector2(0, .65f);
             status.rectTransform.anchorMax = Vector2.one;
@@ -439,18 +436,18 @@ namespace ControlS
                     {
                         if (sequence.Count >= 4) sequence.Clear();
                         sequence.Add(index);
-                        status.text = "실행 순서: " + string.Join("  →  ", sequence);
+                        status.text = d.archiveSequencePrefix + string.Join("  →  ", sequence);
                         game.PlayUiTone(330f + index * 65f, .07f);
                         if (sequence.Count != 4) return;
                         if (state.TryArchiveSequence(sequence.ToArray()))
                         {
-                            status.text = "결합 완료 — RECOVERED.save 생성";
+                            status.text = d.archiveSolved;
                             RefreshIcons();
                         }
                         else
                         {
                             sequence.Clear();
-                            status.text = "순서 오류. 다시 시도: _  _  _  _";
+                            status.text = d.archiveSequencePrefix + d.archiveEmpty;
                         }
                     }, new Color(.075f, .18f, .18f, 1f), new Color(.13f, .41f, .37f, 1f), 20);
                 var rt = button.GetComponent<RectTransform>();
@@ -463,22 +460,16 @@ namespace ControlS
         private void OpenRecovered()
         {
             game.PlayUiTone(180f, .15f);
-            var content = CreateWindow("recovered", "RECOVERED.save — 0 KB", new Vector2(850, 580), Vector2.zero);
-            var warning = RuntimeUI.Text("Warning", content,
-                "RECOVERY RESULT\n\n" +
-                "대상 세션: OCCUPANT_00\n" +
-                "플레이어 프로세스: AUTOSAVE_AGENT\n" +
-                "현실 일치율: 0%\n\n" +
-                "경고: 복구된 것은 파일이 아닙니다.\n" +
-                "경고: 방 안의 '사람'은 저장 프로세스가 만든 커서입니다.\n\n" +
-                "마지막 블록을 기록하면 OCCUPANT_00이 현재 방을 덮어씁니다.",
+            var d = state.Content.desktop;
+            var content = CreateWindow("recovered", d.recoveredTitle, new Vector2(850, 580), Vector2.zero);
+            var warning = RuntimeUI.Text("Warning", content, d.recoveredWarning,
                 27, new Color(.9f, .72f, .67f), TextAnchor.UpperLeft);
             warning.rectTransform.offsetMin = new Vector2(28, 92);
             warning.rectTransform.offsetMax = new Vector2(-28, -20);
-            var open = RuntimeUI.Button("Commit", content, "그래도 마지막 블록 저장 (CTRL+S)", () =>
+            var open = RuntimeUI.Button("Commit", content, d.recoveredButton, () =>
             {
                 Close();
-                game.BeginEnding();
+                endingSequence?.Execute();
             }, new Color(.43f, .075f, .065f, 1f), new Color(.75f, .12f, .09f, 1f), 23);
             open.GetComponent<RectTransform>().anchorMin = new Vector2(.5f, 0);
             open.GetComponent<RectTransform>().anchorMax = new Vector2(.5f, 0);
