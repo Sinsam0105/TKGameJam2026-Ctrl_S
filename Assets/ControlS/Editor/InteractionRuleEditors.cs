@@ -57,6 +57,26 @@ namespace ControlS.Editor
         }
     }
 
+    [CustomEditor(typeof(DesktopShortcut))]
+    public sealed class DesktopShortcutEditor : UnityEditor.Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            serializedObject.Update();
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("button"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("label"));
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField("Visibility Conditions (AND)", EditorStyles.boldLabel);
+            InteractionRuleEditorGui.DrawManagedList(serializedObject,
+                serializedObject.FindProperty("visibilityConditions"), typeof(InteractionCondition),
+                "Add Visibility Condition");
+            EditorGUILayout.Space(8f);
+            EditorGUILayout.LabelField("Click Rules", EditorStyles.boldLabel);
+            InteractionRuleEditorGui.DrawRules(serializedObject, serializedObject.FindProperty("rules"));
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+
     internal static class InteractionRuleEditorGui
     {
         public static void DrawRules(SerializedObject owner, SerializedProperty rules)

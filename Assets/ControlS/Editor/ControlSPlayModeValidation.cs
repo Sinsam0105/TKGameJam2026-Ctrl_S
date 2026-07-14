@@ -47,6 +47,7 @@ namespace ControlS.Editor
             var hudController = UnityEngine.Object.FindFirstObjectByType<ControlSHudController>();
             var atmosphere = UnityEngine.Object.FindFirstObjectByType<ControlSAtmosphereController>();
             var drawer = UnityEngine.Object.FindFirstObjectByType<DrawerKeypadContent>();
+            var virtualDesktop = UnityEngine.Object.FindFirstObjectByType<VirtualDesktop>();
             var sequences = UnityEngine.Object.FindObjectsByType<InteractionSequence>(FindObjectsInactive.Include,
                 FindObjectsSortMode.None);
             var endingRoot = FindObjectIncludingInactive("Ending UI");
@@ -59,6 +60,7 @@ namespace ControlS.Editor
             var valid = controller != null && controller.enabled && controller.Content != null &&
                         hudController != null && hudController.ValidateReferences() &&
                         atmosphere != null && atmosphere.ValidateReferences() &&
+                        virtualDesktop != null && ValidateDesktop(virtualDesktop) &&
                         drawer != null && drawer.ValidateReferences() && drawer.Root != null && !drawer.Root.activeSelf &&
                         sequences.Length == 2 && Array.TrueForAll(sequences, sequence => sequence.Actions.Count > 0) &&
                         endingRoot != null && !endingRoot.activeSelf && ValidateContentButtons() &&
@@ -81,14 +83,29 @@ namespace ControlS.Editor
                 SessionState.SetFloat(StartedKey, (float)EditorApplication.timeSinceStartup);
                 return;
             }
-            else if (!controller.State.ClockInspected)
+            else if (phase == 1 && !controller.State.ClockInspected)
             {
                 SessionState.SetBool(FailedKey, true);
                 Debug.LogError("[CONTROL_S_VALIDATION] Serialized clock rule did not execute.");
             }
+            else if (phase == 1)
+            {
+                virtualDesktop.Open();
+                virtualDesktop.Shortcuts[0].Execute();
+                SessionState.SetInt(PhaseKey, 2);
+                SessionState.SetFloat(StartedKey, (float)EditorApplication.timeSinceStartup);
+                return;
+            }
+            else if (!virtualDesktop.Windows[0].IsOpen)
+            {
+                SessionState.SetBool(FailedKey, true);
+                Debug.LogError("[CONTROL_S_VALIDATION] Serialized desktop shortcut rule did not open its window.");
+            }
             else
             {
-                Debug.Log("[CONTROL_S_VALIDATION] PASS — serialized rules and sequences initialized and executed.");
+                virtualDesktop.Windows[0].Close();
+                virtualDesktop.Close();
+                Debug.Log("[CONTROL_S_VALIDATION] PASS — room and desktop serialized rules initialized and executed.");
             }
 
             var commandLine = Environment.GetCommandLineArgs();
@@ -165,6 +182,17 @@ namespace ControlS.Editor
             return submit != null && submit.onClick.GetPersistentEventCount() > 0 &&
                    cancel != null && cancel.onClick.GetPersistentEventCount() > 0 &&
                    restart != null && restart.onClick.GetPersistentEventCount() > 0;
+        }
+
+        private static bool ValidateDesktop(VirtualDesktop desktop)
+        {
+            if (!desktop.ValidateReferences() || desktop.Shortcuts.Length != 6 || desktop.Windows.Length != 6)
+                return false;
+            foreach (var shortcut in desktop.Shortcuts)
+                if (shortcut == null || shortcut.Rules.Count == 0) return false;
+            foreach (var window in desktop.Windows)
+                if (window == null) return false;
+            return desktop.Shortcuts[5].VisibilityConditions.Count > 0;
         }
 
         private static void CaptureFrame(string path)

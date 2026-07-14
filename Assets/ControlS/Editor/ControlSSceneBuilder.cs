@@ -47,11 +47,6 @@ namespace ControlS.Editor
             var room = BuildRoom(root.transform);
             var hud = BuildHud(root.transform, content);
 
-            var desktopObject = new GameObject("Virtual Desktop System");
-            desktopObject.transform.SetParent(root.transform, false);
-            var desktop = desktopObject.AddComponent<VirtualDesktop>();
-            desktop.BuildSceneLayout(content);
-
             BuildEventSystem(root.transform);
             hud.Controller.Configure(hud.Canvas, hud.Objective, hud.Prompt, hud.Narration,
                 hud.NarrationPanel, hud.GlitchOverlay, hud.GlitchStripes);
@@ -77,7 +72,7 @@ namespace ControlS.Editor
                 new DelayAction(.7f),
                 new ShowInteractionUIAction(hud.EndingRoot)
             });
-            desktop.ConfigureEndingSequence(endingSequence);
+            var desktop = ControlSDesktopSceneBuilder.Build(root.transform, content, endingSequence);
             controller.ConfigureSceneReferences(content, room, desktop, hud.Controller, atmosphere,
                 drawerContent, new[] { introSequence, endingSequence });
             BindRoomInteractionRules(room, drawerContent, desktop, hud, content);

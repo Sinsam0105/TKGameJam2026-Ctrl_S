@@ -27,13 +27,15 @@
 - `ControlSAtmosphereController`: 카메라, 조명, 배경음, UI 효과음을 담당합니다.
 - `InteractionRuleSystem`: Context, Condition, Action, Rule과 순차 실행기를 제공합니다.
 - `RoomSceneView`, `TopDownPlayer`, `RoomInteractable`: 방 탐색과 규칙 기반 상호작용을 담당합니다.
-- `VirtualDesktop`: 가상 데스크톱 시스템입니다.
+- `VirtualDesktop`: 데스크톱 루트, ESC 입력, 작업 표시줄 시계만 관리합니다.
+- `DesktopShortcut`, `DesktopWindow`: 아이콘 표시 조건/클릭 규칙과 공통 창 열기/닫기를 담당합니다.
 
 게임 전용 동작은 `Assets/ControlS/Content/Scripts`에 분리되어 있습니다.
 
 - `DrawerKeypadContent`: 서랍 키패드 열기, 입력 확인, 닫기를 담당합니다.
 - `ControlSInteractionNodes`: CONTROL S 전용 Flag 조건과 Narration/UI/연출 액션을 제공합니다.
 - `ControlSState`: 퍼즐 Flag와 입력 정답 검증만 보관합니다. 조사 분기는 보관하지 않습니다.
+- `Content/Scripts/Desktop`: 복구 입력, 사진 밝기, 휴지통, 아카이브, 마지막 파일 동작을 창별 컴포넌트로 보관합니다.
 
 `ControlSStoryFlow`는 제거되었습니다. 조사 분기와 인트로·엔딩 순서는 특정 Manager 메서드가 아니라 씬에 직렬화된 Rule/Sequence 데이터로 결정됩니다.
 
@@ -59,6 +61,19 @@ SampleScene에는 다음 규칙이 각 오브젝트에 직접 저장되어 있�
 - 엔딩 다시 시작 → `ControlSSceneController.RestartScene`
 
 기존 Payload와 UnityEvent 필드는 호환을 위해 `Legacy Payload / UnityEvents`에 남아 있으며, Rules가 비어 있을 때만 실행됩니다.
+
+## 데스크톱 수정
+
+`Virtual Desktop System/Virtual Desktop Canvas/Desktop` 아래에 아이콘과 여섯 개 창이 실제 씬 오브젝트로 배치되어 있습니다. 실행 중 창을 생성하거나 아이콘 목록을 다시 만들지 않습니다.
+
+- 아이콘의 `DesktopShortcut`에서 `Visibility Conditions`와 `Click Rules`를 편집합니다.
+- `Add Visibility Condition`으로 진행도에 따른 아이콘 표시 조건을 추가합니다.
+- `Add Rule`, `Add Condition`, `Add Action`으로 클릭 결과를 편집합니다.
+- `Open Desktop Window` 액션에 열고 싶은 `DesktopWindow`를 지정합니다.
+- 각 창의 제목, 텍스트, 버튼과 레이아웃은 Hierarchy에서 직접 수정합니다.
+- 복구, 사진, 휴지통, 아카이브 같은 고유 퍼즐 동작은 해당 창의 Content 컴포넌트에만 들어 있습니다.
+
+현재 `RECOVERED.save` 아이콘은 `ArchiveSequenceSolved == true` 표시 조건을 가지며, 나머지 아이콘은 항상 표시됩니다.
 
 ## 씬 재생성 및 검증
 
