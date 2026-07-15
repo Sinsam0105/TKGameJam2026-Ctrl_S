@@ -23,7 +23,7 @@ namespace ControlS
         private void Update()
         {
             if (worldCamera == null || progressManager == null) return;
-            var progress = progressManager.CompletedPuzzleCount / 4f;
+            var progress = progressManager.CompletionRatio;
             var pulse = Mathf.Sin(Time.unscaledTime * (1.25f + progress)) * .004f;
             worldCamera.backgroundColor = new Color(.012f + pulse, .016f, .021f + progress * .006f, 1f);
         }

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4a52f9ec92c4287a08beea678c84ca7, type: 3}
+  m_Name: DefaultProgressSet
+  m_EditorClassIdentifier: Assembly-CSharp:ControlS:ProgressSetSO
+  flags:
+  - {fileID: 11400000, guid: 1c66a4b1db8ec80499bef19947f56229, type: 2}
+  - {fileID: 11400000, guid: ece42fd2f9b1e0747ab3dac852d8e37f, type: 2}
+  - {fileID: 11400000, guid: c0b491de18e62df4ead95d9ca7f8275f, type: 2}
+  - {fileID: 11400000, guid: 0894ef0028f694a40aecd8ba0ee96430, type: 2}
+  - {fileID: 11400000, guid: 0428301d5094ce44891f116ffdad305f, type: 2}
+  - {fileID: 11400000, guid: afe5ad6442a579040ba8326de4b03871, type: 2}
+  - {fileID: 11400000, guid: f3c397eaf86e40941adde9aac8b75878, type: 2}
+  - {fileID: 11400000, guid: c50fae6cad123d341b6057cb7308ad14, type: 2}
+  - {fileID: 11400000, guid: eee173e32ede6104b8c0b1ad520278a8, type: 2}
+  - {fileID: 11400000, guid: b61d5257c2f22114e97fd8f3f185fa71, type: 2}

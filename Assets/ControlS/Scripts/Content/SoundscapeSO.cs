@@ -12,7 +12,6 @@ namespace ControlS
         [Range(0f, 1f)] public float droneVolume = .035f;
         [Range(0f, 1f)] public float finalDroneVolume = .11f;
         public bool playOnStart = true;
-        [Min(1)] public int fallbackProgressSteps = 4;
         [Min(.01f)] public float transitionSpeed = .22f;
 
         [Header("Damaged Copy")]

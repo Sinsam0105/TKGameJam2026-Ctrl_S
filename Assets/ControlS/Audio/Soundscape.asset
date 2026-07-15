@@ -18,7 +18,6 @@ MonoBehaviour:
   droneVolume: 0.035
   finalDroneVolume: 0.11
   playOnStart: 1
-  fallbackProgressSteps: 4
   transitionSpeed: 0.22
   damageStart: 0.28
   damagedLayerVolume: 0.34

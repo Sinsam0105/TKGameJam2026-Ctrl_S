@@ -8,20 +8,74 @@ namespace ControlS
     public sealed class ProgressManager : MonoSingleton<ProgressManager>
     {
         private readonly Dictionary<ProgressFlagSO, bool> flags = new();
+        private readonly List<ProgressFlagSO> configuredFlags = new();
+        private ProgressSetSO progressSet;
 
         public event Action<ProgressFlagSO, bool> FlagChanged;
         public event Action ProgressChanged;
         public event Action ProgressReset;
+        public ProgressSetSO ProgressSet => progressSet;
+
+        public int TotalPuzzleCount
+        {
+            get
+            {
+                var count = 0;
+                if (configuredFlags.Count > 0)
+                {
+                    foreach (var flag in configuredFlags)
+                        if (flag != null && flag.CountsTowardsProgress) count++;
+                    return count;
+                }
+
+                foreach (var pair in flags)
+                    if (pair.Key != null && pair.Key.CountsTowardsProgress) count++;
+                return count;
+            }
+        }
 
         public int CompletedPuzzleCount
         {
             get
             {
                 var count = 0;
+                if (configuredFlags.Count > 0)
+                {
+                    foreach (var flag in configuredFlags)
+                        if (flag != null && flag.CountsTowardsProgress && GetFlag(flag)) count++;
+                    return count;
+                }
+
                 foreach (var pair in flags)
                     if (pair.Key != null && pair.Key.CountsTowardsProgress && pair.Value) count++;
                 return count;
             }
+        }
+
+        public float CompletionRatio
+        {
+            get
+            {
+                var total = TotalPuzzleCount;
+                return total == 0 ? 0f : CompletedPuzzleCount / (float)total;
+            }
+        }
+
+        public void Configure(ProgressSetSO set)
+        {
+            progressSet = set;
+            configuredFlags.Clear();
+            var unique = new HashSet<ProgressFlagSO>();
+            if (set != null)
+            {
+                foreach (var flag in set.Flags)
+                {
+                    if (flag == null || !unique.Add(flag)) continue;
+                    configuredFlags.Add(flag);
+                    if (!flags.ContainsKey(flag)) flags.Add(flag, flag.DefaultValue);
+                }
+            }
+            ProgressChanged?.Invoke();
         }
 
         public bool GetFlag(ProgressFlagSO flag)
@@ -69,17 +123,16 @@ namespace ControlS
 
         public void ResetProgress()
         {
-            if (flags.Count == 0)
-            {
-                ProgressReset?.Invoke();
-                ProgressChanged?.Invoke();
-                return;
-            }
-
-            var changed = new List<ProgressFlagSO>(flags.Keys);
+            var changed = new HashSet<ProgressFlagSO>(flags.Keys);
+            foreach (var flag in configuredFlags)
+                if (flag != null) changed.Add(flag);
             flags.Clear();
             foreach (var flag in changed)
-                if (flag != null) FlagChanged?.Invoke(flag, flag.DefaultValue);
+            {
+                if (flag == null) continue;
+                flags[flag] = flag.DefaultValue;
+                FlagChanged?.Invoke(flag, flag.DefaultValue);
+            }
             ProgressReset?.Invoke();
             ProgressChanged?.Invoke();
         }

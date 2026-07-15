@@ -6,6 +6,7 @@ namespace ControlS
     public sealed class GameContentSetSO : ScriptableObject
     {
         public ObjectiveSetSO objectives;
+        public ProgressSetSO progress;
         public HudContentSO hud;
         public RoomArtSetSO roomArt;
         public DesktopThemeSO desktopTheme;

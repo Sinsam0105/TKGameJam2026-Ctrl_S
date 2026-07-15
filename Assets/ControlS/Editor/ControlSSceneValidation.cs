@@ -32,7 +32,8 @@ namespace ControlS.Editor
             var atmosphere = FindInScene<AtmosphereManager>(scene);
             var sound = FindInScene<SoundManager>(scene);
 
-            if (contents.Count != 1 || contents[0].Current == null) errors.Add("ContentManager or GameContentSetSO is missing.");
+            if (contents.Count != 1 || contents[0].Current == null || contents[0].Current.progress == null)
+                errors.Add("ContentManager, GameContentSetSO, or ProgressSetSO is missing.");
             if (ui.Count != 1 || !ui[0].ValidateReferences()) errors.Add("UIManager references are incomplete.");
             if (desktop.Count != 1 || !desktop[0].ValidateReferences()) errors.Add("VirtualDesktop references are incomplete.");
             if (atmosphere.Count != 1 || !atmosphere[0].ValidateReferences()) errors.Add("AtmosphereManager references are incomplete.");

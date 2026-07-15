@@ -121,9 +121,7 @@ namespace ControlS
                 return;
             }
 
-            var trackedCount = contentManager?.Current?.objectives?.TrackedProgress.Count ?? 0;
-            if (trackedCount <= 0) trackedCount = profile != null ? profile.fallbackProgressSteps : 4;
-            SetCorruption(progressManager.CompletedPuzzleCount / (float)Mathf.Max(1, trackedCount));
+            SetCorruption(progressManager.CompletionRatio);
         }
 
         public void SetCorruption(float value)

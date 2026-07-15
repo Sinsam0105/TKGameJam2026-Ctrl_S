@@ -12,12 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 247241981f0712a42881bc2f0e0bc54e, type: 3}
   m_Name: Objectives
   m_EditorClassIdentifier: Assembly-CSharp:ControlS:ObjectiveSetSO
-  hudFormat: "\uBCF5\uAD6C \uC9C4\uD589  {0}/4     |     {1}"
-  trackedProgress:
-  - {fileID: 11400000, guid: eee173e32ede6104b8c0b1ad520278a8, type: 2}
-  - {fileID: 11400000, guid: c0b491de18e62df4ead95d9ca7f8275f, type: 2}
-  - {fileID: 11400000, guid: 0428301d5094ce44891f116ffdad305f, type: 2}
-  - {fileID: 11400000, guid: 1c66a4b1db8ec80499bef19947f56229, type: 2}
+  hudFormat: "\uBCF5\uAD6C \uC9C4\uD589  {0}/{1}     |     {2}"
   orderedObjectives:
   - objective: RECOVERY COMPLETE
     requirements:

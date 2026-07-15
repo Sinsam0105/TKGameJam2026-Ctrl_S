@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: DefaultGameContentSet
   m_EditorClassIdentifier: Assembly-CSharp:ControlS:GameContentSetSO
   objectives: {fileID: 11400000, guid: 4ae6b5bf00d459e47b965d46df56697f, type: 2}
+  progress: {fileID: 11400000, guid: d13f325b6e684f5fb8d1cd989aa73a27, type: 2}
   hud: {fileID: 11400000, guid: e8f3f62aec674ed4ebe6e44cdd5f128c, type: 2}
   roomArt: {fileID: 11400000, guid: 621da6e3f0bc7b4428d0f562b585250b, type: 2}
   desktopTheme: {fileID: 11400000, guid: 96429101686216d419693b902490b74a, type: 2}

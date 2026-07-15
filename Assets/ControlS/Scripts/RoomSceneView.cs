@@ -45,7 +45,7 @@ namespace ControlS
             if (progressManager == null) return;
             if (floor != null)
             {
-                var normalized = progressManager.CompletedPuzzleCount / 4f;
+                var normalized = progressManager.CompletionRatio;
                 var pulse = Mathf.Sin(Time.unscaledTime * (1.1f + normalized * .8f)) * .012f;
                 var baseColor = artSet != null ? artSet.floorBaseColor : new Color(.075f, .09f, .105f, 1f);
                 floor.color = new Color(baseColor.r + pulse, baseColor.g + pulse * .5f,

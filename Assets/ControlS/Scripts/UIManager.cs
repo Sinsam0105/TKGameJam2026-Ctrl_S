@@ -97,7 +97,7 @@ namespace ControlS
             var objectives = contentManager != null ? contentManager.Current?.objectives : null;
             if (objectiveText == null || objectives == null || progressManager == null) return;
             objectiveText.text = string.Format(objectives.HudFormat,
-                objectives.GetCompletedCount(progressManager), objectives.TrackedProgress.Count,
+                progressManager.CompletedPuzzleCount, progressManager.TotalPuzzleCount,
                 objectives.GetCurrentObjective(progressManager));
         }
 
