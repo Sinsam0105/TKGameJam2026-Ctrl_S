@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb12f6009f3c434993d8b912cea77bc, type: 3}
+  m_Name: RevealPhotoClue
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PuzzleDefinitionSO
+  puzzleId: RevealPhotoClue
+  matcher:
+    rid: 5090045388559221005
+  requirements: []
+  completionFlag: {fileID: 11400000, guid: f3c397eaf86e40941adde9aac8b75878, type: 2}
+  allowRepeat: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221005
+      type: {class: FloatAnswerMatcher, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        mode: 1
+        expected: 0.72
+        maximum: 1
+        tolerance: 0.001

@@ -1,0 +1,5 @@
+"Comfortable Mystery" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 4.0
+https://creativecommons.org/licenses/by/4.0/
+
+Runtime layering, filtering, looping, pitch modulation and glitch processing for CONTROL S.

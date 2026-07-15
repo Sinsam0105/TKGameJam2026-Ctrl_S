@@ -202,9 +202,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 380377981}
-        m_TargetAssemblyTypeName: ControlS.ControlSSceneController, Assembly-CSharp
-        m_MethodName: RestartScene
+      - m_Target: {fileID: 380377988}
+        m_TargetAssemblyTypeName: ControlS.ContentManager, Assembly-CSharp
+        m_MethodName: RestartCurrentGame
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1462,6 +1462,9 @@ GameObject:
   - component: {fileID: 141074644}
   - component: {fileID: 141074641}
   - component: {fileID: 141074642}
+  - component: {fileID: 141074648}
+  - component: {fileID: 141074647}
+  - component: {fileID: 141074649}
   m_Layer: 0
   m_Name: Window - Archive
   m_TagString: Untagged
@@ -1511,11 +1514,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90732ab98e9cf6c4f9f0bb28bfd18116, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlS.ArchiveDesktopWindow
-  lockedPanel: {fileID: 174255801}
-  unknownPanel: {fileID: 1367310721}
-  puzzlePanel: {fileID: 920659945}
-  solvedPanel: {fileID: 326479636}
+  states: {fileID: 141074649}
   sequenceStatus: {fileID: 1161335275}
+  enter: {fileID: 141074647}
+  content: {fileID: 11400000, guid: b2f5705b6eb0c68439f88c008ae4c2a4, type: 2}
 --- !u!224 &141074643
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1590,6 +1592,182 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 141074640}
   m_CullTransparentMesh: 1
+--- !u!114 &141074647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141074640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cdd499971cd1c848b730f633d5bbdfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.IntSequenceEnter
+  targetPuzzle: {fileID: 141074648}
+  resetOnEnable: 1
+  resetAfterSuccess: 0
+  onResult:
+    m_PersistentCalls:
+      m_Calls: []
+  answerLength: 4
+  submitWhenFull: 1
+  resetAfterSubmitFailure: 1
+  separator: '  >  '
+  emptyText: "(\uC5C6\uC74C)"
+  onSequenceChanged:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 141074642}
+        m_TargetAssemblyTypeName: ControlS.ArchiveDesktopWindow, Assembly-CSharp
+        m_MethodName: SetSequenceText
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &141074648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141074640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e263ffa74fb6a8243bfe44dd0028c69f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PuzzleRunner
+  definition: {fileID: 11400000, guid: a74372b12abd31d4eb03a68c179b80f5, type: 2}
+  onSuccess:
+    actions:
+    - rid: 5090045388559221010
+    - rid: 5090045388559221011
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 141074642}
+          m_TargetAssemblyTypeName: ControlS.ArchiveDesktopWindow, Assembly-CSharp
+          m_MethodName: Refresh
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  onIncorrect:
+    actions:
+    - rid: 5090045388559221012
+    - rid: 5090045388559221013
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onConditionsNotMet:
+    actions: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onAlreadySolved:
+    actions: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221010
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 50bc632f979901543844bcd54bdbff3a, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221011
+      type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        strength: 0.55
+    - rid: 5090045388559221012
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 1cc12955d4ec145428abb1efd2e8f800, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221013
+      type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        strength: 0.3
+--- !u!114 &141074649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141074640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78bb43e5f8e479a42b5fb95d1fd3d6e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ConditionalViewGroup
+  views:
+  - view: {fileID: 174255801}
+    conditions:
+    - rid: 5090045388559221014
+  - view: {fileID: 1367310721}
+    conditions:
+    - rid: 5090045388559221015
+    - rid: 5090045388559221016
+  - view: {fileID: 920659945}
+    conditions:
+    - rid: 5090045388559221017
+    - rid: 5090045388559221018
+    - rid: 5090045388559221019
+  - view: {fileID: 326479636}
+    conditions:
+    - rid: 5090045388559221020
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221014
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: eee173e32ede6104b8c0b1ad520278a8, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559221015
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: eee173e32ede6104b8c0b1ad520278a8, type: 2}
+        expectedValue: 1
+    - rid: 5090045388559221016
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: c50fae6cad123d341b6057cb7308ad14, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559221017
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: eee173e32ede6104b8c0b1ad520278a8, type: 2}
+        expectedValue: 1
+    - rid: 5090045388559221018
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: c50fae6cad123d341b6057cb7308ad14, type: 2}
+        expectedValue: 1
+    - rid: 5090045388559221019
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: 1c66a4b1db8ec80499bef19947f56229, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559221020
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: 1c66a4b1db8ec80499bef19947f56229, type: 2}
+        expectedValue: 1
 --- !u!1 &141469706
 GameObject:
   m_ObjectHideFlags: 0
@@ -1763,7 +1941,7 @@ MonoBehaviour:
   button: {fileID: 150645822}
   label: {fileID: 902479109}
   visibilityConditions:
-  - rid: 5090045368784388116
+  - rid: 5090045388559220998
   rules:
   - label: "\uCC3D \uC5F4\uAE30"
     conditions: []
@@ -1774,15 +1952,15 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 5090045368784388116
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 8
-        expectedValue: 1
     - rid: 5090045368784388117
       type: {class: OpenDesktopWindowAction, ns: ControlS, asm: Assembly-CSharp}
       data:
         window: {fileID: 859382582}
+    - rid: 5090045388559220998
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: 1c66a4b1db8ec80499bef19947f56229, type: 2}
+        expectedValue: 1
 --- !u!224 &150645821
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3348,13 +3526,16 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 380377987}
-  - component: {fileID: 380377981}
-  - component: {fileID: 380377984}
   - component: {fileID: 380377983}
   - component: {fileID: 380377982}
   - component: {fileID: 380377980}
   - component: {fileID: 380377986}
   - component: {fileID: 380377985}
+  - component: {fileID: 380377988}
+  - component: {fileID: 380377991}
+  - component: {fileID: 380377990}
+  - component: {fileID: 380377989}
+  - component: {fileID: 380377992}
   m_Layer: 0
   m_Name: Game Controller
   m_TagString: Untagged
@@ -3378,7 +3559,7 @@ MonoBehaviour:
   playOnStart: 0
   blockReentry: 1
   actions:
-  - rid: 5090045368784388096
+  - rid: 5090045388559220999
   - rid: 5090045368784388097
   - rid: 5090045368784388098
   - rid: 5090045368784388099
@@ -3393,11 +3574,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 5090045368784388096
-      type: {class: SetControlSFlagAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 9
-        value: 1
     - rid: 5090045368784388097
       type: {class: CloseDesktopAction, ns: ControlS, asm: Assembly-CSharp}
       data: 
@@ -3407,6 +3583,7 @@ MonoBehaviour:
     - rid: 5090045368784388099
       type: {class: SetPlayerInputAction, ns: ControlS, asm: Assembly-CSharp}
       data:
+        player: {fileID: 1804762093}
         enabled: 0
     - rid: 5090045368784388100
       type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
@@ -3444,27 +3621,11 @@ MonoBehaviour:
       type: {class: ShowInteractionUIAction, ns: ControlS, asm: Assembly-CSharp}
       data:
         uiObject: {fileID: 570609368}
---- !u!114 &380377981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380377979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec4ec34f26e6fc54080f1207e463bea8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ControlSSceneController
-  content: {fileID: 11400000, guid: 63ce42b10b02a9147994221621e4a98b, type: 2}
-  room: {fileID: 649365906}
-  desktop: {fileID: 1835135088}
-  hud: {fileID: 466896984}
-  atmosphere: {fileID: 380377984}
-  drawerKeypad: {fileID: 380377983}
-  sequences:
-  - {fileID: 380377982}
-  - {fileID: 380377980}
+    - rid: 5090045388559220999
+      type: {class: SetProgressFlagAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: 0894ef0028f694a40aecd8ba0ee96430, type: 2}
+        value: 1
 --- !u!114 &380377982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3508,24 +3669,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5041cf5918953b4ba3134b4e62af864, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlS.DrawerKeypadContent
-  root: {fileID: 685602443}
-  codeInput: {fileID: 1157737269}
+  root: {fileID: 380377979}
+  codeInput: {fileID: 0}
   hintText: {fileID: 1648719841}
---- !u!114 &380377984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380377979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eceffc4e9b039154992e1e2101a74751, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ControlSAtmosphereController
-  worldCamera: {fileID: 519420031}
-  droneSource: {fileID: 380377986}
-  uiSource: {fileID: 380377985}
+  enter: {fileID: 380377989}
+  clueRevealedFlag: {fileID: 11400000, guid: f3c397eaf86e40941adde9aac8b75878, type: 2}
+  content: {fileID: 11400000, guid: e8f3f62aec674ed4ebe6e44cdd5f128c, type: 2}
 --- !u!82 &380377985
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3735,6 +3884,141 @@ Transform:
   m_Children: []
   m_Father: {fileID: 141469707}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &380377988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380377979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 644a7a3a00654054b84f33810160596c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ContentManager
+  current: {fileID: 11400000, guid: 6073de239556d0f4abbda01b62480555, type: 2}
+--- !u!114 &380377989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380377979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 860cf203fa795b24797e45431acfeeab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.TextEnter
+  targetPuzzle: {fileID: 380377990}
+  resetOnEnable: 1
+  resetAfterSuccess: 0
+  onResult:
+    m_PersistentCalls:
+      m_Calls: []
+  input: {fileID: 0}
+  focusOnEnable: 1
+--- !u!114 &380377990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380377979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e263ffa74fb6a8243bfe44dd0028c69f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PuzzleRunner
+  definition: {fileID: 11400000, guid: 1f55f3287612e0a46909f74dd2e2b2d9, type: 2}
+  onSuccess:
+    actions:
+    - rid: 5090045388559221006
+    - rid: 5090045388559221007
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 380377983}
+          m_TargetAssemblyTypeName: ControlS.DrawerKeypadContent, Assembly-CSharp
+          m_MethodName: Close
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  onIncorrect:
+    actions:
+    - rid: 5090045388559221008
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onConditionsNotMet:
+    actions:
+    - rid: 5090045388559221009
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onAlreadySolved:
+    actions: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221006
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 6ab309a708615bc4fa8b4189bf2c9714, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221007
+      type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        strength: 0.24
+    - rid: 5090045388559221008
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 5a53d66530078c943a4f96726f471296, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221009
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: e730bf6a938d641479e2ee002a25bade, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+--- !u!114 &380377991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380377979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ff7dcf611dac164ca9b559552d83a18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.AtmosphereManager
+  worldCamera: {fileID: 519420031}
+--- !u!114 &380377992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 380377979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f0587b24e12214aba16ce4d64ab49c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.SoundManager
+  profileOverride: {fileID: 0}
+  droneSource: {fileID: 380377986}
+  uiSource: {fileID: 380377985}
 --- !u!1 &397480332
 GameObject:
   m_ObjectHideFlags: 0
@@ -3990,7 +4274,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 82
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -4198,17 +4482,6 @@ MonoBehaviour:
     - rid: 5090045368784388125
     stopAfterExecution: 1
     executeOnce: 0
-  interactionNarration: {fileID: 11400000, guid: 536421e4692298841b73fa30a77a3ca3, type: 2}
-  interactionUI: {fileID: 0}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
   references:
     version: 2
     RefIds:
@@ -4340,7 +4613,7 @@ GameObject:
   - component: {fileID: 466896985}
   - component: {fileID: 466896987}
   - component: {fileID: 466896986}
-  - component: {fileID: 466896984}
+  - component: {fileID: 466896989}
   m_Layer: 0
   m_Name: Room HUD Canvas
   m_TagString: Untagged
@@ -4348,25 +4621,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &466896984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 466896983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6effc5fd8cc0664881c943355ad4d2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ControlSHudController
-  canvas: {fileID: 466896985}
-  objectiveText: {fileID: 1269533382}
-  promptText: {fileID: 1430568520}
-  messageText: {fileID: 1908866677}
-  messagePanel: {fileID: 823452111}
-  glitchOverlay: {fileID: 1615665285}
-  glitchStripes: {fileID: 1238038390}
 --- !u!223 &466896985
 Canvas:
   m_ObjectHideFlags: 0
@@ -4460,6 +4714,25 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &466896989
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466896983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2443f3cab425b8b44927152211d5f958, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.UIManager
+  canvas: {fileID: 466896985}
+  objectiveText: {fileID: 1269533382}
+  promptText: {fileID: 1430568520}
+  messageText: {fileID: 1908866677}
+  messagePanel: {fileID: 823452111}
+  glitchOverlay: {fileID: 1615665285}
+  glitchStripes: {fileID: 1238038390}
 --- !u!114 &479060561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5196,6 +5469,8 @@ GameObject:
   - component: {fileID: 531117738}
   - component: {fileID: 531117735}
   - component: {fileID: 531117736}
+  - component: {fileID: 531117742}
+  - component: {fileID: 531117741}
   m_Layer: 0
   m_Name: Window - Photo
   m_TagString: Untagged
@@ -5250,6 +5525,9 @@ MonoBehaviour:
   silhouette: {fileID: 1738418954}
   clue: {fileID: 1355834860}
   label: {fileID: 1668245130}
+  enter: {fileID: 531117741}
+  revealedFlag: {fileID: 11400000, guid: f3c397eaf86e40941adde9aac8b75878, type: 2}
+  content: {fileID: 11400000, guid: 7376b1aa7b8767d4497602a9d4ed04ef, type: 2}
 --- !u!224 &531117737
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5324,6 +5602,70 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 531117734}
   m_CullTransparentMesh: 1
+--- !u!114 &531117741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 531117734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bab10e63c9eada48a70d520ecccf875, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.SliderEnter
+  targetPuzzle: {fileID: 531117742}
+  resetOnEnable: 1
+  resetAfterSuccess: 0
+  onResult:
+    m_PersistentCalls:
+      m_Calls: []
+  slider: {fileID: 1684249853}
+  submitOnValueChanged: 1
+  resetValue: 0.08
+--- !u!114 &531117742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 531117734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e263ffa74fb6a8243bfe44dd0028c69f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PuzzleRunner
+  definition: {fileID: 11400000, guid: 83b067b5db2884c4faadbca92a308b10, type: 2}
+  onSuccess:
+    actions:
+    - rid: 5090045388559221028
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onIncorrect:
+    actions: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onConditionsNotMet:
+    actions: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onAlreadySolved:
+    actions: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221028
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 33d7f5912a822c944a7f18a38c83d05e, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
 --- !u!1 &538242389
 GameObject:
   m_ObjectHideFlags: 0
@@ -5680,6 +6022,11 @@ GameObject:
   - component: {fileID: 575353364}
   - component: {fileID: 575353361}
   - component: {fileID: 575353362}
+  - component: {fileID: 575353370}
+  - component: {fileID: 575353368}
+  - component: {fileID: 575353369}
+  - component: {fileID: 575353367}
+  - component: {fileID: 575353371}
   m_Layer: 0
   m_Name: Window - Recovery
   m_TagString: Untagged
@@ -5729,12 +6076,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0904f3de80ae154fb34c171e5a50cf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlS.RecoveryDesktopWindow
-  lockedPanel: {fileID: 2098527591}
-  waitingPanel: {fileID: 251187158}
-  repairPanel: {fileID: 140473351}
-  completePanel: {fileID: 254168819}
+  states: {fileID: 575353371}
   passwordInput: {fileID: 2098234760}
   fileNameInput: {fileID: 989408467}
+  passwordEnter: {fileID: 575353369}
+  fileNameEnter: {fileID: 575353367}
+  content: {fileID: 11400000, guid: 9117276de990ae3469925a73b93bcda6, type: 2}
 --- !u!224 &575353363
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5809,6 +6156,259 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 575353360}
   m_CullTransparentMesh: 1
+--- !u!114 &575353367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575353360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 860cf203fa795b24797e45431acfeeab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.TextEnter
+  targetPuzzle: {fileID: 575353368}
+  resetOnEnable: 1
+  resetAfterSuccess: 0
+  onResult:
+    m_PersistentCalls:
+      m_Calls: []
+  input: {fileID: 989408467}
+  focusOnEnable: 1
+--- !u!114 &575353368
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575353360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e263ffa74fb6a8243bfe44dd0028c69f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PuzzleRunner
+  definition: {fileID: 11400000, guid: 984005fc28c5f6c4db2e581fc3e56011, type: 2}
+  onSuccess:
+    actions:
+    - rid: 5090045388559221029
+    - rid: 5090045388559221030
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 575353362}
+          m_TargetAssemblyTypeName: ControlS.RecoveryDesktopWindow, Assembly-CSharp
+          m_MethodName: Refresh
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  onIncorrect:
+    actions:
+    - rid: 5090045388559221031
+    - rid: 5090045388559221032
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onConditionsNotMet:
+    actions:
+    - rid: 5090045388559221033
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onAlreadySolved:
+    actions: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221029
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 3bf8cab6993de1b4da018a7108a258b3, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221030
+      type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        strength: 0.32
+    - rid: 5090045388559221031
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 1572889d5d8be0143a1d167f4e27c1b5, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221032
+      type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        strength: 0.16
+    - rid: 5090045388559221033
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 9e942711728edf94b902bd5a96cc815f, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+--- !u!114 &575353369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575353360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 860cf203fa795b24797e45431acfeeab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.TextEnter
+  targetPuzzle: {fileID: 575353370}
+  resetOnEnable: 1
+  resetAfterSuccess: 0
+  onResult:
+    m_PersistentCalls:
+      m_Calls: []
+  input: {fileID: 2098234760}
+  focusOnEnable: 1
+--- !u!114 &575353370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575353360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e263ffa74fb6a8243bfe44dd0028c69f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PuzzleRunner
+  definition: {fileID: 11400000, guid: c9b62ca1595d5ff4eb19fff9d973cdef, type: 2}
+  onSuccess:
+    actions:
+    - rid: 5090045388559221034
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 575353362}
+          m_TargetAssemblyTypeName: ControlS.RecoveryDesktopWindow, Assembly-CSharp
+          m_MethodName: Refresh
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  onIncorrect:
+    actions:
+    - rid: 5090045388559221035
+    - rid: 5090045388559221036
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onConditionsNotMet:
+    actions:
+    - rid: 5090045388559221037
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onAlreadySolved:
+    actions: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221034
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 7d10d6bcb6182604bbde577c29605c5b, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221035
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 089b5c2ab6d4ce24fb86fc319db3dd51, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221036
+      type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        strength: 0.12
+    - rid: 5090045388559221037
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 40953fca1eb533d4f8b8242485f0d004, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+--- !u!114 &575353371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 575353360}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78bb43e5f8e479a42b5fb95d1fd3d6e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ConditionalViewGroup
+  views:
+  - view: {fileID: 2098527591}
+    conditions:
+    - rid: 5090045388559221038
+  - view: {fileID: 251187158}
+    conditions:
+    - rid: 5090045388559221039
+    - rid: 5090045388559221040
+  - view: {fileID: 140473351}
+    conditions:
+    - rid: 5090045388559221041
+    - rid: 5090045388559221042
+  - view: {fileID: 254168819}
+    conditions:
+    - rid: 5090045388559221043
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221038
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: b61d5257c2f22114e97fd8f3f185fa71, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559221039
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: b61d5257c2f22114e97fd8f3f185fa71, type: 2}
+        expectedValue: 1
+    - rid: 5090045388559221040
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: afe5ad6442a579040ba8326de4b03871, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559221041
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: afe5ad6442a579040ba8326de4b03871, type: 2}
+        expectedValue: 1
+    - rid: 5090045388559221042
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: eee173e32ede6104b8c0b1ad520278a8, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559221043
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: eee173e32ede6104b8c0b1ad520278a8, type: 2}
+        expectedValue: 1
 --- !u!1 &598438315
 GameObject:
   m_ObjectHideFlags: 0
@@ -7004,6 +7604,9 @@ MonoBehaviour:
   - {fileID: 366437555}
   restoredPhoto: {fileID: 1491538332}
   player: {fileID: 1804762093}
+  atmosphereChangedFlag: {fileID: 11400000, guid: eee173e32ede6104b8c0b1ad520278a8, type: 2}
+  restoredPhotoFlag: {fileID: 11400000, guid: 0428301d5094ce44891f116ffdad305f, type: 2}
+  artSet: {fileID: 11400000, guid: 621da6e3f0bc7b4428d0f562b585250b, type: 2}
 --- !u!4 &649365907
 Transform:
   m_ObjectHideFlags: 0
@@ -7289,25 +7892,25 @@ MonoBehaviour:
   rules:
   - label: "\uCC98\uC74C \uC870\uC0AC"
     conditions:
-    - rid: 5090045368784388129
+    - rid: 5090045388559220990
     actions:
     - rid: 5090045368784388130
-    - rid: 5090045368784388131
+    - rid: 5090045388559220991
     stopAfterExecution: 1
     executeOnce: 0
   - label: "\uBE44\uBC00\uBC88\uD638 \uD574\uC81C \uD6C4 \uD0A4\uCEA1 \uD68C\uC218"
     conditions:
-    - rid: 5090045368784388132
-    - rid: 5090045368784388133
+    - rid: 5090045388559220992
+    - rid: 5090045388559220993
     actions:
-    - rid: 5090045368784388134
+    - rid: 5090045388559220994
     - rid: 5090045368784388135
     - rid: 5090045368784388136
     stopAfterExecution: 1
     executeOnce: 0
   - label: "\uD0A4\uCEA1 \uD68C\uC218 \uD6C4"
     conditions:
-    - rid: 5090045368784388137
+    - rid: 5090045388559220995
     actions:
     - rid: 5090045368784388138
     stopAfterExecution: 1
@@ -7318,51 +7921,15 @@ MonoBehaviour:
     - rid: 5090045368784388139
     stopAfterExecution: 1
     executeOnce: 0
-  interactionNarration: {fileID: 11400000, guid: 7bcbc0bc2272cf047bdcd3c7bb93c1e7, type: 2}
-  interactionUI: {fileID: 0}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
   references:
     version: 2
     RefIds:
-    - rid: 5090045368784388129
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 0
-        expectedValue: 0
     - rid: 5090045368784388130
       type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
       data:
         narration: {fileID: 11400000, guid: 7bcbc0bc2272cf047bdcd3c7bb93c1e7, type: 2}
         waitForNarration: 0
         delayAfter: 0
-    - rid: 5090045368784388131
-      type: {class: SetControlSFlagAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 0
-        value: 1
-    - rid: 5090045368784388132
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 1
-        expectedValue: 1
-    - rid: 5090045368784388133
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 2
-        expectedValue: 0
-    - rid: 5090045368784388134
-      type: {class: SetControlSFlagAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 2
-        value: 1
     - rid: 5090045368784388135
       type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
       data:
@@ -7373,11 +7940,6 @@ MonoBehaviour:
       type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
       data:
         strength: 0.22
-    - rid: 5090045368784388137
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 2
-        expectedValue: 1
     - rid: 5090045368784388138
       type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
       data:
@@ -7390,6 +7952,36 @@ MonoBehaviour:
         narration: {fileID: 11400000, guid: 90ea71cff8d05cf40912ae5868703df4, type: 2}
         waitForNarration: 0
         delayAfter: 0
+    - rid: 5090045388559220990
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: ece42fd2f9b1e0747ab3dac852d8e37f, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559220991
+      type: {class: SetProgressFlagAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: ece42fd2f9b1e0747ab3dac852d8e37f, type: 2}
+        value: 1
+    - rid: 5090045388559220992
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: b61d5257c2f22114e97fd8f3f185fa71, type: 2}
+        expectedValue: 1
+    - rid: 5090045388559220993
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: afe5ad6442a579040ba8326de4b03871, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559220994
+      type: {class: SetProgressFlagAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: afe5ad6442a579040ba8326de4b03871, type: 2}
+        value: 1
+    - rid: 5090045388559220995
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: afe5ad6442a579040ba8326de4b03871, type: 2}
+        expectedValue: 1
 --- !u!212 &697457732
 SpriteRenderer:
   serializedVersion: 2
@@ -7808,6 +8400,9 @@ GameObject:
   - component: {fileID: 744925718}
   - component: {fileID: 744925715}
   - component: {fileID: 744925716}
+  - component: {fileID: 744925722}
+  - component: {fileID: 744925721}
+  - component: {fileID: 744925723}
   m_Layer: 0
   m_Name: Window - Recycle Bin
   m_TagString: Untagged
@@ -7858,8 +8453,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ControlS.RecycleBinDesktopWindow
   info: {fileID: 1840095696}
-  fileList: {fileID: 1969982813}
-  emptyPanel: {fileID: 1095212148}
+  states: {fileID: 744925723}
+  enter: {fileID: 744925721}
+  clueFlag: {fileID: 11400000, guid: c0b491de18e62df4ead95d9ca7f8275f, type: 2}
+  content: {fileID: 11400000, guid: 9013d0a6931431a4397bf49f5067205b, type: 2}
 --- !u!224 &744925717
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7934,6 +8531,136 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 744925714}
   m_CullTransparentMesh: 1
+--- !u!114 &744925721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744925714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f77d24b470e6eff469e4ed426564ee3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.BoolEnter
+  targetPuzzle: {fileID: 744925722}
+  resetOnEnable: 1
+  resetAfterSuccess: 0
+  onResult:
+    m_PersistentCalls:
+      m_Calls: []
+  value: 0
+--- !u!114 &744925722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744925714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e263ffa74fb6a8243bfe44dd0028c69f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PuzzleRunner
+  definition: {fileID: 11400000, guid: 1d4bd2494ac660e41b9894de6c6ef272, type: 2}
+  onSuccess:
+    actions:
+    - rid: 5090045388559221021
+    - rid: 5090045388559221022
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 744925716}
+          m_TargetAssemblyTypeName: ControlS.RecycleBinDesktopWindow, Assembly-CSharp
+          m_MethodName: Refresh
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  onIncorrect:
+    actions:
+    - rid: 5090045388559221023
+    - rid: 5090045388559221024
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onConditionsNotMet:
+    actions:
+    - rid: 5090045388559221025
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  onAlreadySolved:
+    actions: []
+    onCompleted:
+      m_PersistentCalls:
+        m_Calls: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221021
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 2e1f81a5f9f3c2442a3380a534f47c30, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221022
+      type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        strength: 0.35
+    - rid: 5090045388559221023
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: edc70b1f884bfc14ea9807fe692d3327, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+    - rid: 5090045388559221024
+      type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        strength: 0.7
+    - rid: 5090045388559221025
+      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        narration: {fileID: 11400000, guid: 9c1a9aaa25f8e9845aaafcafdb901b0a, type: 2}
+        waitForNarration: 0
+        delayAfter: 0
+--- !u!114 &744925723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 744925714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78bb43e5f8e479a42b5fb95d1fd3d6e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ConditionalViewGroup
+  views:
+  - view: {fileID: 1969982813}
+    conditions:
+    - rid: 5090045388559221026
+  - view: {fileID: 1095212148}
+    conditions:
+    - rid: 5090045388559221027
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221026
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: 0428301d5094ce44891f116ffdad305f, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559221027
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: 0428301d5094ce44891f116ffdad305f, type: 2}
+        expectedValue: 1
 --- !u!1 &773935349
 GameObject:
   m_ObjectHideFlags: 0
@@ -14209,7 +14936,7 @@ MonoBehaviour:
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
-    m_MaxSize: 40
+    m_MaxSize: 42
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -14799,17 +15526,6 @@ MonoBehaviour:
     - rid: 5090045368784388140
     stopAfterExecution: 1
     executeOnce: 0
-  interactionNarration: {fileID: 0}
-  interactionUI: {fileID: 913468116}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
   references:
     version: 2
     RefIds:
@@ -15198,66 +15914,55 @@ MonoBehaviour:
   rules:
   - label: "\uBCF5\uC6D0 \uD6C4 \uCC98\uC74C \uC870\uC0AC"
     conditions:
-    - rid: 5090045368784388110
-    - rid: 5090045368784388111
+    - rid: 5090045388559220986
+    - rid: 5090045388559220987
     actions:
-    - rid: 5090045368784388112
+    - rid: 5090045388559220988
     - rid: 5090045368784388113
     stopAfterExecution: 1
     executeOnce: 0
   - label: "\uB2E4\uC2DC \uC870\uC0AC"
     conditions:
-    - rid: 5090045368784388114
+    - rid: 5090045388559220989
     actions:
     - rid: 5090045368784388115
     stopAfterExecution: 1
     executeOnce: 0
-  interactionNarration: {fileID: 11400000, guid: 11512603b6ec16649b142d3b229013da, type: 2}
-  interactionUI: {fileID: 0}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
   references:
     version: 2
     RefIds:
-    - rid: 5090045368784388110
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 6
-        expectedValue: 1
-    - rid: 5090045368784388111
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 7
-        expectedValue: 0
-    - rid: 5090045368784388112
-      type: {class: SetControlSFlagAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 7
-        value: 1
     - rid: 5090045368784388113
       type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
       data:
         narration: {fileID: 11400000, guid: 11512603b6ec16649b142d3b229013da, type: 2}
         waitForNarration: 0
         delayAfter: 0
-    - rid: 5090045368784388114
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 6
-        expectedValue: 1
     - rid: 5090045368784388115
       type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
       data:
         narration: {fileID: 11400000, guid: 174111c9fcaefb84cb5e4fbb0686669f, type: 2}
         waitForNarration: 0
         delayAfter: 0
+    - rid: 5090045388559220986
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: 0428301d5094ce44891f116ffdad305f, type: 2}
+        expectedValue: 1
+    - rid: 5090045388559220987
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: c50fae6cad123d341b6057cb7308ad14, type: 2}
+        expectedValue: 0
+    - rid: 5090045388559220988
+      type: {class: SetProgressFlagAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: c50fae6cad123d341b6057cb7308ad14, type: 2}
+        value: 1
+    - rid: 5090045388559220989
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        flag: {fileID: 11400000, guid: 0428301d5094ce44891f116ffdad305f, type: 2}
+        expectedValue: 1
 --- !u!212 &1491538334
 SpriteRenderer:
   serializedVersion: 2
@@ -16486,7 +17191,7 @@ MonoBehaviour:
   rules:
   - label: "\uC774\uBBF8 \uC5F4\uB9B0 \uC11C\uB78D"
     conditions:
-    - rid: 5090045368784388126
+    - rid: 5090045388559220996
     actions:
     - rid: 5090045368784388127
     stopAfterExecution: 1
@@ -16494,38 +17199,26 @@ MonoBehaviour:
   - label: "\uD0A4\uD328\uB4DC \uC5F4\uAE30"
     conditions: []
     actions:
-    - rid: 5090045368784388128
+    - rid: 5090045388559220997
     stopAfterExecution: 1
     executeOnce: 0
-  interactionNarration: {fileID: 0}
-  interactionUI: {fileID: 685602443}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
   references:
     version: 2
     RefIds:
-    - rid: 5090045368784388126
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 5
-        expectedValue: 1
     - rid: 5090045368784388127
       type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
       data:
         narration: {fileID: 11400000, guid: c6075db0752828e4dab5c4b7e9ca0096, type: 2}
         waitForNarration: 0
         delayAfter: 0
-    - rid: 5090045368784388128
-      type: {class: OpenDrawerKeypadAction, ns: ControlS, asm: Assembly-CSharp}
+    - rid: 5090045388559220996
+      type: {class: ProgressFlagCondition, ns: ControlS, asm: Assembly-CSharp}
       data:
-        drawerKeypad: {fileID: 380377983}
+        flag: {fileID: 11400000, guid: c0b491de18e62df4ead95d9ca7f8275f, type: 2}
+        expectedValue: 1
+    - rid: 5090045388559220997
+      type: {class: ShowInteractionUIAction, ns: ControlS, asm: Assembly-CSharp}
+      data:
         uiObject: {fileID: 685602443}
 --- !u!212 &1665338123
 SpriteRenderer:
@@ -17445,6 +18138,7 @@ MonoBehaviour:
   desktopRoot: {fileID: 913468117}
   taskbarClock: {fileID: 1041380066}
   closeButton: {fileID: 303738633}
+  blockOpenFlag: {fileID: 11400000, guid: 0894ef0028f694a40aecd8ba0ee96430, type: 2}
   shortcuts:
   - {fileID: 1076302556}
   - {fileID: 1849095340}

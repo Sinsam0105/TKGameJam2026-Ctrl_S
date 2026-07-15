@@ -12,24 +12,11 @@ namespace ControlS
         [SerializeField] private float openTone = 440f;
         [SerializeField] private UnityEvent onOpened = new UnityEvent();
 
-        private ControlSSceneController scene;
-
         public GameObject Root => root != null ? root.gameObject : gameObject;
         public UnityEvent OnOpened => onOpened;
         public bool IsOpen => Root.activeSelf;
 
-        public void Configure(RectTransform windowRoot, Button close, float tone)
-        {
-            root = windowRoot;
-            closeButton = close;
-            openTone = tone;
-        }
-
-        public void Initialize(ControlSSceneController owner)
-        {
-            scene = owner;
-            Root.SetActive(false);
-        }
+        private void Awake() => Root.SetActive(false);
 
         public bool ValidateReferences() => root != null && closeButton != null;
 
@@ -37,7 +24,7 @@ namespace ControlS
         {
             Root.SetActive(true);
             root.SetAsLastSibling();
-            scene?.PlayUiTone(openTone, .05f);
+            SoundManager.Instance?.PlayUiTone(openTone, .05f);
             onOpened?.Invoke();
         }
 

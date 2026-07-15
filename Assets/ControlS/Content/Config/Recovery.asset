@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bf0cc9ee11f71d4896bce7e4c64d3a6, type: 3}
+  m_Name: Recovery
+  m_EditorClassIdentifier: Assembly-CSharp:ControlS:RecoveryWindowContentSO
+  title: RECOVERY
+  icon: {fileID: 0}
+  locked: "\uD3F4\uB354\uAC00 \uC7A0\uACA8 \uC788\uC2B5\uB2C8\uB2E4.\n\uD30C\uC77C
+    \uC0DD\uC131 \uC2DC\uAC01 4\uC790\uB9AC\uB97C \uC785\uB825\uD558\uC2ED\uC2DC\uC624."
+  passwordPlaceholder: HHMM
+  unlockButton: "\uC7A0\uAE08 \uD574\uC81C"
+  waiting: "\uD0A4\uBCF4\uB4DC \uC785\uB825 \uC77C\uBD80\uAC00 \uB204\uB77D\uB418\uC5C8\uC2B5\uB2C8\uB2E4.\n\uBC29\uC5D0\uC11C
+    \uB2E8\uC11C\uB97C \uCC3E\uC73C\uC2ED\uC2DC\uC624."
+  repairPrompt: "\uC190\uC0C1 \uD30C\uC77C: SAVE_?.tmp\n\uC815\uC0C1 \uD30C\uC77C\uBA85\uC744
+    \uC785\uB825\uD558\uC2ED\uC2DC\uC624."
+  fileNamePlaceholder: SAVE_?.tmp
+  repairButton: "\uD30C\uC77C \uBCF5\uAD6C"
+  complete: "SAVE_S.tmp\n\uC0C1\uD0DC: \uBCF5\uAD6C \uC644\uB8CC\n\uC5F0\uACB0\uB41C
+    \uC774\uBBF8\uC9C0 \uCE90\uC2DC\uAC00 \uD574\uC81C\uB418\uC5C8\uC2B5\uB2C8\uB2E4."

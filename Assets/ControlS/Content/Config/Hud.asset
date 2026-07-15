@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db7a2abf98bdc3547b80025b67241d5a, type: 3}
+  m_Name: Hud
+  m_EditorClassIdentifier: Assembly-CSharp:ControlS:HudContentSO
+  controls: "WASD / \uBC29\uD5A5\uD0A4  \uC774\uB3D9    E / Enter  \uC870\uC0AC   
+    ESC  \uCEF4\uD4E8\uD130 \uB2EB\uAE30"
+  drawerTitle: DRAWER LOCK / 4 DIGITS
+  drawerHintRevealed: "\uC0AC\uC9C4\uC5D0\uC11C \uB4DC\uB7EC\uB09C \uB124 \uC790\uB9AC
+    \uC22B\uC790"
+  drawerHintMissing: "\uB2E8\uC11C\uAC00 \uD544\uC694\uD558\uB2E4."
+  drawerPlaceholder: 0000
+  drawerSubmit: "\uC11C\uB78D \uC5F4\uAE30"
+  close: "\uB2EB\uAE30"
+  endingTitle: CTRL+S
+  endingBody: "\uB2F9\uC2E0\uC740 \uC783\uC5B4\uBC84\uB9B0 \uD30C\uC77C\uC744 \uCC3E\uC73C\uB7EC
+    \uC628 \uC0AC\uB78C\uC774 \uC544\uB2D9\uB2C8\uB2E4.\n\uB2F9\uC2E0\uC774 \uBC14\uB85C,
+    \uC0AC\uB78C\uC744 \uBCF5\uAD6C\uD558\uAE30 \uC704\uD574 \uB9CC\uB4E4\uC5B4\uC9C4
+    \uC790\uB3D9 \uC800\uC7A5 \uD30C\uC77C\uC774\uC5C8\uC2B5\uB2C8\uB2E4.\n\nSAVE
+    COMPLETE \u2014 PLAYER PROCESS DELETED"
+  restart: "\uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC \uC2DC\uC791"
