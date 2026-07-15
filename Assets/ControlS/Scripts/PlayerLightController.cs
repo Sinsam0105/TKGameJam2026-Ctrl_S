@@ -68,7 +68,7 @@ public class PlayerLightController : MonoBehaviour
         Init();
     }
 
-    void Init()
+    public void Init()
     {
         Debug.Log("LightController Init");
         _player = GetComponentInParent<TopDownPlayer>();
