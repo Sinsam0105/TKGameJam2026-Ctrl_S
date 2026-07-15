@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb12f6009f3c434993d8b912cea77bc, type: 3}
+  m_Name: RepairSaveFile
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PuzzleDefinitionSO
+  puzzleId: RepairSaveFile
+  matcher:
+    rid: 5090045388559221002
+  requirements:
+  - flag: {fileID: 11400000, guid: afe5ad6442a579040ba8326de4b03871, type: 2}
+    expectedValue: 1
+  completionFlag: {fileID: 11400000, guid: eee173e32ede6104b8c0b1ad520278a8, type: 2}
+  allowRepeat: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221002
+      type: {class: StringAnswerMatcher, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        expected: SAVE_S.tmp
+        trim: 1
+        ignoreSpaces: 1
+        ignoreColons: 0
+        ignoreCase: 1

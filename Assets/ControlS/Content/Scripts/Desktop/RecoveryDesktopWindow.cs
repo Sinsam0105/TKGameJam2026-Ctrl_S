@@ -5,57 +5,59 @@ namespace ControlS
 {
     public sealed class RecoveryDesktopWindow : MonoBehaviour
     {
-        [SerializeField] private GameObject lockedPanel;
-        [SerializeField] private GameObject waitingPanel;
-        [SerializeField] private GameObject repairPanel;
-        [SerializeField] private GameObject completePanel;
+        [SerializeField] private ConditionalViewGroup states;
         [SerializeField] private InputField passwordInput;
         [SerializeField] private InputField fileNameInput;
-
-        public void Configure(GameObject locked, GameObject waiting, GameObject repair, GameObject complete,
-            InputField password, InputField fileName)
-        {
-            lockedPanel = locked;
-            waitingPanel = waiting;
-            repairPanel = repair;
-            completePanel = complete;
-            passwordInput = password;
-            fileNameInput = fileName;
-        }
+        [SerializeField] private TextEnter passwordEnter;
+        [SerializeField] private TextEnter fileNameEnter;
+        [SerializeField] private RecoveryWindowContentSO content;
 
         public void Refresh()
         {
-            var state = ControlSState.Current;
-            if (state == null) return;
-            SetOnly(!state.TimePasswordSolved ? lockedPanel :
-                !state.KeycapCollected ? waitingPanel :
-                !state.SaveFileRepaired ? repairPanel : completePanel);
-            if (lockedPanel.activeSelf)
+            ApplyContent();
+            states?.Refresh();
+            if (passwordInput != null && passwordInput.gameObject.activeInHierarchy)
             {
-                passwordInput.text = string.Empty;
+                passwordEnter?.Reset();
                 passwordInput.Select();
                 passwordInput.ActivateInputField();
             }
         }
 
-        public void SubmitPassword()
+        public void SubmitPassword() { passwordEnter?.EnterAnswer(); states?.Refresh(); }
+        public void SubmitRepairName() { fileNameEnter?.EnterAnswer(); states?.Refresh(); }
+
+        private void ApplyContent()
         {
-            var state = ControlSState.Current;
-            if (state != null && state.TryTimePassword(passwordInput.text)) Refresh();
+            if (content == null && ContentManager.HasInstance) content = ContentManager.Instance.Current?.recovery;
+            if (content == null) return;
+            if (passwordInput != null) passwordInput.placeholder.GetComponent<Text>().text = content.passwordPlaceholder;
+            if (fileNameInput != null) fileNameInput.placeholder.GetComponent<Text>().text = content.fileNamePlaceholder;
+            SetText("Locked", "Info", content.locked);
+            SetText("Waiting", "Message", content.waiting);
+            SetText("Repair", "Info", content.repairPrompt);
+            SetText("Complete", "Message", content.complete);
+            SetButton("Unlock", content.unlockButton);
+            SetButton("Repair", content.repairButton);
         }
 
-        public void SubmitRepairName()
+        private void SetText(string parentName, string childName, string value)
         {
-            var state = ControlSState.Current;
-            if (state != null && state.TryRepairSaveName(fileNameInput.text)) Refresh();
+            var parent = Find(parentName); if (parent == null) return;
+            foreach (var child in parent.GetComponentsInChildren<Transform>(true))
+                if (child.name == childName && child.TryGetComponent<Text>(out var text)) { text.text = value; return; }
         }
 
-        private void SetOnly(GameObject active)
+        private void SetButton(string name, string value)
         {
-            lockedPanel.SetActive(active == lockedPanel);
-            waitingPanel.SetActive(active == waitingPanel);
-            repairPanel.SetActive(active == repairPanel);
-            completePanel.SetActive(active == completePanel);
+            var target = Find(name); var text = target != null ? target.GetComponentInChildren<Text>(true) : null;
+            if (text != null) text.text = value;
+        }
+
+        private Transform Find(string name)
+        {
+            foreach (var child in GetComponentsInChildren<Transform>(true)) if (child.name == name) return child;
+            return null;
         }
     }
 }

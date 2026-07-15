@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad41cc7b559b4e41813c5063f2fbf57c, type: 3}
+  m_Name: Soundscape
+  m_EditorClassIdentifier: Assembly-CSharp:ControlS:SoundscapeSO
+  bgm: {fileID: 8300000, guid: e87df41db94841d5ad3dbce04e6b5d81, type: 3}
+  bgmVolume: 0.42
+  uiVolume: 0.8
+  droneVolume: 0.035
+  finalDroneVolume: 0.11
+  playOnStart: 1
+  fallbackProgressSteps: 4
+  transitionSpeed: 0.22
+  damageStart: 0.28
+  damagedLayerVolume: 0.34
+  damagedPitchCentsAtStart: -7
+  damagedPitchCentsAtEnd: -32
+  maxPitchWobbleCents: 38
+  dissonanceStart: 0.62
+  dissonanceSemitones: 1
+  dissonanceLayerVolume: 0.25
+  collapseStart: 0.78
+  finalOriginalVolume: 0.38
+  finalLowPassCutoff: 3200
+  lowPassResonance: 4.5
+  finalReverbDecay: 7
+  maxStereoDrift: 0.36
+  glitchStart: 0.5
+  glitchInterval: {x: 8, y: 20}
+  glitchFragmentDuration: {x: 0.12, y: 0.28}
+  maxGlitchRepeats: 5

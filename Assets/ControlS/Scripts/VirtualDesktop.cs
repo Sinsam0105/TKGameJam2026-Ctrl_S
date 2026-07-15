@@ -1,59 +1,68 @@
 using System;
+using Sinsam.SingletonSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace ControlS
 {
-    /// <summary>데스크톱 루트와 공통 입력만 관리합니다. 아이콘과 창 콘텐츠는 개별 컴포넌트가 소유합니다.</summary>
-    public sealed class VirtualDesktop : MonoBehaviour
+    public sealed class VirtualDesktop : MonoSingleton<VirtualDesktop>
     {
         [SerializeField] private Canvas canvas;
         [SerializeField] private RectTransform desktopRoot;
         [SerializeField] private Text taskbarClock;
         [SerializeField] private Button closeButton;
+        [SerializeField] private ProgressFlagSO blockOpenFlag;
         [SerializeField] private DesktopShortcut[] shortcuts = Array.Empty<DesktopShortcut>();
         [SerializeField] private DesktopWindow[] windows = Array.Empty<DesktopWindow>();
 
-        private ControlSSceneController game;
-        private ControlSState state;
+        private ProgressManager progressManager;
+        private ContentManager contentManager;
+        private UIManager uiManager;
+        private SoundManager soundManager;
 
         public bool IsOpen => desktopRoot != null && desktopRoot.gameObject.activeSelf;
         public GameObject DesktopUI => desktopRoot != null ? desktopRoot.gameObject : null;
         public DesktopShortcut[] Shortcuts => shortcuts;
         public DesktopWindow[] Windows => windows;
 
-        public void Configure(Canvas ownerCanvas, RectTransform root, Text clock, Button close,
-            DesktopShortcut[] desktopShortcuts, DesktopWindow[] desktopWindows)
-        {
-            canvas = ownerCanvas;
-            desktopRoot = root;
-            taskbarClock = clock;
-            closeButton = close;
-            shortcuts = desktopShortcuts ?? Array.Empty<DesktopShortcut>();
-            windows = desktopWindows ?? Array.Empty<DesktopWindow>();
-        }
+        protected override bool ShouldPersist() => false;
 
-        public void Initialize(ControlSSceneController owner, ControlSState gameState)
+        protected override void Awake()
         {
-            game = owner;
-            state = gameState;
+            base.Awake();
             if (!ValidateReferences())
             {
-                Debug.LogError("Virtual Desktop scene references are incomplete: " + GetValidationError(), this);
+                Debug.LogError("Virtual Desktop references are incomplete: " + GetValidationError(), this);
                 enabled = false;
                 return;
             }
-
-            foreach (var window in windows) window.Initialize(owner);
-            foreach (var shortcut in shortcuts) shortcut.Initialize(owner);
             desktopRoot.gameObject.SetActive(false);
         }
 
-        public bool ValidateReferences()
+        private void OnEnable()
         {
-            return string.IsNullOrEmpty(GetValidationError());
+            progressManager = ProgressManager.Instance;
+            contentManager = ContentManager.Instance;
+            uiManager = UIManager.Instance;
+            soundManager = SoundManager.Instance;
+            if (progressManager != null) progressManager.ProgressChanged += RefreshShortcuts;
+            if (contentManager != null) contentManager.ContentChanged += HandleContentChanged;
+            ApplyContent();
+            RefreshShortcuts();
         }
+
+        private void OnDisable()
+        {
+            if (progressManager != null) progressManager.ProgressChanged -= RefreshShortcuts;
+            if (contentManager != null) contentManager.ContentChanged -= HandleContentChanged;
+            progressManager = null;
+            contentManager = null;
+            uiManager = null;
+            soundManager = null;
+        }
+
+        public bool ValidateReferences() => string.IsNullOrEmpty(GetValidationError());
 
         public string GetValidationError()
         {
@@ -64,36 +73,74 @@ namespace ControlS
             if (shortcuts == null || shortcuts.Length == 0) return "shortcuts";
             if (windows == null || windows.Length == 0) return "windows";
             for (var i = 0; i < shortcuts.Length; i++)
-                if (shortcuts[i] == null || !shortcuts[i].ValidateReferences())
-                    return "shortcut[" + i + "] " + (shortcuts[i] == null ? "null" : shortcuts[i].name);
+                if (shortcuts[i] == null || !shortcuts[i].ValidateReferences()) return "shortcut[" + i + "]";
             for (var i = 0; i < windows.Length; i++)
-                if (windows[i] == null || !windows[i].ValidateReferences())
-                    return "window[" + i + "] " + (windows[i] == null ? "null" : windows[i].name);
+                if (windows[i] == null || !windows[i].ValidateReferences()) return "window[" + i + "]";
             return string.Empty;
         }
 
         public void Open()
         {
-            if (desktopRoot == null || state == null || state.EndingStarted) return;
+            if (desktopRoot == null || (blockOpenFlag != null && progressManager != null && progressManager.GetFlag(blockOpenFlag))) return;
             desktopRoot.gameObject.SetActive(true);
             desktopRoot.SetAsLastSibling();
-            game.SetPrompt(string.Empty);
-            game.PlayUiTone(520f, .07f);
+            uiManager?.SetPrompt(string.Empty);
+            soundManager?.PlayUiTone(520f, .07f);
         }
 
         public void Close()
         {
             if (desktopRoot == null) return;
             desktopRoot.gameObject.SetActive(false);
-            game?.PlayUiTone(300f, .05f);
+            soundManager?.PlayUiTone(300f, .05f);
         }
 
         private void Update()
         {
             if (!IsOpen) return;
             taskbarClock.text = DateTime.Now.ToString("HH:mm") + "  ▣";
-            var keyboard = Keyboard.current;
-            if (keyboard != null && keyboard.escapeKey.wasPressedThisFrame) Close();
+            if (Keyboard.current?.escapeKey.wasPressedThisFrame == true) Close();
+        }
+
+        private void RefreshShortcuts()
+        {
+            if (shortcuts == null) return;
+            foreach (var shortcut in shortcuts) if (shortcut != null) shortcut.RefreshVisibility();
+        }
+
+        private void HandleContentChanged(GameContentSetSO _) => ApplyContent();
+
+        public void ApplyContent()
+        {
+            var set = contentManager != null ? contentManager.Current : null;
+            var theme = set != null ? set.desktopTheme : null;
+            if (desktopRoot == null || theme == null) return;
+            var wallpaper = desktopRoot.GetComponent<Image>();
+            if (wallpaper != null)
+            {
+                if (theme.wallpaper != null) wallpaper.sprite = theme.wallpaper;
+                wallpaper.color = theme.wallpaperColor;
+            }
+            var watermark = FindText(desktopRoot, "Watermark");
+            if (watermark != null) watermark.text = theme.watermark;
+            var closeLabel = closeButton != null ? closeButton.GetComponentInChildren<Text>(true) : null;
+            if (closeLabel != null) closeLabel.text = theme.exitButton;
+            if (set.readme != null)
+            {
+                var readme = Array.Find(windows, item => item != null && item.name.Contains("Readme"));
+                if (readme != null)
+                {
+                    var document = FindText(readme.transform, "Document");
+                    if (document != null) document.text = set.readme.body;
+                }
+            }
+        }
+
+        private static Text FindText(Transform root, string objectName)
+        {
+            foreach (var child in root.GetComponentsInChildren<Transform>(true))
+                if (child.name == objectName && child.TryGetComponent<Text>(out var text)) return text;
+            return null;
         }
     }
 }

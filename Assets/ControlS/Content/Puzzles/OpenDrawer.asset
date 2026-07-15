@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb12f6009f3c434993d8b912cea77bc, type: 3}
+  m_Name: OpenDrawer
+  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PuzzleDefinitionSO
+  puzzleId: OpenDrawer
+  matcher:
+    rid: 5090045388559221003
+  requirements:
+  - flag: {fileID: 11400000, guid: f3c397eaf86e40941adde9aac8b75878, type: 2}
+    expectedValue: 1
+  completionFlag: {fileID: 11400000, guid: c0b491de18e62df4ead95d9ca7f8275f, type: 2}
+  allowRepeat: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 5090045388559221003
+      type: {class: StringAnswerMatcher, ns: ControlS, asm: Assembly-CSharp}
+      data:
+        expected: 4312
+        trim: 1
+        ignoreSpaces: 1
+        ignoreColons: 1
+        ignoreCase: 0

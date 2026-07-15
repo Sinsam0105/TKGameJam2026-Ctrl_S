@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf42e78e94e8f454488437da3ef366a0, type: 3}
+  m_Name: Archive
+  m_EditorClassIdentifier: Assembly-CSharp:ControlS:ArchiveWindowContentSO
+  title: ARCHIVE - fragment executor
+  icon: {fileID: 0}
+  locked: "\U0001F512 ARCHIVE\n\n\uC758\uC874 \uD30C\uC77C SAVE_?.tmp\uAC00 \uC190\uC0C1\uB418\uC5B4
+    \uD3F4\uB354\uB97C \uC5F4 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
+  unknown: "\uC190\uC0C1 \uB85C\uADF8 \uC870\uAC01 4\uAC1C\uAC00 \uBC1C\uACAC\uB418\uC5C8\uC2B5\uB2C8\uB2E4.\n\uC2E4\uD589
+    \uC21C\uC11C\uB97C \uC54C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4.\n\n\uBCF5\uC6D0\uB41C
+    \uD604\uC2E4 \uC624\uBE0C\uC81D\uD2B8\uC5D0 \uC778\uB371\uC2A4\uAC00 \uAE30\uB85D\uB418\uC5B4
+    \uC788\uC2B5\uB2C8\uB2E4."
+  solved: "RECOVERED.save \uC0DD\uC131 \uC644\uB8CC.\n\uBC14\uD0D5\uD654\uBA74\uC744
+    \uD655\uC778\uD558\uC2ED\uC2DC\uC624."
+  sequencePrefix: "\uC785\uB825: "
+  emptySequence: "(\uC5C6\uC74C)"
