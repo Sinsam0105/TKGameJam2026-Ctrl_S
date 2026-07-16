@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,12 +18,20 @@ public enum ESpeechBubbleSpeed
 }
 
 /// <summary>
+/// 모든 말풍선
 /// 어마어마한 대사 분량을 고려하여 json 사용을 추천한다.
 /// 대사 데이터 파일(json)은 기획자가 작성해야 한다.
 /// Assets/ControlS/Resources/Data 안에 넣으면 된다.
 /// </summary>
 [Serializable]
-public class SpeechBubble
+public class SpeechBubbleData   // TODO: 구조 재설계
+{
+    public int DataId;
+    public List<SpeechBubbleInfo> Bubble;
+}
+
+[Serializable]
+public class SpeechBubbleInfo
 {
     public string Text;
     /// <summary>
@@ -30,32 +39,62 @@ public class SpeechBubble
     /// </summary>
     public ESpeechBubbleSpeed Speed;
     public int FontSize;
-    public Color FontColor;
+    
+    [JsonIgnore] public Color FontColor => new Color(R, G, B, A);
+    public float R, G, B, A;
 
     /// <summary>
     /// 처음에만 true로 설정해도, 이후 글자는 모두 자동으로 넘어간다. 이때, 상호작용 불가 (스킵/닫기 등)
     /// </summary>
     public bool IsAuto;
+    
+    public SpeechBubbleInfo()
+    {
+    }
 
-    /// <summary>
-    /// </summary>
-    /// <param name="text"></param>
-    /// <param name="speed">높을수록 빠르게 출력한다. (1/Speed = 출력 간격)</param>
-    /// <param name="fontSize"></param>
-    /// <param name="fontColor"></param>
-    /// <param name="isAuto">하나만 true로 설정해도, 이후 글자는 모두 자동으로 넘어간다. 이때, 상호작용 불가 (스킵/닫기 등)</param>
-    public SpeechBubble(string text, ESpeechBubbleSpeed speed, int fontSize, Color fontColor, bool isAuto)
+    #region 테스트용
+    public SpeechBubbleInfo(string text, ESpeechBubbleSpeed speed, int fontSize, float r, float g, float b, float a, bool isAuto)
     {
         Text = text;
         Speed = speed;
         FontSize = fontSize;
-        FontColor = fontColor;
+        R = r;
+        G = g;
+        B = b;
+        A = a;
         IsAuto = isAuto;
+    }
+
+    public SpeechBubbleInfo(string text, ESpeechBubbleSpeed speed, int fontSize, Color color, bool isAuto)
+    {
+        Text = text;
+        Speed = speed;
+        FontSize = fontSize;
+        R = color.r;
+        G = color.g;
+        B = color.b;
+        A = color.a;
+        IsAuto = isAuto;
+    }
+    #endregion
+}
+
+[Serializable]
+public class SpeechBubbleDataLoader : ILoader<int, SpeechBubbleData>
+{
+    public List<SpeechBubbleData> SpeechBubble = new List<SpeechBubbleData>();
+    public Dictionary<int, SpeechBubbleData> MakeDict()
+    {
+        Dictionary<int, SpeechBubbleData> dict = new Dictionary<int, SpeechBubbleData>();
+        foreach (SpeechBubbleData data in SpeechBubble)
+            dict.Add(data.DataId, data);
+        return dict;
     }
 }
 
 public class SpeechBubbleController : MonoBehaviour
 {
+    SpeechBubbleData Data;
     Text _textUI;   // TODO: 추후 TMP로 변경 필요
 
     /// <summary>
@@ -77,19 +116,25 @@ public class SpeechBubbleController : MonoBehaviour
         _textUI = GetComponentInChildren<Text>();
         transform.localPosition = new Vector3(0, 1.5f, transform.localPosition.z);  // 머리 위 배치
 
-        // test
+        #region TODO: 테스트 용도이다. 제거 필요
         {
-            StartCoroutine(CoShow(new List<SpeechBubble>
-            {
-                new SpeechBubble("그래. 귀관에게 ", ESpeechBubbleSpeed.Slow, 25, Color.blue, false),
-                new SpeechBubble("주어진 ", ESpeechBubbleSpeed.Slow, 25, Color.blue, false),
-                new SpeechBubble("아주아주 막중한 임무", ESpeechBubbleSpeed.Fast, 25, Color.blue, false),
-                new SpeechBubble("가 있기 때문이지.", ESpeechBubbleSpeed.Slow, 25, Color.blue, false),
-                //new SpeechBubble("\n알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?", ESpeechBubbleSpeed.Fast, 25, Color.darkRed, false),
-                //new SpeechBubble("\n알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?", ESpeechBubbleSpeed.VeryFast, 25, Color.red, false),
-            }));
-            //StartCoroutine(CoShow(new SpeechBubble("집가고 싶어집가고 싶어집가고 싶어\n집가고 싶어집가고 싶어집가고 싶어", ESpeechBubbleSpeed.Normal, 15, Color.red, false)));
+            JsonDataManager jsonData = new JsonDataManager();
+            jsonData.Init();
+            Data = jsonData.SpeechBubbleDataDic[1001];
+            StartCoroutine(CoShow(Data.Bubble));
+
+            //StartCoroutine(CoShow(new List<SpeechBubbleInfo>
+            //{
+            //    new SpeechBubbleInfo("그래. 귀관에게 ", ESpeechBubbleSpeed.Slow, 25, Color.blue, false),
+            //    new SpeechBubbleInfo("주어진 ", ESpeechBubbleSpeed.Slow, 25, Color.blue, false),
+            //    new SpeechBubbleInfo("아주아주 막중한 임무", ESpeechBubbleSpeed.Fast, 25, Color.blue, false),
+            //    new SpeechBubbleInfo("가 있기 때문이지.", ESpeechBubbleSpeed.Slow, 25, Color.blue, false),
+            //    //new SpeechBubbleInfo("\n알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?", ESpeechBubbleSpeed.Fast, 25, Color.darkRed, false),
+            //    //new SpeechBubbleInfo("\n알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?", ESpeechBubbleSpeed.VeryFast, 25, Color.red, false),
+            //}));
+            //StartCoroutine(CoShow(new SpeechBubbleInfo("집가고 싶어집가고 싶어집가고 싶어\n집가고 싶어집가고 싶어집가고 싶어", ESpeechBubbleSpeed.Normal, 15, Color.red, false)));
         }
+        #endregion
     }
 
     void Update()
@@ -112,14 +157,14 @@ public class SpeechBubbleController : MonoBehaviour
     /// 효과 단위로 분리된 글자를 모두 합쳐, 한 글자씩 말풍선을 띄운다. (크기/색깔/속도)
     /// </summary>
     /// <param name="text">한 개의 말풍선에 들어갈 대사 내용</param>
-    public IEnumerator CoShow(List<SpeechBubble> textList)
+    public IEnumerator CoShow(List<SpeechBubbleInfo> textList)
     {
         if (IsTyping)   // 중복 출력 방지
         {
             Debug.Log($"이미 다른 대사가 출력 중입니다");
             yield break;
         }
-        Debug.Log($"Show SpeechBubble");
+        Debug.Log($"Show SpeechBubbleInfo");
 
         #region 초기화
         gameObject.SetActive(true);
@@ -170,7 +215,7 @@ public class SpeechBubbleController : MonoBehaviour
     /// </summary>
     /// <param name="text">한 개의 말풍선에 들어갈 대사 내용</param>
     /// <param name="isContinuing">이전 텍스트에 이어서 출력하는지 여부. 효과 단위로 글자를 분리했을 때 사용한다.</param>
-    public IEnumerator CoShow(SpeechBubble text, bool isContinuing = false)
+    public IEnumerator CoShow(SpeechBubbleInfo text, bool isContinuing = false)
     {
         #region 초기화
         if (isContinuing == false)
@@ -181,7 +226,7 @@ public class SpeechBubbleController : MonoBehaviour
                 yield break;
             }
 
-            Debug.Log($"Show SpeechBubble");
+            Debug.Log($"Show SpeechBubbleInfo");
 
             gameObject.SetActive(true);
             _textUI.text = "";
@@ -241,12 +286,12 @@ public class SpeechBubbleController : MonoBehaviour
     }
 
     // TODO: TMP로 변경 시, 제거
-    void Skip(SpeechBubble text, int idx = -1)  // 글자가 잘리지 않게 idx 전달한다. 그대로 출력하고 싶다면 -1
+    void Skip(SpeechBubbleInfo text, int idx = -1)  // 글자가 잘리지 않게 idx 전달한다. 그대로 출력하고 싶다면 -1
     {
         if (_isSkip == false || _isAuto)
             return;
 
-        Debug.Log($"Skip SpeechBubble {text.Text}");
+        Debug.Log($"Skip SpeechBubbleInfo {text.Text}");
 
         // TODO: TMP로 변경 시, 제거
         {

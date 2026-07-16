@@ -1,0 +1,29 @@
+{
+  "SpeechBubble": [ // 말풍선 하나
+    {
+      "DataId": 1001, // 중복 금지
+      "Bubble": [
+        {
+          "Text": "Test Test", // 말풍선 대사 내용
+          "Speed": "Normal", // ESpeechBubbleSpeed => None, VerySlow, Slow, Normal, Fast, VeryFast
+          "FontSize": 30,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 1.0,
+          "A": 1.0,
+          "IsAuto": false // 처음에만 true로 설정해도, 이후 글자는 모두 자동으로 넘어간다. 이때, 상호작용 불가 (스킵/닫기 등)
+        },
+        {
+          "Text": "\n이어서 뒤의 글자도 확인합시다.",
+          "Speed": "Normal",
+          "FontSize": 30,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 1.0,
+          "A": 1.0,
+          "IsAuto": false
+        }
+      ]
+    }
+  ]
+}
