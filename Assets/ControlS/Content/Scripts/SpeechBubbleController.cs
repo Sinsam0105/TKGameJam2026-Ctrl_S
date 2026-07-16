@@ -1,44 +1,34 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using TMPro;
+
+public enum ESpeechBubbleSpeed
+{
+    None = 0,       // 그냥 한 번에 출력
+    VerySlow = 2,   // 거의 뭐 한 글자씩 출력되는 수준
+    Slow = 10,
+    Normal = 20,    // 기본 속도
+    Fast = 40,
+    VeryFast = 100, // 너무 빨라서 눈으로 따라가기 힘들다
+}
 
 /// <summary>
-/// 테스트용 임시 구조체.
-/// 
-/// 이름 변경은 취향대로 변경해도 된다.
-/// 어마어마한 대사 분량을 고려하여 json과 class 사용을 추천한다.
+/// 어마어마한 대사 분량을 고려하여 json 사용을 추천한다.
 /// 대사 데이터 파일(json)은 기획자가 작성해야 한다.
-/// 
-/// ==================================================================================
-/// ex 1. 대사가 모두 같은 크기/색깔/속도일 때는, 하나의 SpeechBubble로 처리 가능 
-/// 
-/// 집에 가고 싶다 => 
-/// new SpeechBubble("집에 가고 싶다", 15f, 10, Color.red, false),
-///
-/// ==================================================================================
-/// ex 2. 대사가 일부 다른 크기/색깔/속도일 때는, 여러 개의 SpeechBubble로 분리해서 List로 묶음
-///
-/// 집에 /가고(글자 크기 줄어듬)/ 싶다 =>
-/// new List<SpeechBubble>
-/// {
-///     new SpeechBubble("집에 ", 15f, 10, Color.red, false),
-///     new SpeechBubble("가고", 15f, 3, Color.red, false),   // 글자 크기 줄어듬 (10 -> 3)
-///     new SpeechBubble(" 싶다", 15f, 10, Color.red, false)
-/// }
-/// 
-/// ==================================================================================
+/// Assets/ControlS/Resources/Data 안에 넣으면 된다.
 /// </summary>
-public struct SpeechBubble
+[Serializable]
+public class SpeechBubble
 {
     public string Text;
     /// <summary>
     /// 높을수록 빠르게 출력한다. (1/Speed = 출력 간격)
     /// </summary>
-    public float Speed;
+    public ESpeechBubbleSpeed Speed;
     public int FontSize;
     public Color FontColor;
 
@@ -54,7 +44,7 @@ public struct SpeechBubble
     /// <param name="fontSize"></param>
     /// <param name="fontColor"></param>
     /// <param name="isAuto">하나만 true로 설정해도, 이후 글자는 모두 자동으로 넘어간다. 이때, 상호작용 불가 (스킵/닫기 등)</param>
-    public SpeechBubble(string text, float speed, int fontSize, Color fontColor, bool isAuto)
+    public SpeechBubble(string text, ESpeechBubbleSpeed speed, int fontSize, Color fontColor, bool isAuto)
     {
         Text = text;
         Speed = speed;
@@ -91,10 +81,14 @@ public class SpeechBubbleController : MonoBehaviour
         {
             StartCoroutine(CoShow(new List<SpeechBubble>
             {
-                new SpeechBubble("집가고 싶어집가고 싶어집가고 싶어\n집가고 싶어집가고 싶어집가고 싶어", 15f, 15, Color.red, false),
-                new SpeechBubble("\n집 가는 길이 너무 고되다", 15f, 8, Color.blue, false)
+                new SpeechBubble("그래. 귀관에게 ", ESpeechBubbleSpeed.Slow, 25, Color.blue, false),
+                new SpeechBubble("주어진 ", ESpeechBubbleSpeed.Slow, 25, Color.blue, false),
+                new SpeechBubble("아주아주 막중한 임무", ESpeechBubbleSpeed.Fast, 25, Color.blue, false),
+                new SpeechBubble("가 있기 때문이지.", ESpeechBubbleSpeed.Slow, 25, Color.blue, false),
+                //new SpeechBubble("\n알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?", ESpeechBubbleSpeed.Fast, 25, Color.darkRed, false),
+                //new SpeechBubble("\n알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?알겠는가?", ESpeechBubbleSpeed.VeryFast, 25, Color.red, false),
             }));
-            //StartCoroutine(CoShow(new SpeechBubble("집가고 싶어집가고 싶어집가고 싶어\n집가고 싶어집가고 싶어집가고 싶어", 15f, 15, Color.red, false)));
+            //StartCoroutine(CoShow(new SpeechBubble("집가고 싶어집가고 싶어집가고 싶어\n집가고 싶어집가고 싶어집가고 싶어", ESpeechBubbleSpeed.Normal, 15, Color.red, false)));
         }
     }
 
@@ -137,19 +131,26 @@ public class SpeechBubbleController : MonoBehaviour
 
         // 대사 출력
         // TODO: TMP로 변경 시, 변경 필요
-        foreach (SpeechBubble text in textList)
+        int range = textList.Count - 1;
+        for (int idx = 0; idx < range; idx++)
         {
             // 즉시 출력
             if (_isSkip)
             {
-                Skip(text);
+                Skip(textList[idx]);
                 continue;
             }
 
             // 분리된 단위로 출력
-            yield return StartCoroutine(CoShow(text, true));
+            yield return StartCoroutine(CoShow(textList[idx], true));
+            
+            // 현재 단위와 다음 단위 사이의 간격
+            float speed = ((float)textList[idx].Speed + (float)textList[idx + 1].Speed) / 2f;
+            yield return new WaitForSeconds(GetInterval(speed));  // 단위별로 출력 간격
         }
+        yield return StartCoroutine(CoShow(textList[range], true)); // 마지막 단위 출력
 
+        // 대사 모두 출력 후, 잠시 대기한 뒤에 닫는다
         if (_isAuto)
         {
             yield return new WaitForSeconds(0.5f);
@@ -196,11 +197,17 @@ public class SpeechBubbleController : MonoBehaviour
             _textUI.color = text.FontColor;
         }
 
-        float speed = Mathf.Max(text.Speed, 1f);
-        float actualInterval = 1 / speed;   // speed가 높을수록 출력 간격이 짧아진다
+        if (text.Speed == ESpeechBubbleSpeed.None)
+        {
+            _textUI.text += text.Text;
+            yield break;
+        }
 
-        // actualInterval마다 한 글자씩 출력
-        for (int idx = 0; idx < text.Text.Length; idx++)
+        float interval = GetInterval(text.Speed);
+
+        // interval마다 한 글자씩 출력
+        int range = text.Text.Length - 1;
+        for (int idx = 0; idx < range; idx++)
         {
             // 즉시 출력
             if (_isSkip)
@@ -212,8 +219,12 @@ public class SpeechBubbleController : MonoBehaviour
             }
 
             _textUI.text += text.Text[idx];
-            yield return new WaitForSeconds(actualInterval);
+            yield return new WaitForSeconds(interval);
         }
+        _textUI.text += text.Text[range];   // 마지막 글자
+
+        if (isContinuing)
+            yield break;
 
         if (_isAuto)
         {
@@ -235,7 +246,7 @@ public class SpeechBubbleController : MonoBehaviour
         if (_isSkip == false || _isAuto)
             return;
 
-        Debug.Log($"Skip SpeechBubble");
+        Debug.Log($"Skip SpeechBubble {text.Text}");
 
         // TODO: TMP로 변경 시, 제거
         {
@@ -244,5 +255,17 @@ public class SpeechBubbleController : MonoBehaviour
         }
         
         _textUI.text += (idx >= 0 ? text.Text[idx..] : text.Text);
+    }
+
+    float GetInterval(float speed)
+    {
+        float actualSpeed = Mathf.Max(speed, 1f);
+        return 1 / actualSpeed; // speed가 높을수록 출력 간격이 짧아진다
+    }
+
+    float GetInterval(ESpeechBubbleSpeed speed)
+    {
+        float actualSpeed = Mathf.Max((float)speed, 1f);
+        return 1 / actualSpeed; // speed가 높을수록 출력 간격이 짧아진다
     }
 }
