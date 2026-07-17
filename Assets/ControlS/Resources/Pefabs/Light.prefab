@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8671350784338978870}
   - component: {fileID: 3210563564669735898}
-  - component: {fileID: 1380848713643478388}
+  - component: {fileID: 1078403544361901695}
   m_Layer: 0
-  m_Name: PlayerLight
+  m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -85,7 +85,7 @@ MonoBehaviour:
   - {x: 0.5, y: -0.5, z: 0}
   - {x: 0.5, y: 0.5, z: 0}
   - {x: -0.5, y: 0.5, z: 0}
---- !u!114 &1380848713643478388
+--- !u!114 &1078403544361901695
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,9 +94,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3822942009553455479}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e921ccd7521dd3249b3133c4184267fd, type: 3}
+  m_Script: {fileID: 11500000, guid: 87ee24b9e926f2f45b89198b4e563990, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerLightController
+  m_EditorClassIdentifier: Assembly-CSharp::LightController
   _defaultColor: {r: 0, g: 0, b: 0, a: 0}
   _defaultIntensity: 0
   _defaultInnerRadius: 0
