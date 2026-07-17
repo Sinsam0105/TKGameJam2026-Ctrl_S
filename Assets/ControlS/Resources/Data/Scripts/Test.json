@@ -1,0 +1,62 @@
+{
+  "Description": "Test 용도입니다. 대충 플레이어가 갇혀있다는 대본.",
+  "IsAuto": false,
+  "Bubbles": [
+    // 플레이어 말풍선 1
+    {
+      // 말하는 놈
+      "ObjectType": "Player",
+      // 말풍선 하나에 들어갈 내용
+      "Bubble": [
+        {
+          "Text": "문이 잠겨 있는데, ",
+          "Speed": "Normal", // ESpeechBubbleSpeed => None, VerySlow, Slow, Normal, Fast, VeryFast
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 1.0,
+          "B": 0.0,
+          "A": 1.0 // 투명도 => 0(안 보임) ~ 1(잘 보임)
+        },
+        {
+          "Text": "\n너무 무서워!!!!!!!",
+          "Speed": "Fast",
+          "FontSize": 40,
+          "R": 1.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        },
+        {
+          "Text": "너무 무서워...",
+          "Speed": "Normal",
+          "FontSize": 20,
+          "R": 1.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        }
+      ]
+    },
+    // 플레이어 말풍선 2
+    {
+      "ObjectType": "Player",
+      "Bubble": [
+        {
+          "Text": "어떡하지....",
+          "Speed": "Slow",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 0.0
+        }
+      ]
+    }
+    // 플레이어 말풍선 3
+
+
+
+
+
+  ]
+}
