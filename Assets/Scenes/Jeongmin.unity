@@ -201,19 +201,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5214361}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 380377981}
-        m_TargetAssemblyTypeName: ControlS.ControlSSceneController, Assembly-CSharp
-        m_MethodName: RestartScene
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &5214361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,7 +252,6 @@ GameObject:
   - component: {fileID: 6795992}
   - component: {fileID: 6795991}
   - component: {fileID: 6795990}
-  - component: {fileID: 6795988}
   m_Layer: 0
   m_Name: "Icon \uD734\uC9C0\uD1B5"
   m_TagString: Untagged
@@ -272,35 +259,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &6795988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6795987}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c9bba3626e9d8f4c824b0db9dd70a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopShortcut
-  button: {fileID: 6795990}
-  label: {fileID: 1570850345}
-  visibilityConditions: []
-  rules:
-  - label: "\uCC3D \uC5F4\uAE30"
-    conditions: []
-    actions:
-    - rid: 5090045368784388119
-    stopAfterExecution: 1
-    executeOnce: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388119
-      type: {class: OpenDesktopWindowAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        window: {fileID: 744925715}
 --- !u!224 &6795989
 RectTransform:
   m_ObjectHideFlags: 0
@@ -364,19 +322,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6795991}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6795988}
-        m_TargetAssemblyTypeName: ControlS.DesktopShortcut, Assembly-CSharp
-        m_MethodName: Execute
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &6795991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -576,19 +522,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 51962815}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 744925716}
-        m_TargetAssemblyTypeName: ControlS.RecycleBinDesktopWindow, Assembly-CSharp
-        m_MethodName: RestoreFamily
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &51962815
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -922,19 +856,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 64684983}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 141074642}
-        m_TargetAssemblyTypeName: ControlS.ArchiveDesktopWindow, Assembly-CSharp
-        m_MethodName: PushFragment
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &64684983
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -985,7 +907,6 @@ GameObject:
   - component: {fileID: 71148441}
   - component: {fileID: 71148440}
   - component: {fileID: 71148439}
-  - component: {fileID: 71148437}
   m_Layer: 0
   m_Name: Icon dark_photo.img
   m_TagString: Untagged
@@ -993,35 +914,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &71148437
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 71148436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c9bba3626e9d8f4c824b0db9dd70a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopShortcut
-  button: {fileID: 71148439}
-  label: {fileID: 646718031}
-  visibilityConditions: []
-  rules:
-  - label: "\uCC3D \uC5F4\uAE30"
-    conditions: []
-    actions:
-    - rid: 5090045368784388120
-    stopAfterExecution: 1
-    executeOnce: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388120
-      type: {class: OpenDesktopWindowAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        window: {fileID: 531117735}
 --- !u!224 &71148438
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1085,19 +977,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 71148440}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 71148437}
-        m_TargetAssemblyTypeName: ControlS.DesktopShortcut, Assembly-CSharp
-        m_MethodName: Execute
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &71148440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1594,8 +1474,6 @@ GameObject:
   - component: {fileID: 141074646}
   - component: {fileID: 141074645}
   - component: {fileID: 141074644}
-  - component: {fileID: 141074641}
-  - component: {fileID: 141074642}
   m_Layer: 0
   m_Name: Window - Archive
   m_TagString: Untagged
@@ -1603,53 +1481,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &141074641
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 141074640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e9c33d226f68564dbc3f329fcfd351f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopWindow
-  root: {fileID: 141074643}
-  closeButton: {fileID: 877788655}
-  openTone: 420
-  onOpened:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 141074642}
-        m_TargetAssemblyTypeName: ControlS.ArchiveDesktopWindow, Assembly-CSharp
-        m_MethodName: Refresh
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &141074642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 141074640}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90732ab98e9cf6c4f9f0bb28bfd18116, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ArchiveDesktopWindow
-  lockedPanel: {fileID: 174255801}
-  unknownPanel: {fileID: 1367310721}
-  puzzlePanel: {fileID: 920659945}
-  solvedPanel: {fileID: 326479636}
-  sequenceStatus: {fileID: 1161335275}
 --- !u!224 &141074643
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1874,7 +1705,6 @@ GameObject:
   - component: {fileID: 150645824}
   - component: {fileID: 150645823}
   - component: {fileID: 150645822}
-  - component: {fileID: 150645820}
   m_Layer: 0
   m_Name: Icon RECOVERED.save
   m_TagString: Untagged
@@ -1882,41 +1712,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &150645820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 150645819}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c9bba3626e9d8f4c824b0db9dd70a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopShortcut
-  button: {fileID: 150645822}
-  label: {fileID: 902479109}
-  visibilityConditions:
-  - rid: 5090045368784388116
-  rules:
-  - label: "\uCC3D \uC5F4\uAE30"
-    conditions: []
-    actions:
-    - rid: 5090045368784388117
-    stopAfterExecution: 1
-    executeOnce: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388116
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 8
-        expectedValue: 1
-    - rid: 5090045368784388117
-      type: {class: OpenDesktopWindowAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        window: {fileID: 859382582}
 --- !u!224 &150645821
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1980,19 +1775,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 150645823}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 150645820}
-        m_TargetAssemblyTypeName: ControlS.DesktopShortcut, Assembly-CSharp
-        m_MethodName: Execute
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &150645823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2363,19 +2146,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 228793079}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 744925716}
-        m_TargetAssemblyTypeName: ControlS.RecycleBinDesktopWindow, Assembly-CSharp
-        m_MethodName: RestoreOccupant
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &228793079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2877,19 +2648,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 303738634}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1835135088}
-        m_TargetAssemblyTypeName: ControlS.VirtualDesktop, Assembly-CSharp
-        m_MethodName: Close
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &303738634
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3582,19 +3341,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 378127265}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 141074642}
-        m_TargetAssemblyTypeName: ControlS.ArchiveDesktopWindow, Assembly-CSharp
-        m_MethodName: PushFragment
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 4
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &378127265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3642,9 +3389,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 380377987}
-  - component: {fileID: 380377981}
-  - component: {fileID: 380377984}
-  - component: {fileID: 380377983}
   - component: {fileID: 380377982}
   - component: {fileID: 380377980}
   - component: {fileID: 380377986}
@@ -3738,27 +3482,6 @@ MonoBehaviour:
       type: {class: ShowInteractionUIAction, ns: ControlS, asm: Assembly-CSharp}
       data:
         uiObject: {fileID: 570609368}
---- !u!114 &380377981
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380377979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec4ec34f26e6fc54080f1207e463bea8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ControlSSceneController
-  content: {fileID: 11400000, guid: 63ce42b10b02a9147994221621e4a98b, type: 2}
-  room: {fileID: 649365906}
-  desktop: {fileID: 1835135088}
-  hud: {fileID: 466896984}
-  atmosphere: {fileID: 380377984}
-  drawerKeypad: {fileID: 380377983}
-  sequences:
-  - {fileID: 380377982}
-  - {fileID: 380377980}
 --- !u!114 &380377982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3790,36 +3513,6 @@ MonoBehaviour:
         narration: {fileID: 11400000, guid: ee685a64f3a06914dbeae86e5f5aa34b, type: 2}
         waitForNarration: 0
         delayAfter: 0
---- !u!114 &380377983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380377979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5041cf5918953b4ba3134b4e62af864, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DrawerKeypadContent
-  root: {fileID: 685602443}
-  codeInput: {fileID: 1157737269}
-  hintText: {fileID: 1648719841}
---- !u!114 &380377984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 380377979}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eceffc4e9b039154992e1e2101a74751, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ControlSAtmosphereController
-  worldCamera: {fileID: 519420031}
-  droneSource: {fileID: 380377986}
-  uiSource: {fileID: 380377985}
 --- !u!82 &380377985
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4440,7 +4133,6 @@ GameObject:
   m_Component:
   - component: {fileID: 457038898}
   - component: {fileID: 457038900}
-  - component: {fileID: 457038899}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -4463,65 +4155,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 649365907}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &457038899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 457038897}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39824634f7f673a49aea3c3a6c8b3a11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.RoomInteractable
-  kind: 4
-  prompt: "\uBB38 \uC5F4\uAE30"
-  radius: 1.35
-  rules:
-  - label: "\uD37C\uC990 \uC9C4\uD589 \uD6C4"
-    conditions:
-    - rid: 5090045368784388123
-    actions:
-    - rid: 5090045368784388124
-    stopAfterExecution: 1
-    executeOnce: 0
-  - label: "\uC7A0\uAE34 \uBB38"
-    conditions: []
-    actions:
-    - rid: 5090045368784388125
-    stopAfterExecution: 1
-    executeOnce: 0
-  interactionNarration: {fileID: 11400000, guid: 536421e4692298841b73fa30a77a3ca3, type: 2}
-  interactionUI: {fileID: 0}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388123
-      type: {class: CompletedPuzzleCountCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        minimumCount: 3
-    - rid: 5090045368784388124
-      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        narration: {fileID: 11400000, guid: de161820277b8e4498f117c233ab59ef, type: 2}
-        waitForNarration: 0
-        delayAfter: 0
-    - rid: 5090045368784388125
-      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        narration: {fileID: 11400000, guid: 536421e4692298841b73fa30a77a3ca3, type: 2}
-        waitForNarration: 0
-        delayAfter: 0
 --- !u!212 &457038900
 SpriteRenderer:
   serializedVersion: 2
@@ -4634,7 +4267,6 @@ GameObject:
   - component: {fileID: 466896985}
   - component: {fileID: 466896987}
   - component: {fileID: 466896986}
-  - component: {fileID: 466896984}
   m_Layer: 0
   m_Name: Room HUD Canvas
   m_TagString: Untagged
@@ -4642,25 +4274,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &466896984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 466896983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6effc5fd8cc0664881c943355ad4d2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.ControlSHudController
-  canvas: {fileID: 466896985}
-  objectiveText: {fileID: 1269533382}
-  promptText: {fileID: 1430568520}
-  messageText: {fileID: 1908866677}
-  messagePanel: {fileID: 823452111}
-  glitchOverlay: {fileID: 1615665285}
-  glitchStripes: {fileID: 1238038390}
 --- !u!223 &466896985
 Canvas:
   m_ObjectHideFlags: 0
@@ -5488,8 +5101,6 @@ GameObject:
   - component: {fileID: 531117740}
   - component: {fileID: 531117739}
   - component: {fileID: 531117738}
-  - component: {fileID: 531117735}
-  - component: {fileID: 531117736}
   m_Layer: 0
   m_Name: Window - Photo
   m_TagString: Untagged
@@ -5497,53 +5108,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &531117735
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 531117734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e9c33d226f68564dbc3f329fcfd351f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopWindow
-  root: {fileID: 531117737}
-  closeButton: {fileID: 1263727717}
-  openTone: 390
-  onOpened:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 531117736}
-        m_TargetAssemblyTypeName: ControlS.PhotoDesktopWindow, Assembly-CSharp
-        m_MethodName: Refresh
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &531117736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 531117734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: caf9564b8555c844d8bfbccc66577b80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.PhotoDesktopWindow
-  brightness: {fileID: 1684249853}
-  preview: {fileID: 1610803459}
-  silhouette: {fileID: 1738418954}
-  clue: {fileID: 1355834860}
-  label: {fileID: 1668245130}
 --- !u!224 &531117737
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5972,8 +5536,6 @@ GameObject:
   - component: {fileID: 575353366}
   - component: {fileID: 575353365}
   - component: {fileID: 575353364}
-  - component: {fileID: 575353361}
-  - component: {fileID: 575353362}
   m_Layer: 0
   m_Name: Window - Recovery
   m_TagString: Untagged
@@ -5981,54 +5543,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &575353361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 575353360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e9c33d226f68564dbc3f329fcfd351f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopWindow
-  root: {fileID: 575353363}
-  closeButton: {fileID: 1081632225}
-  openTone: 460
-  onOpened:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 575353362}
-        m_TargetAssemblyTypeName: ControlS.RecoveryDesktopWindow, Assembly-CSharp
-        m_MethodName: Refresh
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &575353362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 575353360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0904f3de80ae154fb34c171e5a50cf2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.RecoveryDesktopWindow
-  lockedPanel: {fileID: 2098527591}
-  waitingPanel: {fileID: 251187158}
-  repairPanel: {fileID: 140473351}
-  completePanel: {fileID: 254168819}
-  passwordInput: {fileID: 2098234760}
-  fileNameInput: {fileID: 989408467}
 --- !u!224 &575353363
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6517,19 +6031,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 611787217}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 141074642}
-        m_TargetAssemblyTypeName: ControlS.ArchiveDesktopWindow, Assembly-CSharp
-        m_MethodName: PushFragment
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 3
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &611787217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7451,7 +6953,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 649365907}
-  - component: {fileID: 649365906}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -7459,23 +6960,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &649365906
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 649365905}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6977a3fbec9273349ad2ebb43e68e861, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.RoomSceneView
-  floor: {fileID: 1727887369}
-  lampGlow:
-  - {fileID: 366437555}
-  restoredPhoto: {fileID: 1491538332}
-  player: {fileID: 1804762093}
 --- !u!4 &649365907
 Transform:
   m_ObjectHideFlags: 0
@@ -7897,7 +7381,6 @@ GameObject:
   m_Component:
   - component: {fileID: 697457730}
   - component: {fileID: 697457732}
-  - component: {fileID: 697457731}
   m_Layer: 0
   m_Name: Stopped Clock
   m_TagString: Untagged
@@ -7920,125 +7403,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 742370764}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &697457731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 697457729}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39824634f7f673a49aea3c3a6c8b3a11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.RoomInteractable
-  kind: 1
-  prompt: "\uBA48\uCD98 \uC2DC\uACC4 \uC870\uC0AC"
-  radius: 1.55
-  rules:
-  - label: "\uCC98\uC74C \uC870\uC0AC"
-    conditions:
-    - rid: 5090045368784388129
-    actions:
-    - rid: 5090045368784388130
-    - rid: 5090045368784388131
-    stopAfterExecution: 1
-    executeOnce: 0
-  - label: "\uBE44\uBC00\uBC88\uD638 \uD574\uC81C \uD6C4 \uD0A4\uCEA1 \uD68C\uC218"
-    conditions:
-    - rid: 5090045368784388132
-    - rid: 5090045368784388133
-    actions:
-    - rid: 5090045368784388134
-    - rid: 5090045368784388135
-    - rid: 5090045368784388136
-    stopAfterExecution: 1
-    executeOnce: 0
-  - label: "\uD0A4\uCEA1 \uD68C\uC218 \uD6C4"
-    conditions:
-    - rid: 5090045368784388137
-    actions:
-    - rid: 5090045368784388138
-    stopAfterExecution: 1
-    executeOnce: 0
-  - label: "\uBE44\uBC00\uBC88\uD638 \uD78C\uD2B8"
-    conditions: []
-    actions:
-    - rid: 5090045368784388139
-    stopAfterExecution: 1
-    executeOnce: 0
-  interactionNarration: {fileID: 11400000, guid: 7bcbc0bc2272cf047bdcd3c7bb93c1e7, type: 2}
-  interactionUI: {fileID: 0}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388129
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 0
-        expectedValue: 0
-    - rid: 5090045368784388130
-      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        narration: {fileID: 11400000, guid: 7bcbc0bc2272cf047bdcd3c7bb93c1e7, type: 2}
-        waitForNarration: 0
-        delayAfter: 0
-    - rid: 5090045368784388131
-      type: {class: SetControlSFlagAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 0
-        value: 1
-    - rid: 5090045368784388132
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 1
-        expectedValue: 1
-    - rid: 5090045368784388133
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 2
-        expectedValue: 0
-    - rid: 5090045368784388134
-      type: {class: SetControlSFlagAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 2
-        value: 1
-    - rid: 5090045368784388135
-      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        narration: {fileID: 11400000, guid: 4470940e4b8005e4982d16beb5cad364, type: 2}
-        waitForNarration: 0
-        delayAfter: 0
-    - rid: 5090045368784388136
-      type: {class: RequestGlitchAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        strength: 0.22
-    - rid: 5090045368784388137
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 2
-        expectedValue: 1
-    - rid: 5090045368784388138
-      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        narration: {fileID: 11400000, guid: d64ebee1e25235547bd5efda8b5e1024, type: 2}
-        waitForNarration: 0
-        delayAfter: 0
-    - rid: 5090045368784388139
-      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        narration: {fileID: 11400000, guid: 90ea71cff8d05cf40912ae5868703df4, type: 2}
-        waitForNarration: 0
-        delayAfter: 0
 --- !u!212 &697457732
 SpriteRenderer:
   serializedVersion: 2
@@ -8328,7 +7692,6 @@ GameObject:
   - component: {fileID: 708804676}
   - component: {fileID: 708804679}
   - component: {fileID: 708804678}
-  - component: {fileID: 708804677}
   m_Layer: 0
   m_Name: Title Bar
   m_TagString: Untagged
@@ -8357,20 +7720,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -24}
   m_SizeDelta: {x: 0, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &708804677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 708804675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223658bf40016e4449c5fc8938a6d8a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.WindowDragHandle
-  target: {fileID: 531117737}
-  canvas: {fileID: 141603778}
 --- !u!114 &708804678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8455,8 +7804,6 @@ GameObject:
   - component: {fileID: 744925720}
   - component: {fileID: 744925719}
   - component: {fileID: 744925718}
-  - component: {fileID: 744925715}
-  - component: {fileID: 744925716}
   m_Layer: 0
   m_Name: Window - Recycle Bin
   m_TagString: Untagged
@@ -8464,51 +7811,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &744925715
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744925714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e9c33d226f68564dbc3f329fcfd351f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopWindow
-  root: {fileID: 744925717}
-  closeButton: {fileID: 1967716853}
-  openTone: 330
-  onOpened:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 744925716}
-        m_TargetAssemblyTypeName: ControlS.RecycleBinDesktopWindow, Assembly-CSharp
-        m_MethodName: Refresh
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &744925716
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744925714}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a7db7597d1b68fa46bb8a32901535052, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.RecycleBinDesktopWindow
-  info: {fileID: 1840095696}
-  fileList: {fileID: 1969982813}
-  emptyPanel: {fileID: 1095212148}
 --- !u!224 &744925717
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8740,19 +8042,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 773939772}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 141074642}
-        m_TargetAssemblyTypeName: ControlS.ArchiveDesktopWindow, Assembly-CSharp
-        m_MethodName: PushFragment
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 2
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &773939772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8836,7 +8126,6 @@ GameObject:
   - component: {fileID: 778547614}
   - component: {fileID: 778547617}
   - component: {fileID: 778547616}
-  - component: {fileID: 778547615}
   m_Layer: 0
   m_Name: Title Bar
   m_TagString: Untagged
@@ -8865,20 +8154,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -24}
   m_SizeDelta: {x: 0, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &778547615
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 778547613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223658bf40016e4449c5fc8938a6d8a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.WindowDragHandle
-  target: {fileID: 141074643}
-  canvas: {fileID: 141603778}
 --- !u!114 &778547616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9656,7 +8931,6 @@ GameObject:
   - component: {fileID: 856833672}
   - component: {fileID: 856833671}
   - component: {fileID: 856833670}
-  - component: {fileID: 856833668}
   m_Layer: 0
   m_Name: Window - README
   m_TagString: Untagged
@@ -9664,24 +8938,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &856833668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 856833667}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e9c33d226f68564dbc3f329fcfd351f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopWindow
-  root: {fileID: 856833669}
-  closeButton: {fileID: 937416980}
-  openTone: 600
-  onOpened:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!224 &856833669
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9768,8 +9024,6 @@ GameObject:
   - component: {fileID: 859382587}
   - component: {fileID: 859382586}
   - component: {fileID: 859382585}
-  - component: {fileID: 859382582}
-  - component: {fileID: 859382584}
   m_Layer: 0
   m_Name: Window - Recovered
   m_TagString: Untagged
@@ -9777,24 +9031,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &859382582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 859382581}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e9c33d226f68564dbc3f329fcfd351f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopWindow
-  root: {fileID: 859382583}
-  closeButton: {fileID: 1875475383}
-  openTone: 180
-  onOpened:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!224 &859382583
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9816,20 +9052,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 850, y: 580}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &859382584
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 859382581}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3e2f04432ab6f0459a42773227eda0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.RecoveredDesktopWindow
-  window: {fileID: 859382582}
-  endingSequence: {fileID: 380377980}
 --- !u!114 &859382585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10182,19 +9404,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 877788656}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 141074641}
-        m_TargetAssemblyTypeName: ControlS.DesktopWindow, Assembly-CSharp
-        m_MethodName: Close
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &877788656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10695,7 +9905,6 @@ GameObject:
   - component: {fileID: 930809267}
   - component: {fileID: 930809270}
   - component: {fileID: 930809269}
-  - component: {fileID: 930809268}
   m_Layer: 0
   m_Name: Title Bar
   m_TagString: Untagged
@@ -10724,20 +9933,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -24}
   m_SizeDelta: {x: 0, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &930809268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 930809266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223658bf40016e4449c5fc8938a6d8a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.WindowDragHandle
-  target: {fileID: 744925717}
-  canvas: {fileID: 141603778}
 --- !u!114 &930809269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10838,19 +10033,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 937416981}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 856833668}
-        m_TargetAssemblyTypeName: ControlS.DesktopWindow, Assembly-CSharp
-        m_MethodName: Close
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &937416981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11857,7 +11040,6 @@ GameObject:
   - component: {fileID: 1029963298}
   - component: {fileID: 1029963297}
   - component: {fileID: 1029963296}
-  - component: {fileID: 1029963294}
   m_Layer: 0
   m_Name: Icon ARCHIVE
   m_TagString: Untagged
@@ -11865,35 +11047,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1029963294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1029963293}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c9bba3626e9d8f4c824b0db9dd70a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopShortcut
-  button: {fileID: 1029963296}
-  label: {fileID: 522661213}
-  visibilityConditions: []
-  rules:
-  - label: "\uCC3D \uC5F4\uAE30"
-    conditions: []
-    actions:
-    - rid: 5090045368784388118
-    stopAfterExecution: 1
-    executeOnce: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388118
-      type: {class: OpenDesktopWindowAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        window: {fileID: 141074641}
 --- !u!224 &1029963295
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11957,19 +11110,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1029963297}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1029963294}
-        m_TargetAssemblyTypeName: ControlS.DesktopShortcut, Assembly-CSharp
-        m_MethodName: Execute
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1029963297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12090,19 +11231,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1037113188}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 575353362}
-        m_TargetAssemblyTypeName: ControlS.RecoveryDesktopWindow, Assembly-CSharp
-        m_MethodName: SubmitRepairName
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1037113188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12665,7 +11794,6 @@ GameObject:
   - component: {fileID: 1076302560}
   - component: {fileID: 1076302559}
   - component: {fileID: 1076302558}
-  - component: {fileID: 1076302556}
   m_Layer: 0
   m_Name: Icon README.txt
   m_TagString: Untagged
@@ -12673,35 +11801,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1076302556
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1076302555}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c9bba3626e9d8f4c824b0db9dd70a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopShortcut
-  button: {fileID: 1076302558}
-  label: {fileID: 703542642}
-  visibilityConditions: []
-  rules:
-  - label: "\uCC3D \uC5F4\uAE30"
-    conditions: []
-    actions:
-    - rid: 5090045368784388122
-    stopAfterExecution: 1
-    executeOnce: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388122
-      type: {class: OpenDesktopWindowAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        window: {fileID: 856833668}
 --- !u!224 &1076302557
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12765,19 +11864,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1076302559}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1076302556}
-        m_TargetAssemblyTypeName: ControlS.DesktopShortcut, Assembly-CSharp
-        m_MethodName: Execute
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1076302559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12878,19 +11965,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1081632226}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 575353361}
-        m_TargetAssemblyTypeName: ControlS.DesktopWindow, Assembly-CSharp
-        m_MethodName: Close
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1081632226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13810,7 +12885,6 @@ GameObject:
   - component: {fileID: 1151818249}
   - component: {fileID: 1151818252}
   - component: {fileID: 1151818251}
-  - component: {fileID: 1151818250}
   m_Layer: 0
   m_Name: Title Bar
   m_TagString: Untagged
@@ -13839,20 +12913,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -24}
   m_SizeDelta: {x: 0, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1151818250
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1151818248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223658bf40016e4449c5fc8938a6d8a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.WindowDragHandle
-  target: {fileID: 856833669}
-  canvas: {fileID: 141603778}
 --- !u!114 &1151818251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14594,19 +13654,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1263727718}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 531117735}
-        m_TargetAssemblyTypeName: ControlS.DesktopWindow, Assembly-CSharp
-        m_MethodName: Close
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1263727718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14958,19 +14006,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1301372715}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 380377983}
-        m_TargetAssemblyTypeName: ControlS.DrawerKeypadContent, Assembly-CSharp
-        m_MethodName: Close
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1301372715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15813,7 +14849,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1430900223}
   - component: {fileID: 1430900225}
-  - component: {fileID: 1430900224}
   m_Layer: 0
   m_Name: Computer
   m_TagString: Untagged
@@ -15836,45 +14871,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1261367054}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1430900224
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1430900222}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39824634f7f673a49aea3c3a6c8b3a11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.RoomInteractable
-  kind: 0
-  prompt: "\uCEF4\uD4E8\uD130 \uC0AC\uC6A9"
-  radius: 1.75
-  rules:
-  - label: "\uCEF4\uD4E8\uD130 \uC5F4\uAE30"
-    conditions: []
-    actions:
-    - rid: 5090045368784388140
-    stopAfterExecution: 1
-    executeOnce: 0
-  interactionNarration: {fileID: 0}
-  interactionUI: {fileID: 913468116}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388140
-      type: {class: OpenDesktopAction, ns: ControlS, asm: Assembly-CSharp}
-      data: 
 --- !u!212 &1430900225
 SpriteRenderer:
   serializedVersion: 2
@@ -16170,19 +15166,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1460078887}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 575353362}
-        m_TargetAssemblyTypeName: ControlS.RecoveryDesktopWindow, Assembly-CSharp
-        m_MethodName: SubmitPassword
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1460078887
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16231,7 +15215,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1491538335}
   - component: {fileID: 1491538334}
-  - component: {fileID: 1491538333}
   m_Layer: 0
   m_Name: Restored Family Photo
   m_TagString: Untagged
@@ -16239,84 +15222,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1491538333
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1491538332}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39824634f7f673a49aea3c3a6c8b3a11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.RoomInteractable
-  kind: 3
-  prompt: "\uBCF5\uC6D0\uB41C \uC0AC\uC9C4 \uC870\uC0AC"
-  radius: 1.55
-  rules:
-  - label: "\uBCF5\uC6D0 \uD6C4 \uCC98\uC74C \uC870\uC0AC"
-    conditions:
-    - rid: 5090045368784388110
-    - rid: 5090045368784388111
-    actions:
-    - rid: 5090045368784388112
-    - rid: 5090045368784388113
-    stopAfterExecution: 1
-    executeOnce: 0
-  - label: "\uB2E4\uC2DC \uC870\uC0AC"
-    conditions:
-    - rid: 5090045368784388114
-    actions:
-    - rid: 5090045368784388115
-    stopAfterExecution: 1
-    executeOnce: 0
-  interactionNarration: {fileID: 11400000, guid: 11512603b6ec16649b142d3b229013da, type: 2}
-  interactionUI: {fileID: 0}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388110
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 6
-        expectedValue: 1
-    - rid: 5090045368784388111
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 7
-        expectedValue: 0
-    - rid: 5090045368784388112
-      type: {class: SetControlSFlagAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 7
-        value: 1
-    - rid: 5090045368784388113
-      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        narration: {fileID: 11400000, guid: 11512603b6ec16649b142d3b229013da, type: 2}
-        waitForNarration: 0
-        delayAfter: 0
-    - rid: 5090045368784388114
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 6
-        expectedValue: 1
-    - rid: 5090045368784388115
-      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        narration: {fileID: 11400000, guid: 174111c9fcaefb84cb5e4fbb0686669f, type: 2}
-        waitForNarration: 0
-        delayAfter: 0
 --- !u!212 &1491538334
 SpriteRenderer:
   serializedVersion: 2
@@ -17265,19 +16170,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1586995171}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 859382584}
-        m_TargetAssemblyTypeName: ControlS.RecoveredDesktopWindow, Assembly-CSharp
-        m_MethodName: Commit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1586995171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17558,7 +16451,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1665338121}
   - component: {fileID: 1665338123}
-  - component: {fileID: 1665338122}
   m_Layer: 0
   m_Name: Locked Drawer
   m_TagString: Untagged
@@ -17581,65 +16473,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1523317861}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1665338122
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1665338120}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39824634f7f673a49aea3c3a6c8b3a11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.RoomInteractable
-  kind: 2
-  prompt: "\uC7A0\uAE34 \uC11C\uB78D \uD655\uC778"
-  radius: 1.7
-  rules:
-  - label: "\uC774\uBBF8 \uC5F4\uB9B0 \uC11C\uB78D"
-    conditions:
-    - rid: 5090045368784388126
-    actions:
-    - rid: 5090045368784388127
-    stopAfterExecution: 1
-    executeOnce: 0
-  - label: "\uD0A4\uD328\uB4DC \uC5F4\uAE30"
-    conditions: []
-    actions:
-    - rid: 5090045368784388128
-    stopAfterExecution: 1
-    executeOnce: 0
-  interactionNarration: {fileID: 0}
-  interactionUI: {fileID: 685602443}
-  onInteract:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractNarration:
-    m_PersistentCalls:
-      m_Calls: []
-  onInteractGameObject:
-    m_PersistentCalls:
-      m_Calls: []
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388126
-      type: {class: ControlSFlagCondition, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        flag: 5
-        expectedValue: 1
-    - rid: 5090045368784388127
-      type: {class: ShowNarrationAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        narration: {fileID: 11400000, guid: c6075db0752828e4dab5c4b7e9ca0096, type: 2}
-        waitForNarration: 0
-        delayAfter: 0
-    - rid: 5090045368784388128
-      type: {class: OpenDrawerKeypadAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        drawerKeypad: {fileID: 380377983}
-        uiObject: {fileID: 685602443}
 --- !u!212 &1665338123
 SpriteRenderer:
   serializedVersion: 2
@@ -17789,7 +16622,6 @@ GameObject:
   - component: {fileID: 1672735562}
   - component: {fileID: 1672735565}
   - component: {fileID: 1672735564}
-  - component: {fileID: 1672735563}
   m_Layer: 0
   m_Name: Title Bar
   m_TagString: Untagged
@@ -17818,20 +16650,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -24}
   m_SizeDelta: {x: 0, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1672735563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1672735561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223658bf40016e4449c5fc8938a6d8a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.WindowDragHandle
-  target: {fileID: 859382583}
-  canvas: {fileID: 141603778}
 --- !u!114 &1672735564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17959,19 +16777,7 @@ MonoBehaviour:
   m_Value: 0.08
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 531117736}
-        m_TargetAssemblyTypeName: ControlS.PhotoDesktopWindow, Assembly-CSharp
-        m_MethodName: OnBrightnessChanged
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &1701661832
 GameObject:
   m_ObjectHideFlags: 0
@@ -18315,7 +17121,6 @@ GameObject:
   - component: {fileID: 1804762096}
   - component: {fileID: 1804762095}
   - component: {fileID: 1804762094}
-  - component: {fileID: 1804762093}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -18323,19 +17128,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1804762093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1804762092}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e67938062a21e442ae0859716c0428b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.TopDownPlayer
-  speed: 3.6
 --- !u!70 &1804762094
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -18520,7 +17312,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1835135087}
-  - component: {fileID: 1835135088}
   m_Layer: 0
   m_Name: Virtual Desktop System
   m_TagString: Untagged
@@ -18544,36 +17335,6 @@ Transform:
   - {fileID: 141603777}
   m_Father: {fileID: 141469707}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1835135088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1835135086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5c554c8a54f21941af2579b76034e2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.VirtualDesktop
-  canvas: {fileID: 141603778}
-  desktopRoot: {fileID: 913468117}
-  taskbarClock: {fileID: 1041380066}
-  closeButton: {fileID: 303738633}
-  shortcuts:
-  - {fileID: 1076302556}
-  - {fileID: 1849095340}
-  - {fileID: 71148437}
-  - {fileID: 6795988}
-  - {fileID: 1029963294}
-  - {fileID: 150645820}
-  windows:
-  - {fileID: 856833668}
-  - {fileID: 575353361}
-  - {fileID: 531117735}
-  - {fileID: 744925715}
-  - {fileID: 141074641}
-  - {fileID: 859382582}
 --- !u!1 &1840095693
 GameObject:
   m_ObjectHideFlags: 0
@@ -18666,7 +17427,6 @@ GameObject:
   - component: {fileID: 1849095344}
   - component: {fileID: 1849095343}
   - component: {fileID: 1849095342}
-  - component: {fileID: 1849095340}
   m_Layer: 0
   m_Name: Icon RECOVERY
   m_TagString: Untagged
@@ -18674,35 +17434,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1849095340
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1849095339}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c9bba3626e9d8f4c824b0db9dd70a73, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.DesktopShortcut
-  button: {fileID: 1849095342}
-  label: {fileID: 1400517950}
-  visibilityConditions: []
-  rules:
-  - label: "\uCC3D \uC5F4\uAE30"
-    conditions: []
-    actions:
-    - rid: 5090045368784388121
-    stopAfterExecution: 1
-    executeOnce: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 5090045368784388121
-      type: {class: OpenDesktopWindowAction, ns: ControlS, asm: Assembly-CSharp}
-      data:
-        window: {fileID: 575353361}
 --- !u!224 &1849095341
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18766,19 +17497,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1849095343}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1849095340}
-        m_TargetAssemblyTypeName: ControlS.DesktopShortcut, Assembly-CSharp
-        m_MethodName: Execute
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1849095343
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19125,19 +17844,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1875475384}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 859382582}
-        m_TargetAssemblyTypeName: ControlS.DesktopWindow, Assembly-CSharp
-        m_MethodName: Close
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1875475384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19337,19 +18044,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1967716854}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 744925715}
-        m_TargetAssemblyTypeName: ControlS.DesktopWindow, Assembly-CSharp
-        m_MethodName: Close
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1967716854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19783,19 +18478,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2023040658}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 380377983}
-        m_TargetAssemblyTypeName: ControlS.DrawerKeypadContent, Assembly-CSharp
-        m_MethodName: Submit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2023040658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19845,7 +18528,6 @@ GameObject:
   - component: {fileID: 2075799908}
   - component: {fileID: 2075799911}
   - component: {fileID: 2075799910}
-  - component: {fileID: 2075799909}
   m_Layer: 0
   m_Name: Title Bar
   m_TagString: Untagged
@@ -19874,20 +18556,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -24}
   m_SizeDelta: {x: 0, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2075799909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2075799907}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 223658bf40016e4449c5fc8938a6d8a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ControlS.WindowDragHandle
-  target: {fileID: 575353363}
-  canvas: {fileID: 141603778}
 --- !u!114 &2075799910
 MonoBehaviour:
   m_ObjectHideFlags: 0

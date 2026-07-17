@@ -1,11 +1,8 @@
-using ControlS;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
-using System.Collections;
 
 public class PlayerLightController : MonoBehaviour
 {
-    TopDownPlayer _player;
     Light2D _light;
 
     Color _color = new Color(224f / 255f, 171f / 255f, 98f / 255f, 255f / 255f);    // 옅은 주황색
@@ -71,7 +68,6 @@ public class PlayerLightController : MonoBehaviour
     public void Init()
     {
         Debug.Log("LightController Init");
-        _player = GetComponentInParent<TopDownPlayer>();
         _light = GetComponent<Light2D>();
 
         // 기본값 적용
