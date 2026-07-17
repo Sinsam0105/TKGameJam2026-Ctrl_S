@@ -1,13 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+using Sinsam.SingletonSystem;
 
 public interface ILoader<Key, Value>
 {
     Dictionary<Key, Value> MakeDict();
 }
 
-public class JsonDataManager
+public sealed class JsonDataManager : Singleton<JsonDataManager>
 {
     public Dictionary<int, SpeechBubbleData> SpeechBubbleDataDic { get; private set; } = new Dictionary<int, SpeechBubbleData>();
 

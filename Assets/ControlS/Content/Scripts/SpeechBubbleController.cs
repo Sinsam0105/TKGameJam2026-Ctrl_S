@@ -118,9 +118,8 @@ public class SpeechBubbleController : MonoBehaviour
 
         #region TODO: 테스트 용도이다. 제거 필요
         {
-            JsonDataManager jsonData = new JsonDataManager();
-            jsonData.Init();
-            Data = jsonData.SpeechBubbleDataDic[1001];
+            JsonDataManager.Instance.Init();
+            Data = JsonDataManager.Instance.SpeechBubbleDataDic[1001];
             StartCoroutine(CoShow(Data.Bubble));
 
             //StartCoroutine(CoShow(new List<SpeechBubbleInfo>
