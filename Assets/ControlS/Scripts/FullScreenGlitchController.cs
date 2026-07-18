@@ -174,10 +174,14 @@ public class FullScreenGlitchController : MonoBehaviour
     }
 
     // 에디터에서 플레이 모드가 끝나면 글리치 강도 초기화
+    // Stop()으로 실행 중인 코루틴을 먼저 멈추지 않으면, 코루틴이 한 번 더 틱하며 SetIntensity(0f)를 덮어쓴다 
     void OnPlayModeStateChanged(PlayModeStateChange state)
     {
         if (state == PlayModeStateChange.ExitingPlayMode)
+        {
+            Stop();
             SetIntensity(0f);
+        }
     }
 #endif
 }
