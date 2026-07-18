@@ -10,6 +10,7 @@ public class PuzzleAction
     public BaseWindowedUI OpeningUI;
     public List<string> NarrationID;
     public List<GameCondition> ChagingConditions;
+    public CollectionType CollectionType;
 
     public bool OnAction()
     {
@@ -31,6 +32,10 @@ public class PuzzleAction
         foreach (var changingCondition in ChagingConditions)
         {
             GameConditionManager.Instance.SetCondition(changingCondition);
+        }
+        if (CollectionType != CollectionType.None)
+        {
+            CollectionSystem.Instance.AddCollection(CollectionType);
         }
         return true;
     }
