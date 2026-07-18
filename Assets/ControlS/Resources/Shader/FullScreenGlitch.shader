@@ -1,102 +1,141 @@
 Shader "FullScreenGlitch"
 {
-    // 쉐이더가 적용된 머테리얼은 Inspector에서 속성 값 조정 가능
     Properties
     {
-        _Intensity ("Intensity", Range(0, 1)) = 0   // 글리치 강도. 0이면 정상 화면이고, 1에 가까울수록 글리치가 강해진다
-        _RGBSplit ("RGB Split", Range(0, 0.05)) = 0.008 // RGB 색상 분리 거리
-        _HorizontalJump ("Horizontal Jump", Range(0, 0.2)) = 0.05   // 화면이 좌우로 밀리는 거리
-        _BlockCount ("Block Count", Range(1, 200)) = 80 // 화면을 나누는 가로 구간 수
-        _NoiseAmount ("Noise Amount", Range(0, 1)) = 0.15
-        _Speed ("Speed", Range(0, 30)) = 15
+        _Intensity ("Intensity", Range(0, 1)) = 0
+
+        [Header(Glitch Settings)]
+        _RgbSplit ("RGB Split", Range(0, 0.05)) = 0.012
+        _Jitter ("Line Jitter", Range(0, 0.1)) = 0.02
+        _BlockGlitch ("Block Glitch", Range(0, 0.1)) = 0.03
+        _ScanlineStrength ("Scanline Strength", Range(0, 1)) = 0.15
+        _NoiseStrength ("Noise Strength", Range(0, 1)) = 0.01
     }
 
     SubShader
     {
         Tags
         {
-            "RenderType" = "Opaque" // 불투명한 화면 처리
-            "RenderPipeline" = "UniversalPipeline"  // URP용 셰이더
+            "RenderType" = "Opaque"
+            "RenderPipeline" = "UniversalPipeline"
         }
 
-        ZWrite Off  // 이미 그려진 화면 위에 덮어씌우므로 z값을 새로 기록할 필요가 없다
-        Cull Off    // 폴리곤의 앞면이나 뒷면을 제거하지 않는다
+        Cull Off
+        ZWrite Off
+        ZTest Always
 
         Pass
         {
-            Name "FullScreenGlitch"
+            Name "FullScreenGlitchPass"
 
             HLSLPROGRAM
 
+            #pragma target 3.0
             #pragma vertex Vert
-            #pragma fragment Frag   // 화면의 각 픽셀마다 따로 실행하여 각 픽셀 색상을 계산
+            #pragma fragment Frag
 
+            // 반드시 Blit.hlsl보다 먼저 포함해야 한다.
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
 
             float _Intensity;
-            float _RGBSplit;
-            float _HorizontalJump;
-            float _BlockCount;
-            float _NoiseAmount;
-            float _Speed;
+            float _RgbSplit;
+            float _Jitter;
+            float _BlockGlitch;
+            float _ScanlineStrength;
+            float _NoiseStrength;
 
-            float Random(float2 value)
+            // 시드값 하나로 0~1 사이 의사난수를 만드는 해시 함수 (텍스처/노이즈 없이 GPU에서 값싸게 랜덤을 얻는 용도)
+            float Hash11(float value)
             {
-                return frac(sin(dot(value, float2(12.9898, 78.233))) * 43758.5453); // 입력값 → 0 ~ 1
+                value = frac(value * 0.1031);
+                value *= value + 33.33;
+                value *= value + value;
+                return frac(value);
             }
 
-            // 화면의 각 픽셀마다 따로 실행하여 각 픽셀 색상을 계산
+            // 2차원 좌표를 받는 해시 함수. uv나 (row, time) 같은 쌍을 랜덤 시드로 쓸 때 사용
+            float Hash21(float2 value)
+            {
+                float3 value3 = frac(float3(value.xyx) * 0.1031);
+                value3 += dot(value3, value3.yzx + 33.33);
+                return frac((value3.x + value3.y) * value3.z);
+            }
+
+            float2 GetBlockOffset(float2 uv, float time)
+            {
+                // 화면을 가로 18줄 블록으로 나누고, 12fps 주기로 블록 번호를 바꿔 "칸별로 끊겨서 밀리는" 느낌을 만든다.
+                float2 blockCell = floor(float2(uv.y * 18.0, time * 12.0));
+                // 매 블록마다 18% 확률로만 글리치가 발동하도록 트리거를 켠다.
+                float trigger = step(0.82, Hash21(blockCell));
+                float shift = (Hash21(blockCell + 13.37) - 0.5) * _BlockGlitch * _Intensity * 2.0;
+                return float2(shift * trigger, 0.0);
+            }
+
             half4 Frag(Varyings input) : SV_Target
             {
-                float2 uv = input.texcoord; // 화면에서 현재 픽셀 위치
+                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
 
-                // 시간 값을 계단식으로 만들어 프레임마다 불규칙하게 변하게 한다
-                float glitchTime = floor(_Time.y * _Speed); // 경과 시간 * 속도
+                float2 uv = input.texcoord;
+                float time = _Time.y;
 
-                // 화면을 가로줄 블록으로 나눈다
-                float blockY = floor(uv.y * _BlockCount);
+                // 0.125초(8fps)마다 8% 확률로 글리치 강도를 순간 증폭시킨다 (버스트 노이즈처럼 화면이 튀는 순간을 만든다).
+                float burstSeed = floor(time * 8.0);
+                float burst = step(0.92, Hash11(burstSeed));
+                float burstMultiplier = lerp(1.0, 1.75, burst);
 
-                // 각 가로 블록마다 난수를 생성한다
-                float blockNoise = Random(float2(blockY, glitchTime));
+                // uv.y를 240줄로 양자화해 같은 줄에 속한 픽셀들이 같은 양만큼 가로로 밀리게 한다 (한 줄씩 어긋나는 글리치 라인).
+                float lineIndex = floor(uv.y * 240.0 + time * 30.0);
+                float lineRandom = Hash11(lineIndex);
+                float jitterMask = step(0.65, lineRandom);
+                float lineShift = (Hash11(lineIndex + 17.0) - 0.5) * _Jitter * _Intensity * burstMultiplier;
+                float2 glitchOffset = float2(lineShift * jitterMask, 0.0);
 
-                // 일부 가로줄만 좌우로 크게 밀어낸다 => 현재 화면 픽셀에 원래 자기 위치의 색을 그리지 않고, 조금 옆에 있는 원본 화면의 색을 가져와 그린다
-                float2 distortedUV = uv;    // 기준 위치. 원본 UV를 글리치용으로 변형하기 위한 좌표
-                float isActiveBlock = step(0.82, blockNoise);   // blockNoise가 0.82 이상인 가로줄만 활성화 (true, false)
-                float horizontalOffset = (blockNoise - 0.5) * _HorizontalJump * _Intensity * isActiveBlock;
-                distortedUV.x += horizontalOffset;
+                // 큰 블록 단위 밀림 추가
+                glitchOffset += GetBlockOffset(uv, time);
 
-                // 글리치로 UV 위치를 움직였을 때 화면 밖으로 나가지 않도록 한다
-                distortedUV = saturate(distortedUV);    // 0 ~ 1 사이로 제한
+                // 3% 확률로 화면 전체가 세로로 한 번 크게 찢어지도록 한다 (드문 강한 글리치 연출).
+                float verticalTear = step(0.97, Hash11(floor(time * 5.0)));
+                float verticalShift = (Hash11(floor(time * 60.0)) - 0.5) * 0.015 * _Intensity * verticalTear;
+                glitchOffset.y += verticalShift;
 
-                // RGB 채널 분리 거리. 분리하지 않으면 세 색이 정확히 겹쳐서 원래 색으로 보인다
-                float splitNoise = Random(float2(glitchTime, blockY + 31.7));
-                float rgbOffset = (splitNoise * 2.0 - 1.0) * _RGBSplit * _Intensity;
-                float2 redUV = saturate(distortedUV + float2(rgbOffset, 0));    // 기준보다 오른쪽
-                float2 blueUV = saturate(distortedUV - float2(rgbOffset, 0));   // 기준보다 왼쪽
+                float2 baseUV = saturate(uv + glitchOffset);
 
-                // 렌더링된 원본 화면에서 특정 위치의 색상을 가져온다
-                half red = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, redUV).r;  
-                half green = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, distortedUV).g;
-                half blue = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, blueUV).b;
-                half4 original = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, uv);
+                // RGB 채널을 서로 다른 UV에서 샘플링해 색수차(chromatic aberration) 느낌의 RGB 분리를 만든다.
+                float chromaticOffset = _RgbSplit * _Intensity * burstMultiplier;
+                float2 redOffset = float2(chromaticOffset, 0.0);
+                float red = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, saturate(baseUV + redOffset)).r;
+                float green = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, baseUV).g;
+                float blue = SAMPLE_TEXTURE2D_X(_BlitTexture, sampler_LinearClamp, saturate(baseUV - redOffset)).b;
+                half4 color = half4(red, green, blue, 1.0);
 
-                // 서로 다른 위치의 R, G, B를 합쳐서 색상 적용. 물체 가장자리에 빨강과 파랑이 벌어지는 효과
-                half4 glitchColor = half4(red, green, blue, original.a);
+                // CRT 스캔라인
+                // 실제 화면 해상도(_ScreenParams.y)에 비례한 주파수를 쓰면 픽셀 그리드와 간섭(모아레)이 생겨
+                // 두꺼운 밝은 띠가 흐르는 것처럼 보이므로, 해상도와 무관한 고정 주파수를 사용한다.
+                float scanValue = sin((uv.y + time * 0.5) * 480.0);
+                float scanline = 1.0 - ((scanValue * 0.5 + 0.5) * _ScanlineStrength * _Intensity);
+                color.rgb *= scanline;
 
-                // 화면 전체에 미세한 노이즈를 추가한다
-                float pixelNoise = Random(floor(uv * _ScreenParams.xy * 0.25) + glitchTime);    // UV 좌표 -> 실제 화면 픽셀 단위
-                glitchColor.rgb += (pixelNoise - 0.5) * _NoiseAmount * _Intensity;
+                // 화면 노이즈: 픽셀 좌표 + 60fps로 바뀌는 시드로 매 프레임 다른 백색 노이즈를 만든다.
+                float noise = Hash21(uv * _ScreenParams.xy + floor(time * 60.0)) - 0.5;
+                noise *= 2.0;
+                color.rgb += noise * _NoiseStrength * _Intensity;
 
-                // 가는 수평 스캔라인
-                float scanLine = sin(uv.y * _ScreenParams.y * 1.5);
-                glitchColor.rgb -= scanLine * 0.025 * _Intensity;
+                // 순간적으로 나타나는 밝은 가로 간섭선: 14fps 주기로 랜덤한 세로 위치(stripeY)에 얇은 밝은 줄을 띄운다.
+                float stripeSeed = floor(time * 14.0);
+                float stripeY = Hash11(stripeSeed);
+                float stripeDistance = abs(uv.y - stripeY);
+                float stripe = 1.0 - smoothstep(0.0, 0.03, stripeDistance);
+                color.rgb += stripe * 0.12 * _Intensity * burst;
 
-                // 원본 화면과 글리치 화면을 Intensity만큼 섞는다
-                return lerp(original, glitchColor, _Intensity);
+                color.rgb = saturate(color.rgb);
+
+                return color;
             }
 
             ENDHLSL
         }
     }
+
+    FallBack Off
 }
