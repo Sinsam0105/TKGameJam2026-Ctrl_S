@@ -16,6 +16,16 @@ public class CollectionSystem : MonoSingleton<CollectionSystem>
 
     public void AddCollection(CollectionType type)
     {
+        if (type == CollectionType.None)
+        {
+            Debug.LogWarning("Cannot add collection of type None.");
+            return;
+        }
+        if (type != CurrentCollection)
+        {
+            Debug.LogWarning($"Current collection type is {CurrentCollection}, but tried to add {type}. Ignoring.");
+            return;
+        }
         if (!CurrentCollectionCounts.ContainsKey(type))
         {
             CurrentCollectionCounts[type] = 0;
@@ -33,6 +43,18 @@ public class CollectionSystem : MonoSingleton<CollectionSystem>
                 Debug.Log($"Collection of type {type} is complete!");
                 CollectionCompletion(type);
             }
+        }
+    }
+    public void StartCollection(CollectionType type, int neededCount)
+    {
+        CurrentCollection = type;
+        if (!NeededCollectionCounts.ContainsKey(type))
+        {
+            NeededCollectionCounts[type] = neededCount; // Set the needed count
+        }
+        if (!CurrentCollectionCounts.ContainsKey(type))
+        {
+            CurrentCollectionCounts[type] = 0; // Initialize current count if not set
         }
     }
     public void CollectionCompletion(CollectionType type)

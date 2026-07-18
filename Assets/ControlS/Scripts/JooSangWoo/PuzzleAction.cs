@@ -10,7 +10,9 @@ public class PuzzleAction
     public BaseWindowedUI OpeningUI;
     public List<string> NarrationID;
     public List<GameCondition> ChagingConditions;
-    public CollectionType CollectionType;
+    public CollectionType CollectCollectionType;
+    public CollectionType StartCollectionType;
+    public int NeededCollectionCount;
 
     public bool OnAction()
     {
@@ -33,9 +35,13 @@ public class PuzzleAction
         {
             GameConditionManager.Instance.SetCondition(changingCondition);
         }
-        if (CollectionType != CollectionType.None)
+        if (CollectCollectionType != CollectionType.None)
         {
-            CollectionSystem.Instance.AddCollection(CollectionType);
+            CollectionSystem.Instance.AddCollection(CollectCollectionType);
+        }
+        if (StartCollectionType != CollectionType.None)
+        {
+            CollectionSystem.Instance.StartCollection(StartCollectionType, NeededCollectionCount);
         }
         return true;
     }
