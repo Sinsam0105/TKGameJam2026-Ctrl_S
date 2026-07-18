@@ -1,4 +1,3 @@
-using ControlS;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -7,6 +6,8 @@ public class LightController : MonoBehaviour
 {
     public Transform Owner { get; protected set; }
     protected Light2D _light;
+
+    protected Coroutine _coFlicker = null;
 
     #region Light2D 속성
     protected Color _defaultColor;
@@ -84,13 +85,24 @@ public class LightController : MonoBehaviour
         Falloff = _defaultFalloff;
     }
 
-    public void TurnOn()
+    public void TurnOn(bool flicker = true)
     {
+        if (_coFlicker != null) // 중복 방지
+            return;
+
         gameObject.SetActive(true);
+        if (flicker)
+            _coFlicker = StartCoroutine(CoFlicker());
     }
 
     public void TurnOff()
     {
+        if (_coFlicker != null)
+        {
+            StopCoroutine(_coFlicker);
+            _coFlicker = null;
+        }
+
         gameObject.SetActive(false);
     }
 
@@ -98,7 +110,7 @@ public class LightController : MonoBehaviour
     /// 빛 일렁이는 효과
     /// </summary>
     /// <returns></returns>
-    public IEnumerator CoFlicker()  // TODO: 진행도에 따라 일렁이는 효과 강화 (심리적 공포용)
+    IEnumerator CoFlicker()  // TODO: 진행도에 따라 일렁이는 효과 강화 (심리적 공포용)
     {
         float intensityNoiseOffset = Random.Range(0f, 1000f);
         float radiusNoiseOffset = Random.Range(0f, 1000f);

@@ -1,4 +1,3 @@
-using ControlS;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -27,7 +26,7 @@ public class PlayerLightController : LightController
         // test
         {
             GameObject.Find("Global Light 2D").SetActive(false);
-            StartCoroutine(CoFlicker());
+            TurnOn();
         }
     }
 }
