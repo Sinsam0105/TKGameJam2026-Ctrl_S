@@ -4,24 +4,33 @@ using System.Collections.Generic;
 public class PictureCollector : MonoBehaviour
 {
     [SerializeField]
-    private List<Transform> Pictures;
+    private List<Transform> Pictures = new List<Transform>();
     [SerializeField]
-    private List<Transform> Answers;
+    private List<Transform> Answers = new List<Transform>();
     [SerializeField]
     private float detectionDistance = 5f;
+    [SerializeField]
+    private GameCondition completionCondition = GameCondition.ImagePuzzleCompleted;
+
+    private bool completed;
 
     private void Update()
     {
-        foreach (var picture in Pictures)
+        if (completed || Pictures.Count == 0 || Pictures.Count != Answers.Count)
         {
-            foreach (var answer in Answers)
+            return;
+        }
+
+        for (int i = 0; i < Pictures.Count; i++)
+        {
+            if (!IsWithinDistance(Pictures[i], Answers[i], detectionDistance))
             {
-                if (IsWithinDistance(picture, answer, detectionDistance))
-                {
-                    Debug.Log($"Picture {picture.name} is within {detectionDistance} units of Answer {answer.name}");
-                }
+                return;
             }
         }
+
+        completed = true;
+        GameConditionManager.Instance.SetCondition(completionCondition);
     }
     private bool IsWithinDistance(Transform target1 ,Transform target2, float maxDistance)
     {
