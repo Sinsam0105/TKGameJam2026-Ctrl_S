@@ -41,14 +41,12 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlockCount: 80
-    - _EnableExternalAlpha: 0
-    - _HorizontalJump: 0.05
+    - _BlockGlitch: 0.03
     - _Intensity: 0
-    - _NoiseAmount: 0.15
-    - _RGBSplit: 0.008
-    - _Speed: 15
-    - _ZWrite: 0
+    - _Jitter: 0.02
+    - _NoiseStrength: 0.01
+    - _RgbSplit: 0.012
+    - _ScanlineStrength: 0.15
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
