@@ -9,6 +9,7 @@ public enum CollectionType
 }
 public class CollectionSystem : MonoSingleton<CollectionSystem>
 {
+    public Dictionary<CollectionType, GameCondition> CollectionProgress = new Dictionary<CollectionType, GameCondition>();
     public Dictionary<CollectionType, int> NeededCollectionCounts = new Dictionary<CollectionType, int>();
     public Dictionary<CollectionType, int> CurrentCollectionCounts = new Dictionary<CollectionType, int>();
 
@@ -59,6 +60,6 @@ public class CollectionSystem : MonoSingleton<CollectionSystem>
     }
     public void CollectionCompletion(CollectionType type)
     {
-
+        GameConditionManager.Instance.SetCondition(CollectionProgress[type]);
     }
 }

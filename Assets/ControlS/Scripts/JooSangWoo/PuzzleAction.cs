@@ -29,7 +29,7 @@ public class PuzzleAction
         }
         foreach (var narrationID in NarrationID)
         {
-            //TODO: NarrationManager가  Play 하게
+            //NarrationManager.Instance.StartNarration(narrationID)
         }
         foreach (var changingCondition in ChagingConditions)
         {
