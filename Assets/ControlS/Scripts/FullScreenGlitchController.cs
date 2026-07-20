@@ -24,11 +24,10 @@ public class FullScreenGlitchController : MonoBehaviour
             _material = Resources.Load<Material>($"Material/{name}");
         }
 
-        Debug.Log($"FullScreenGlitchController Init: {_material}");
+        //Debug.Log($"FullScreenGlitchController Init: {_material}");
         Stop();
 
-        // test
-        PlayBurst(1f);
+        //PlayBurst(1f);
         //Play(0.5f, 0.35f);
     }
 
@@ -83,6 +82,9 @@ public class FullScreenGlitchController : MonoBehaviour
     /// </summary>
     public void Stop()
     {
+        SetIntensity(0f);   // 정상 화면
+        // TODO: To 팀장님. 글리치 효과음 정지
+        
         if (_coPlay != null)
         {
             StopCoroutine(_coPlay);
@@ -101,11 +103,12 @@ public class FullScreenGlitchController : MonoBehaviour
         SetIntensity(intensity);
         // TODO: To 팀장님. 나중에 글리치 효과음 넣어주세용 (지지지직)
 
-        if (duration != -1) // -1이면 멈추지 않고 무한 재생
+        // duration초 동안 글리치 효과 재생
+        // -1이면 멈추지 않고 무한 재생
+        if (duration != -1)
         {
             yield return new WaitForSeconds(duration);
-            SetIntensity(0f);   // 정상 화면
-            _coPlay = null;
+            Stop();
         }
     }
 
@@ -120,9 +123,13 @@ public class FullScreenGlitchController : MonoBehaviour
             {
                 float minIntensity = Mathf.Min(0.5f, maxIntensity);
                 SetIntensity(Random.Range(minIntensity, maxIntensity));
+                // TODO: To 팀장님. 나중에 글리치 효과음 넣어주세용 (지지지직)
             }
             else
+            {
                 SetIntensity(0f);
+                // TODO: To 팀장님. 글리치 효과음 정지
+            }
 
             yield return new WaitForSeconds(interval);
         }
@@ -143,14 +150,15 @@ public class FullScreenGlitchController : MonoBehaviour
             float minIntensity = Mathf.Min(0.5f, maxIntensity);
 
             SetIntensity(Random.Range(minIntensity, maxIntensity));
+            // TODO: To 팀장님. 나중에 글리치 효과음 넣어주세용 (지지지직)
             yield return new WaitForSeconds(playDuration);
 
             SetIntensity(0f);
+            // TODO: To 팀장님. 글리치 효과음 정지
             yield return new WaitForSeconds(stopDuration);
         }
 
-        SetIntensity(0f);
-        _coPlayBurst = null;
+        Stop();
     }
 
     /// <summary>

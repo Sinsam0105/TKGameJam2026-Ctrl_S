@@ -27,19 +27,18 @@ public class SpeechBubbleController : MonoBehaviour
 
     public void Init()
     {
-        Debug.Log("SpeechBubbleController Init");
+        //Debug.Log("SpeechBubbleController Init");
         Owner = transform.parent.transform;
         transform.localPosition = new Vector3(0, 1.5f, transform.localPosition.z);  // 머리 위 배치
         _textUI = GetComponentInChildren<Text>();
 
-        #region TODO: 테스트 용도이다. 제거 필요
-        {
-            JsonDataManager.Instance.Init();
-            _isAuto = JsonDataManager.Instance.ScriptData["Test"].IsAuto;
-            SpeechBubbleData data = JsonDataManager.Instance.ScriptData["Test"].Bubbles[0];
-            StartCoroutine(CoShow(data.Bubble));
-        }
-        #endregion
+        // test
+        //{
+        //    JsonDataManager.Instance.Init();
+        //    _isAuto = JsonDataManager.Instance.ScriptData["Stage3CardConfirmed"].IsAuto;
+        //    SpeechBubbleData data = JsonDataManager.Instance.ScriptData["Stage3CardConfirmed"].Bubbles[0];
+        //    Show(data.Bubble);
+        //}
     }
 
     void Update()
@@ -61,26 +60,29 @@ public class SpeechBubbleController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 효과 단위로 분리된 글자를 모두 합쳐, 한 글자씩 말풍선을 띄운다. (크기/색깔/속도)
-    /// </summary>
-    /// <param name="text">한 개의 말풍선에 들어갈 대사 내용</param>
-    public IEnumerator CoShow(List<SpeechBubbleInfo> speechBubble)
+    public void Show(List<SpeechBubbleInfo> speechBubble)
     {
         if (IsTyping)   // 중복 출력 방지
         {
             Debug.Log($"이미 다른 대사가 출력 중입니다");
-            yield break;
+            return;
         }
-        Debug.Log($"Show SpeechBubbleInfo");
 
-        #region 초기화
+        //Debug.Log($"Show SpeechBubbleInfo");
+
         gameObject.SetActive(true);
         _textUI.text = "";
-        
         IsTyping = true;
-        #endregion
 
+        StartCoroutine(CoShow(speechBubble));
+    }
+
+    /// <summary>
+    /// 효과 단위로 분리된 글자를 모두 합쳐, 한 글자씩 말풍선을 띄운다. (크기/색깔/속도)
+    /// </summary>
+    /// <param name="text">한 개의 말풍선에 들어갈 대사 내용</param>
+    IEnumerator CoShow(List<SpeechBubbleInfo> speechBubble)
+    {
         // 대사 출력
         // TODO: TMP로 변경 시, 변경 필요
         int range = speechBubble.Count - 1;
@@ -122,26 +124,8 @@ public class SpeechBubbleController : MonoBehaviour
     /// </summary>
     /// <param name="text">한 개의 말풍선에 들어갈 대사 내용</param>
     /// <param name="isContinuing">이전 텍스트에 이어서 출력하는지 여부. 효과 단위로 글자를 분리했을 때 사용한다.</param>
-    public IEnumerator CoShow(SpeechBubbleInfo text, bool isContinuing = false)
+    IEnumerator CoShow(SpeechBubbleInfo text, bool isContinuing = false)
     {
-        #region 초기화
-        if (isContinuing == false)
-        {
-            if (IsTyping)   // 중복 출력 방지
-            {
-                Debug.Log($"이미 다른 대사가 출력 중입니다");
-                yield break;
-            }
-
-            Debug.Log($"Show SpeechBubbleInfo");
-
-            gameObject.SetActive(true);
-            _textUI.text = "";
-
-            IsTyping = true;
-        }
-        #endregion
-
         // TODO: TMP로 변경 시, 제거
         {
             _textUI.fontSize = text.FontSize;
@@ -155,9 +139,9 @@ public class SpeechBubbleController : MonoBehaviour
         }
 
         float interval = GetInterval(text.Speed);
+        int range = text.Text.Length - 1;
 
         // interval마다 한 글자씩 출력
-        int range = text.Text.Length - 1;
         for (int idx = 0; idx < range; idx++)
         {
             // 즉시 출력
@@ -197,7 +181,8 @@ public class SpeechBubbleController : MonoBehaviour
         if (_isSkip == false || _isAuto)
             return;
 
-        Debug.Log($"Skip SpeechBubbleInfo {text.Text}");
+        //Debug.Log($"Skip SpeechBubbleInfo {text.Text}");
+        // TODO: TMP로 변경 시, 제거
         {
             _textUI.fontSize = text.FontSize;
             _textUI.color = text.FontColor;

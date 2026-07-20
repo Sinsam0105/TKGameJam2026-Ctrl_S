@@ -1,0 +1,136 @@
+{
+  "Description": "3단계 Version History Recovery의 버전 카드 비교 상황에 속한 대사 파일",
+  "IsAuto": false,
+  "Bubbles": [
+    // 플레이어 말풍선 0
+    {
+      "ObjectType": "Player", // 말하는 놈
+      // 말풍선 하나에 들어갈 내용들
+      "Bubble": [
+        {
+          "Text": "제목만 있으니까 이게 처음.",
+          "Speed": "Normal", // VerySlow, Slow, Normal, Fast, VeryFast
+          "FontSize": 24,
+          "R": 0.0, // (0.0 ~ 1.0)
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0 // 투명도 => 0.0(안 보임) ~ 1.0(잘 보임)
+        }
+      ]
+    },
+    // 플레이어 말풍선 1
+    {
+      "ObjectType": "Player",
+      "Bubble": [
+        {
+          "Text": "그다음에 빈 사진 틀을 넣었고.",
+          "Speed": "Normal",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        }
+      ]
+    },
+    // 플레이어 말풍선 2
+    {
+      "ObjectType": "Player",
+      "Bubble": [
+        {
+          "Text": "여기서 사진이 들어갔네.",
+          "Speed": "Normal",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        }
+      ]
+    },
+    // 플레이어 말풍선 3
+    {
+      "ObjectType": "Player",
+      "Bubble": [
+        {
+          "Text": "사람은 아직 베란다 밖에 있고.",
+          "Speed": "Normal",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        }
+      ]
+    },
+    // 플레이어 말풍선 4
+    {
+      "ObjectType": "Player",
+      "Bubble": [
+        {
+          "Text": "그다음엔 사진을 확대해서 잘랐고.",
+          "Speed": "Normal",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        }
+      ]
+    },
+    // 플레이어 말풍선 5
+    {
+      "ObjectType": "Player",
+      "Bubble": [
+        {
+          "Text": "사람 위치도 더 가까워진 것 같은데.",
+          "Speed": "Slow",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        }
+      ]
+    },
+    // 플레이어 말풍선 6
+    {
+      "ObjectType": "Player",
+      "Bubble": [
+        {
+          "Text": "그 뒤에 부제를 추가했고.",
+          "Speed": "Normal",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        }
+      ]
+    },
+    // 플레이어 말풍선 7
+    {
+      "ObjectType": "Player",
+      "Bubble": [
+        {
+          "Text": "마지막으로 페이지 번호랑 색상 효과를 넣었네.",
+          "Speed": "Normal",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        },
+        {
+          "Text": "근데… 사람은 어디 갔지?",
+          "Speed": "Slow",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        }
+      ]
+    }
+  ]
+}

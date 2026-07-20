@@ -24,9 +24,9 @@ public class PlayerLightController : LightController
         _maxIntensity = _defaultIntensity;
 
         // test
-        {
-            GameObject.Find("Global Light 2D").SetActive(false);
-            TurnOn();
-        }
+        //{
+        //    GameObject.Find("Global Light 2D").SetActive(false);
+        //    TurnOn();
+        //}
     }
 }

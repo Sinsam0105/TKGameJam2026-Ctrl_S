@@ -70,7 +70,7 @@ public class LightController : MonoBehaviour
 
     public virtual void Init()
     {
-        Debug.Log("LightController Init");
+        //Debug.Log("LightController Init");
         Owner ??= transform.parent;
         _light = GetComponent<Light2D>();
         transform.localPosition = Vector3.zero;
