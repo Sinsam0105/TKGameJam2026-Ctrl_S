@@ -9,6 +9,16 @@ using ScriptData;
 
 public class SpeechBubbleController : MonoBehaviour
 {
+    static readonly Dictionary<EObject, SpeechBubbleController> s_registry = new();
+    /// <summary>
+    /// 화자(EObject)당 말풍선이 하나씩만 있어야 한다. 이 레지스트리로 화자에 맞는 말풍선을 찾는다.
+    /// </summary>
+    /// <param name="speaker"></param>
+    /// <returns></returns>
+    public static SpeechBubbleController Get(EObject speaker) => s_registry.GetValueOrDefault(speaker);
+
+    [SerializeField] EObject _speaker;    // 이 말풍선의 주인 (ex. Player/Monster/NPC)
+
     public Transform Owner { get; private set; }
     Text _textUI;   // TODO: 추후 TMP로 변경 필요
 
@@ -16,7 +26,12 @@ public class SpeechBubbleController : MonoBehaviour
     /// 대사 출력 중인가
     /// </summary>
     public bool IsTyping { get; private set; } = false;
-    
+
+    /// <summary>
+    /// 말풍선이 닫힐 때(자동/수동 모두) 발생한다. ScriptManager가 이걸로 다음 대사 진행 시점을 판단한다.
+    /// </summary>
+    public event Action Closed;
+
     bool _isSkip = false;   // 대사 출력 중에 스킵키를 눌렀는가
     bool _isAuto = false;   // 자동으로 다음 대사로 넘어가는가 (false: 수동), 상호작용 불가 (스킵/닫기 등)
 
@@ -25,20 +40,28 @@ public class SpeechBubbleController : MonoBehaviour
         Init();
     }
 
+    void OnDestroy()
+    {
+        if (s_registry.TryGetValue(_speaker, out var self) && self == this)
+            s_registry.Remove(_speaker);
+    }
+
     public void Init()
     {
         //Debug.Log("SpeechBubbleController Init");
         Owner = transform.parent.transform;
+        // 임시. TODO: 플레이어/몬스터/NPC 크리처들이 Base 컴포넌트를 상속하면 좋겠다
+        // 또는, 태그를 활용한다던가..?
+        {
+            if (Owner.GetComponent<PlayerMove>() != null)
+                _speaker = EObject.Player;
+        }
+
         transform.localPosition = new Vector3(0, 1.5f, transform.localPosition.z);  // 머리 위 배치
         _textUI = GetComponentInChildren<Text>();
 
-        // test
-        //{
-        //    JsonDataManager.Instance.Init();
-        //    _isAuto = JsonDataManager.Instance.ScriptData["Stage3CardConfirmed"].IsAuto;
-        //    SpeechBubbleData data = JsonDataManager.Instance.ScriptData["Stage3CardConfirmed"].Bubbles[0];
-        //    Show(data.Bubble);
-        //}
+        s_registry[_speaker] = this;
+        gameObject.SetActive(false);
     }
 
     void Update()
@@ -55,12 +78,17 @@ public class SpeechBubbleController : MonoBehaviour
                 _isSkip = true;
                 return;
             }
-            
-            gameObject.SetActive(false);
+
+            OnClosed();
         }
     }
 
-    public void Show(List<SpeechBubbleInfo> speechBubble)
+    /// <summary>
+    /// 말풍선을 띄운다.
+    /// </summary>
+    /// <param name="speechBubble">출력할 대사 (효과 단위로 분리된 조각들)</param>
+    /// <param name="isAuto">true면 출력 완료 후 자동으로 닫힌다 (상호작용 불가). false면 클릭으로 스킵/닫기.</param>
+    public void Show(List<SpeechBubbleInfo> speechBubble, bool isAuto = false)
     {
         if (IsTyping)   // 중복 출력 방지
         {
@@ -70,6 +98,7 @@ public class SpeechBubbleController : MonoBehaviour
 
         //Debug.Log($"Show SpeechBubbleInfo");
 
+        _isAuto = isAuto;
         gameObject.SetActive(true);
         _textUI.text = "";
         IsTyping = true;
@@ -77,10 +106,12 @@ public class SpeechBubbleController : MonoBehaviour
         StartCoroutine(CoShow(speechBubble));
     }
 
-    /// <summary>
-    /// 효과 단위로 분리된 글자를 모두 합쳐, 한 글자씩 말풍선을 띄운다. (크기/색깔/속도)
-    /// </summary>
-    /// <param name="text">한 개의 말풍선에 들어갈 대사 내용</param>
+    void OnClosed()
+    {
+        gameObject.SetActive(false);
+        Closed?.Invoke();
+    }
+
     IEnumerator CoShow(List<SpeechBubbleInfo> speechBubble)
     {
         // 대사 출력
@@ -109,7 +140,7 @@ public class SpeechBubbleController : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
             _isAuto = false;
-            gameObject.SetActive(false);
+            OnClosed();
         }
 
         // 대사 모두 출력한 후, 초기화
@@ -165,7 +196,7 @@ public class SpeechBubbleController : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
             _isAuto = false;
-            gameObject.SetActive(false);
+            OnClosed();
         }
 
         // 대사 모두 출력한 후, 초기화

@@ -11,11 +11,18 @@ public interface ILoader<Key, Value>
 
 public sealed class JsonDataManager : Singleton<JsonDataManager>
 {
+    static bool s_init = false;
+
     public Dictionary<string, ScriptData.ScriptData> ScriptData { get; private set; } = new Dictionary<string, ScriptData.ScriptData>();
 
     public void Init()
     {
-        Debug.Log("JsonDataManager Init");
+        // 중복 초기화 방지
+        if (s_init)
+            return;
+
+        //Debug.Log("JsonDataManager Init");
+        s_init = true;
         ScriptData = LoadAllScripts();
     }
 
