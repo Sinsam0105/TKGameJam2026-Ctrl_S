@@ -6,9 +6,14 @@ using System.Collections.Generic;
 public enum CollectionType
 {
     None,
+    Picture,
 }
 public class CollectionSystem : MonoSingleton<CollectionSystem>
 {
+    public Dictionary<CollectionType, GameCondition> CollectionProgress = new Dictionary<CollectionType, GameCondition>
+    {
+        { CollectionType.Picture, GameCondition.AllImageFound },
+    };
     public Dictionary<CollectionType, int> NeededCollectionCounts = new Dictionary<CollectionType, int>();
     public Dictionary<CollectionType, int> CurrentCollectionCounts = new Dictionary<CollectionType, int>();
 
@@ -59,6 +64,6 @@ public class CollectionSystem : MonoSingleton<CollectionSystem>
     }
     public void CollectionCompletion(CollectionType type)
     {
-
+        GameConditionManager.Instance.SetCondition(CollectionProgress[type]);
     }
 }
