@@ -1,0 +1,8 @@
+{
+  "Description": "수능특강을 바라보는 장면",
+  "IsAuto": false,
+  "Bubbles": [
+    { "ObjectType": 1, "Bubble": [{ "Text": "수특 마렵네.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] },
+    { "ObjectType": 1, "Bubble": [{ "Text": "이런 거 할 시간에 커리 짜는 게 더 생산적일 것 같긴 한데…", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] }
+  ]
+}

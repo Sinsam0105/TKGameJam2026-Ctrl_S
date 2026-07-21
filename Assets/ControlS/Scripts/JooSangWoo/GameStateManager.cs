@@ -8,11 +8,13 @@ public enum GameState
     Computer,
     Room,
 }
+[DefaultExecutionOrder(-290)]
 public class GameStateManager: MonoSingleton<GameStateManager>
 {
     public GameState State { get; private set; } = GameState.Room;
     public event Action<GameState> OnGameStateChanged;
     [SerializeField] private GameState initialState = GameState.Room;
+    protected override bool ShouldPersist() => false;
     void Start()
     {
         SetState(initialState);

@@ -70,8 +70,10 @@ public class SpeechBubbleController : MonoBehaviour
         if (_isAuto)
             return;
 
-        // TODO: 추후 키 변경 예정 (임시로, 왼쪽 마우스)
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        // 기존 클릭 입력에 프롤로그 진행용 Enter만 추가한다.
+        bool advance = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        advance |= Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame;
+        if (advance)
         {
             if (IsTyping)
             {

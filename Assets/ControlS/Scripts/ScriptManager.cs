@@ -28,8 +28,17 @@ public class ScriptManager : MonoSingleton<ScriptManager>
     /// </summary>
     public event Action<string, int> BubbleFinished;
 
-    private void Awake()
+    /// <summary>
+    /// 말풍선 하나가 출력되기 직전에 발생한다. Desktop처럼 기존 말풍선 내용을
+    /// 보조 UI에 표시할 때 원래 대사 흐름을 복제하지 않고 이 이벤트를 사용한다.
+    /// </summary>
+    public event Action<string, int, SpeechBubbleData> BubbleStarted;
+
+    protected override bool ShouldPersist() => false;
+
+    protected override void Awake()
     {
+        base.Awake();
         Init();
     }
 
@@ -95,6 +104,7 @@ public class ScriptManager : MonoSingleton<ScriptManager>
         }
 
         bubble.Closed += OnBubbleClosed;
+        BubbleStarted?.Invoke(name, _index, data);
         bubble.Show(data.Bubble, _current.IsAuto);  // CoShow 코루틴 실행 중
 
         // 이 말풍선이 닫힐 때마다 다음 말풍선으로 넘어간다

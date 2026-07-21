@@ -5,7 +5,21 @@ public class PuzzleWindowedUI : BaseWindowedUI
     protected override void Awake()
     {
         base.Awake();
-        UIManager.Instance.Escape.performed += OnEscapePerformed;
+        if (WindowManager != null && WindowManager.Escape != null)
+            WindowManager.Escape.performed += OnEscapePerformed;
+    }
+
+    public override void OpenWindow()
+    {
+        base.OpenWindow();
+        GetComponentInChildren<PictureCollector>(true)?.ResetPuzzle();
+        GameStateManager.Instance?.SetPuzzle();
+    }
+
+    public override void CloseWindow()
+    {
+        base.CloseWindow();
+        GameStateManager.Instance?.SetRoom();
     }
 
     private void OnEscapePerformed(InputAction.CallbackContext context)
@@ -18,9 +32,9 @@ public class PuzzleWindowedUI : BaseWindowedUI
 
     protected override void OnDestroy()
     {
-        if (UIManager.Instance != null)
+        if (WindowManager != null && WindowManager.Escape != null)
         {
-            UIManager.Instance.Escape.performed -= OnEscapePerformed;
+            WindowManager.Escape.performed -= OnEscapePerformed;
         }
 
         base.OnDestroy();

@@ -8,10 +8,18 @@ public class BaseWindowedUI : MonoBehaviour
 
     public UnityEvent OnOpen = new UnityEvent();
     public UnityEvent OnClose = new UnityEvent();
+    private UIManager windowManager;
+
+    protected UIManager WindowManager => windowManager;
 
     protected virtual void Awake()
     {
-        OpenWindow();
+        windowManager = UIManager.Instance;
+        if (windowManager != null)
+        {
+            windowManager.RegisterWindow(this);
+        }
+
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(CloseWindow);
@@ -20,10 +28,18 @@ public class BaseWindowedUI : MonoBehaviour
 
     public virtual void OpenWindow()
     {
-        UIManager.Instance.RegisterWindow(this);
+        if (windowManager == null)
+            windowManager = UIManager.Instance;
+        if (windowManager != null)
+        {
+            windowManager.RegisterWindow(this);
+        }
 
         gameObject.SetActive(true);
-        UIManager.Instance.SetWindowFront(this);
+        if (windowManager != null)
+        {
+            windowManager.SetWindowFront(this);
+        }
 
         OnOpen?.Invoke();
     }
@@ -37,9 +53,9 @@ public class BaseWindowedUI : MonoBehaviour
 
         OnClose?.Invoke();
 
-        if (UIManager.Instance != null)
+        if (windowManager != null)
         {
-            UIManager.Instance.SetWindowBack(this);
+            windowManager.SetWindowBack(this);
         }
 
         gameObject.SetActive(false);
@@ -51,5 +67,8 @@ public class BaseWindowedUI : MonoBehaviour
         {
             closeButton.onClick.RemoveListener(CloseWindow);
         }
+
+        if (windowManager != null)
+            windowManager.UnregisterWindow(this);
     }
 }

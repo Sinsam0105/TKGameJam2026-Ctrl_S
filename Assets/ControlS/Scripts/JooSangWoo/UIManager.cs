@@ -3,6 +3,7 @@ using Sinsam.SingletonSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[DefaultExecutionOrder(-240)]
 public class UIManager : MonoSingleton<UIManager>
 {
     [SerializeField] private InputActionAsset inputActionsAsset;
@@ -11,8 +12,11 @@ public class UIManager : MonoSingleton<UIManager>
         new List<BaseWindowedUI>();
 
     private InputAction escapeAction;
+    private GameStateManager gameStateManager;
 
     public InputAction Escape => escapeAction;
+
+    protected override bool ShouldPersist() => false;
 
     protected override void Awake()
     {
@@ -36,8 +40,12 @@ public class UIManager : MonoSingleton<UIManager>
         escapeAction.performed += OnEscapePerformed;
         escapeAction.Enable();
 
-        GameStateManager.Instance.OnGameStateChanged +=
-            OnGameStateChanged;
+        gameStateManager = GameStateManager.Instance;
+        if (gameStateManager != null)
+        {
+            gameStateManager.OnGameStateChanged +=
+                OnGameStateChanged;
+        }
     }
 
     private void OnEscapePerformed(
@@ -165,9 +173,9 @@ public class UIManager : MonoSingleton<UIManager>
             escapeAction.Disable();
         }
 
-        if (GameStateManager.Instance != null)
+        if (gameStateManager != null)
         {
-            GameStateManager.Instance.OnGameStateChanged -=
+            gameStateManager.OnGameStateChanged -=
                 OnGameStateChanged;
         }
     }

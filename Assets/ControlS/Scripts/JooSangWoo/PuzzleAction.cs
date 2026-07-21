@@ -14,7 +14,7 @@ public class PuzzleAction
     public CollectionType StartCollectionType;
     public int NeededCollectionCount;
 
-    public bool OnAction()
+    public bool OnAction(string uniqueCollectionId = null)
     {
         foreach (var condition in Conditions)
         {
@@ -30,7 +30,8 @@ public class PuzzleAction
         foreach (var narrationID in NarrationID)
         {
             //TODO: ScriptManager가 Play 하게
-            //ScriptManager.Instance.Play(narrationID);
+            if (!string.IsNullOrWhiteSpace(narrationID))
+                ScriptManager.Instance.Play(narrationID);
         }
         foreach (var changingCondition in ChagingConditions)
         {
@@ -38,7 +39,8 @@ public class PuzzleAction
         }
         if (CollectCollectionType != CollectionType.None)
         {
-            CollectionSystem.Instance.AddCollection(CollectCollectionType);
+            if (!CollectionSystem.Instance.AddCollection(CollectCollectionType, uniqueCollectionId))
+                return false;
         }
         if (StartCollectionType != CollectionType.None)
         {

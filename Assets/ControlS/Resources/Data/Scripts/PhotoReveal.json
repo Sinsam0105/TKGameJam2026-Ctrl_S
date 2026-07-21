@@ -1,0 +1,10 @@
+{
+  "Description": "조립된 1단계 사진 확인",
+  "IsAuto": false,
+  "Bubbles": [
+    { "ObjectType": 1, "Bubble": [{ "Text": "잠깐.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] },
+    { "ObjectType": 1, "Bubble": [{ "Text": "이 사람 누구야?", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] },
+    { "ObjectType": 1, "Bubble": [{ "Text": "…이런 사진을 넣은 적은 없는데.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] },
+    { "ObjectType": 1, "Bubble": [{ "Text": "사진이 깨지면서 이상한 게 합성됐나.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] }
+  ]
+}

@@ -1,50 +1,92 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class RoomInteractable : MonoBehaviour
 {
     public PuzzleAction puzzleAction;
+
     [SerializeField] private string playerTag = "Player";
-    public InputAction interact => InteractionManager.Instance.Interact;
-    private bool onRange = false;
-    void OnEnable()
+    [SerializeField] private string interactionId;
+    [SerializeField] private string prompt = "[E] 조사하기";
+    [SerializeField] private bool deactivateAfterSuccess;
+    [SerializeField] private UnityEvent onInteracted = new UnityEvent();
+
+    private Transform playerInRange;
+    private bool consumed;
+    private InteractionManager interactionManager;
+
+    public string InteractionId => interactionId;
+    public string Prompt => prompt;
+    public bool IsConsumed => consumed;
+    public bool CanInteract => isActiveAndEnabled && !consumed && playerInRange != null;
+    public UnityEvent OnInteracted => onInteracted;
+
+    public void Configure(string id, string promptText, bool deactivateOnSuccess)
     {
-        interact.performed += OnInteract;
-    }
-    void OnDisable()
-    {
-        interact.performed -= OnInteract;
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!IsPlayer(other))
-            return;
-        onRange = true;
+        interactionId = id;
+        prompt = promptText;
+        deactivateAfterSuccess = deactivateOnSuccess;
+        consumed = false;
     }
 
-    private void OnTriggerExit(Collider other)
+    public void ResetInteraction()
+    {
+        consumed = false;
+        playerInRange = null;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (!IsPlayer(other))
             return;
-        onRange = false;
+
+        playerInRange = other.attachedRigidbody != null
+            ? other.attachedRigidbody.transform
+            : other.transform;
+        interactionManager = InteractionManager.Instance;
+        interactionManager?.Register(this, playerInRange);
     }
-    private bool IsPlayer(Collider other)
+
+    private void OnTriggerExit2D(Collider2D other)
     {
-        // Collider가 플레이어 자식에 붙어 있는 경우도 처리
+        if (!IsPlayer(other))
+            return;
+
+        playerInRange = null;
+        interactionManager?.Unregister(this);
+    }
+
+    private bool IsPlayer(Collider2D other)
+    {
         if (other.CompareTag(playerTag))
             return true;
 
-        Rigidbody attachedRigidbody = other.attachedRigidbody;
-
-        return attachedRigidbody != null &&
-               attachedRigidbody.CompareTag(playerTag);
+        Rigidbody2D attachedRigidbody = other.attachedRigidbody;
+        return attachedRigidbody != null && attachedRigidbody.CompareTag(playerTag);
     }
-    void OnInteract(InputAction.CallbackContext context)
+
+    public bool TryInteract()
     {
-        if (!onRange) return; 
-        if (context.performed)
+        if (!CanInteract || puzzleAction == null)
+            return false;
+
+        if (!puzzleAction.OnAction(interactionId))
+            return false;
+
+        onInteracted?.Invoke();
+        if (deactivateAfterSuccess)
         {
-            puzzleAction.OnAction();
+            consumed = true;
+            interactionManager?.Unregister(this);
+            gameObject.SetActive(false);
         }
+
+        return true;
+    }
+
+    private void OnDisable()
+    {
+        playerInRange = null;
+        interactionManager?.Unregister(this);
     }
 }

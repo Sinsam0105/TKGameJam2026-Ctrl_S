@@ -48,7 +48,9 @@ public sealed class SoundManager : MonoSingleton<SoundManager>
     private AudioReverbFilter _dissonanceReverb;
     private AudioReverbFilter _reverseReverb;
 
-    private float _currentProgress => GameConditionManager.Instance.GameProgress;
+    private float _currentProgress => GameConditionManager.Instance != null
+        ? GameConditionManager.Instance.NormalizedGameProgress
+        : progress;
     private float _progressVelocity;
     private float _duck = 1f;
     private bool _isStarted;
@@ -58,6 +60,14 @@ public sealed class SoundManager : MonoSingleton<SoundManager>
 
     private readonly float[] _flutterSeeds = { 12.31f, 43.87f, 91.17f };
     public bool IsPlaying => _isStarted && !_isPaused;
+
+    protected override bool ShouldPersist() => false;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        BuildAudioGraph();
+    }
 
     private void Start()
     {

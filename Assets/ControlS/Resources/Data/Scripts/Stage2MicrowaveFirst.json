@@ -1,0 +1,8 @@
+{
+  "Description": "2단계 전자레인지 최초 조사",
+  "IsAuto": false,
+  "Bubbles": [
+    { "ObjectType": 1, "Bubble": [{ "Text": "전자레인지 시계가 멈춰 있네.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] },
+    { "ObjectType": 1, "Bubble": [{ "Text": "03:12.", "Speed": 10, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] }
+  ]
+}

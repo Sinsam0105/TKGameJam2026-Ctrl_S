@@ -1,0 +1,9 @@
+{
+  "Description": "2단계 단서 조사 후 계산",
+  "IsAuto": false,
+  "Bubbles": [
+    { "ObjectType": 1, "Bubble": [{ "Text": "전자레인지가 03:12, 포스트잇에는 7분 빠르다고 적혀 있고.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] },
+    { "ObjectType": 1, "Bubble": [{ "Text": "12분에서 7분을 빼면 5분.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] },
+    { "ObjectType": 1, "Bubble": [{ "Text": "실제 시간은 03:05야.", "Speed": 10, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] }
+  ]
+}

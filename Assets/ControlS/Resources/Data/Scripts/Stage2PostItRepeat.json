@@ -1,0 +1,7 @@
+{
+  "Description": "2단계 포스트잇 중복 조사",
+  "IsAuto": false,
+  "Bubbles": [
+    { "ObjectType": 1, "Bubble": [{ "Text": "전자레인지 시계는 실제보다 7분 빠르다.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] }
+  ]
+}

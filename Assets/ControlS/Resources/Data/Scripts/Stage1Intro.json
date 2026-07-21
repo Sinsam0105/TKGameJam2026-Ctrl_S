@@ -1,0 +1,8 @@
+{
+  "Description": "1단계 Image Recovery 시작",
+  "IsAuto": false,
+  "Bubbles": [
+    { "ObjectType": 1, "Bubble": [{ "Text": "사진 원본을 다시 넣으라고?", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] },
+    { "ObjectType": 1, "Bubble": [{ "Text": "과제 하나 복구하는데 할 일이 왜 이렇게 많아.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] }
+  ]
+}

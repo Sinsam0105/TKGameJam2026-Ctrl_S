@@ -1,0 +1,7 @@
+{
+  "Description": "2단계 전자레인지 중복 조사",
+  "IsAuto": false,
+  "Bubbles": [
+    { "ObjectType": 1, "Bubble": [{ "Text": "전자레인지는 여전히 03:12를 가리키고 있다.", "Speed": 20, "FontSize": 30, "R": 1, "G": 1, "B": 1, "A": 1 }] }
+  ]
+}

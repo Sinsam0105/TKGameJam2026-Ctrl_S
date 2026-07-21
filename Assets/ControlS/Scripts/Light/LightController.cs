@@ -10,35 +10,35 @@ public class LightController : MonoBehaviour
     protected Coroutine _coFlicker = null;
 
     #region Light2D 속성
-    protected Color _defaultColor;
+    [SerializeField] protected Color _defaultColor;
     public Color Color
     {
         get => _light.color;
         set => _light.color = value;
     }
 
-    protected float _defaultIntensity;
+    [SerializeField] protected float _defaultIntensity;
     public float Intensity
     {
         get => _light.intensity;
         set => _light.intensity = value;
     }
 
-    protected float _defaultInnerRadius;
+    [SerializeField] protected float _defaultInnerRadius;
     public float InnerRadius
     {
         get => _light.pointLightInnerRadius;
         set => _light.pointLightInnerRadius = value;
     }
 
-    protected float _defaultOuterRadius;
+    [SerializeField] protected float _defaultOuterRadius;
     public float OuterRadius
     {
         get => _light.pointLightOuterRadius;
         set => _light.pointLightOuterRadius = value;
     }
 
-    protected float _defaultFalloff;
+    [SerializeField] protected float _defaultFalloff;
     public float Falloff
     {
         get => _light.falloffIntensity;
