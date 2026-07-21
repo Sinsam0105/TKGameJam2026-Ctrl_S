@@ -34,10 +34,10 @@ public class MicrowaveDirection : MonoBehaviour
 
     void Init()
     {
-        _light = transform.GetComponentInChildren<LightController>();
+        _light ??= transform.GetComponentInChildren<LightController>();
         _light.Init();
 
-        _display = transform.GetComponentInChildren<Text>();
+        _display ??= transform.GetComponentInChildren<Text>();
         _turntable = transform.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "Turntable");
         _originalTurntableScale = _turntable.localScale;
     }
