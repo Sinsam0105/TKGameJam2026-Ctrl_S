@@ -62,11 +62,17 @@ public class LightController : MonoBehaviour
     [SerializeField] protected float _maxIntensity;
     #endregion
 
+    // Init을 직접 불러주지 않는 조명(컴퓨터 화면 등)도 있어서 여기서 보장한다.
+    protected virtual void Awake()
+    {
+        Init();
+    }
+
     public virtual void Init()
     {
         //Debug.Log("LightController Init");
         Owner ??= transform.parent;
-        _light = GetComponent<Light2D>();
+        _light ??= GetComponent<Light2D>();
         transform.localPosition = Vector3.zero;
     }
 
@@ -85,6 +91,20 @@ public class LightController : MonoBehaviour
             return;
 
         gameObject.SetActive(true);
+
+        // SetActive(true)가 Awake -> Init을 즉시 부르고, Init에서 TurnOn을 다시 부르는
+        // 파생 클래스(PlayerLightController)가 있다. 코루틴이 두 번 돌지 않게 재확인한다.
+        if (_coFlicker != null)
+            return;
+
+        // Light2D가 없으면 일렁임을 돌릴 수 없다. 켜는 것 자체는 그대로 둔다.
+        _light ??= GetComponent<Light2D>();
+        if (_light == null)
+        {
+            Debug.LogWarning($"{name}에 Light2D가 없어 일렁임 효과를 건너뛴다.", this);
+            return;
+        }
+
         if (flicker)
             _coFlicker = StartCoroutine(CoFlicker());
     }

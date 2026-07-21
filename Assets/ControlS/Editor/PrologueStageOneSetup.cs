@@ -128,14 +128,10 @@ public static class PrologueStageOneSetup
                             && desktopWindow != null;
         SerializedObject desktopSerialized = desktopWindow != null ? new SerializedObject(desktopWindow) : null;
         GameObject desktopSpeaker = desktopSerialized?.FindProperty("desktopSpeaker")?.objectReferenceValue as GameObject;
-        GameObject desktopDialogue = desktopSerialized?.FindProperty("desktopDialogueRoot")?.objectReferenceValue as GameObject;
-        Text desktopDialogueText = desktopSerialized?.FindProperty("desktopDialogueText")?.objectReferenceValue as Text;
         RawImage speakerPortrait = desktopSpeaker != null
             ? desktopSpeaker.GetComponentInChildren<RawImage>(true)
             : null;
         bool desktopSpeakerReady = desktopSpeaker != null
-                                   && desktopDialogue != null
-                                   && desktopDialogueText != null
                                    && speakerPortrait != null
                                    && AssetDatabase.GetAssetPath(speakerPortrait.texture) == DesktopSpeakerPath;
         bool desktopFlowAssigned = flow != null
@@ -1261,21 +1257,17 @@ public static class PrologueStageOneSetup
 
         leaveButton.interactable = false;
         ComputerWindowedUI desktopWindow = GetOrAdd<ComputerWindowedUI>(desktop);
-        ConfigureDesktopSpeaker(desktop, out GameObject speakerRoot,
-            out GameObject dialogueRoot, out Text dialogueText);
+        ConfigureDesktopSpeaker(desktop, out GameObject speakerRoot);
         SerializedObject serialized = new SerializedObject(desktopWindow);
         serialized.FindProperty("openOnStart").boolValue = openOnStart;
         serialized.FindProperty("draggable").boolValue = false;
         serialized.FindProperty("leaveComputerButton").objectReferenceValue = leaveButton;
         serialized.FindProperty("desktopSpeaker").objectReferenceValue = speakerRoot;
-        serialized.FindProperty("desktopDialogueRoot").objectReferenceValue = dialogueRoot;
-        serialized.FindProperty("desktopDialogueText").objectReferenceValue = dialogueText;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         return desktopWindow;
     }
 
-    private static void ConfigureDesktopSpeaker(GameObject desktop, out GameObject speakerRoot,
-        out GameObject dialogueRoot, out Text dialogueText)
+    private static void ConfigureDesktopSpeaker(GameObject desktop, out GameObject speakerRoot)
     {
         Transform existing = FindChild(desktop.transform, "Desktop Speaker");
         if (existing != null)
@@ -1295,18 +1287,10 @@ public static class PrologueStageOneSetup
                     existingPortraitAspect.aspectMode = AspectRatioFitter.AspectMode.HeightControlsWidth;
             }
 
-            Transform dialogue = FindChild(existing, "Desktop Dialogue");
-            dialogueRoot = dialogue != null ? dialogue.gameObject : null;
-            dialogueText = dialogue != null ? dialogue.GetComponentInChildren<Text>(true) : null;
-            if (dialogue is RectTransform dialogueRect)
-            {
-                dialogueRect.anchorMin = new Vector2(0.61f, 0.07f);
-                dialogueRect.anchorMax = new Vector2(0.87f, 0.24f);
-                dialogueRect.anchoredPosition = Vector2.zero;
-                dialogueRect.sizeDelta = Vector2.zero;
-            }
-            if (dialogueText != null)
-                dialogueText.fontSize = 22;
+            // 대사는 머리 위 말풍선으로 통일했다. 예전 하단 패널이 남아 있으면 제거한다.
+            Transform staleDialogue = FindChild(existing, "Desktop Dialogue");
+            if (staleDialogue != null)
+                Object.DestroyImmediate(staleDialogue.gameObject);
             return;
         }
 
@@ -1343,20 +1327,7 @@ public static class PrologueStageOneSetup
         portraitAspect.aspectRatio = speakerTexture.width * portrait.uvRect.width
                                      / (speakerTexture.height * portrait.uvRect.height);
 
-        Image dialoguePanel = CreatePanel(rootRect, "Desktop Dialogue",
-            new Vector2(0.61f, 0.07f), new Vector2(0.87f, 0.24f),
-            new Color(0.035f, 0.055f, 0.075f, 0.96f));
-        dialoguePanel.raycastTarget = false;
-        dialogueRoot = dialoguePanel.gameObject;
 
-        dialogueText = CreateText(dialoguePanel.transform, "Dialogue Text",
-            new Vector2(0.06f, 0.12f), new Vector2(0.94f, 0.88f),
-            Vector2.zero, Vector2.zero, string.Empty, 22, TextAnchor.MiddleLeft);
-        dialogueText.color = Color.white;
-        dialogueText.horizontalOverflow = HorizontalWrapMode.Wrap;
-        dialogueText.verticalOverflow = VerticalWrapMode.Overflow;
-        dialogueText.raycastTarget = false;
-        dialogueRoot.SetActive(false);
     }
 
     private static void ConfigureRecoveryWindow(GameObject window, out Text body, out Text progress, out Button button)
