@@ -47,7 +47,6 @@ public class LightController : MonoBehaviour
     #endregion
 
     #region Flicker 속성
-    [Header("테스트. 플레이 중일 때만 변경할 것.")]
     /// <summary>
     /// 빛의 밝기와 반경이 일렁이는 변화 속도 (목표가 움직이는 속도)
     /// </summary>
@@ -62,11 +61,6 @@ public class LightController : MonoBehaviour
     [SerializeField] protected float _minIntensity;
     [SerializeField] protected float _maxIntensity;
     #endregion
-
-    void Awake()
-    {
-        Init();
-    }
 
     public virtual void Init()
     {

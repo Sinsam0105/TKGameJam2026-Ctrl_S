@@ -4,6 +4,11 @@ using UnityEngine.Rendering.Universal;
 
 public class PlayerLightController : LightController
 {
+    private void Awake()
+    {
+        Init();
+    }
+
     public override void Init()
     {
         base.Init();
@@ -23,10 +28,6 @@ public class PlayerLightController : LightController
         _minIntensity = 1;
         _maxIntensity = _defaultIntensity;
 
-        // test
-        //{
-        //    GameObject.Find("Global Light 2D").SetActive(false);
-        //    TurnOn();
-        //}
+        TurnOn();
     }
 }
