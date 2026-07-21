@@ -10,35 +10,35 @@ public class LightController : MonoBehaviour
     protected Coroutine _coFlicker = null;
 
     #region Light2D 속성
-    protected Color _defaultColor;
+    [SerializeField] protected Color _defaultColor;
     public Color Color
     {
         get => _light.color;
         set => _light.color = value;
     }
 
-    protected float _defaultIntensity;
+    [SerializeField] protected float _defaultIntensity;
     public float Intensity
     {
         get => _light.intensity;
         set => _light.intensity = value;
     }
 
-    protected float _defaultInnerRadius;
+    [SerializeField] protected float _defaultInnerRadius;
     public float InnerRadius
     {
         get => _light.pointLightInnerRadius;
         set => _light.pointLightInnerRadius = value;
     }
 
-    protected float _defaultOuterRadius;
+    [SerializeField] protected float _defaultOuterRadius;
     public float OuterRadius
     {
         get => _light.pointLightOuterRadius;
         set => _light.pointLightOuterRadius = value;
     }
 
-    protected float _defaultFalloff;
+    [SerializeField] protected float _defaultFalloff;
     public float Falloff
     {
         get => _light.falloffIntensity;
@@ -47,7 +47,6 @@ public class LightController : MonoBehaviour
     #endregion
 
     #region Flicker 속성
-    [Header("테스트. 플레이 중일 때만 변경할 것.")]
     /// <summary>
     /// 빛의 밝기와 반경이 일렁이는 변화 속도 (목표가 움직이는 속도)
     /// </summary>
@@ -62,11 +61,6 @@ public class LightController : MonoBehaviour
     [SerializeField] protected float _minIntensity;
     [SerializeField] protected float _maxIntensity;
     #endregion
-
-    void Awake()
-    {
-        Init();
-    }
 
     public virtual void Init()
     {
