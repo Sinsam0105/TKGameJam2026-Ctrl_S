@@ -16,7 +16,7 @@ public class Version07Direction : MonoBehaviour
     [SerializeField] LightController _light;
     [SerializeField] TMP_Text _display;
 
-    [SerializeField] string _narrationScriptName;
+    [SerializeField] string _narrationScriptName;   // TODO: 스크립트 매니저를 통해 말풍선이 끝날 때마다 이벤트 활성화
 
     private void Awake()
     {
@@ -48,17 +48,19 @@ public class Version07Direction : MonoBehaviour
 
     IEnumerator CoPlay()
     {
+        // TODO: 실제 UI에 띄워야 한다
         char[] code = { 'D', 'B', 'F', 'A', 'E', 'C' };
-        _display.text += $"{code[0]} ";
+        _display.text += $"{code[0]}";
 
         for (int i = 1; i < code.Length; ++i)
         {
             yield return new WaitForSeconds(0.25f);
-            _display.text += $"-> {code[i]}";
+            _display.text += $" -> {code[i]}";
         }
 
         // TODO: 목록에 없던 손상 버전이 0.5초 나타난다.
-        // => 0.5초 표시. 현재 방과 유사하지만 검은 형태가 사람인지 의자인지 판별 불가
+        // => 0.5초 동안 표시. 현재 방과 유사하지만 검은 형태가 사람인지 의자인지 판별 불가
+        // 기획자님께 허락 받았어요. 재량껏 지속 시간 조정해도 된대요
         Debug.Log("Version07Direction => 손상 버전");
 
         float elapsedTime = 0f;
@@ -69,6 +71,7 @@ public class Version07Direction : MonoBehaviour
         }
 
         // TODO: 0.5초 뒤 사라진다
+        Debug.Log("Version07Direction => 손상 버전 사라짐");
 
         //ScriptManager.Instance.Play(_narrationScriptName);    // TODO: 대본이 없다
     }
