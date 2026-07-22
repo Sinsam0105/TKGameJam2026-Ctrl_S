@@ -13,7 +13,7 @@ public class WashingMachineDirection : MonoBehaviour
     /// <summary>
     /// 이벤트를 이미 봤는가 (중복 방지)
     /// </summary>
-    public bool HasSeenEvent { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
+    public bool Event_40_Played { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
 
     [SerializeField] Text _display;   // TODO: TMP로 변경
     [SerializeField] AudioSource _audioSource;
@@ -54,10 +54,10 @@ public class WashingMachineDirection : MonoBehaviour
     // TODO: 세탁기 상호작용 스크립트에서 이벤트 연결해줘용
     void OnClosed()
     {
-        if (HasSeenEvent)
+        if (Event_40_Played)
             return;
 
-        HasSeenEvent = true;
+        Event_40_Played = true;
         StartCoroutine(CoFlickerDisplay());
     }
 

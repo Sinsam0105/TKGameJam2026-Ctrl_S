@@ -14,7 +14,7 @@ public class MicrowaveDirection : MonoBehaviour
     /// <summary>
     /// 이벤트를 이미 봤는가 (중복 방지)
     /// </summary>
-    public bool HasSeenEvent { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
+    public bool Event_40_Played { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
 
     [SerializeField] LightController _light;
     [SerializeField] Text _display;  // TODO: TMP
@@ -36,6 +36,7 @@ public class MicrowaveDirection : MonoBehaviour
     {
         _light ??= transform.GetComponentInChildren<LightController>();
         _light.Init();
+        _light.TurnOff();
 
         _display ??= transform.GetComponentInChildren<Text>();
         _turntable = transform.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "Turntable");
@@ -44,16 +45,22 @@ public class MicrowaveDirection : MonoBehaviour
 
     void Play()
     {
-        if (HasSeenEvent || _coPlay != null)
+        if (Event_40_Played || _coPlay != null)
             return;
 
-        HasSeenEvent = true;
         _coPlay = StartCoroutine(CoPlay());
     }
 
     IEnumerator CoPlay()
     {
-        _light.TurnOff();
+        //GameObject player = GameObject.FindGameObjectWithTag("Player");
+        //Vector3 dir = transform.position - player.transform.position;
+        //dir.y = 0f;
+        //float dot = Vector3.Dot(player.transform.forward, dir);
+
+        //// 플레이어 앞에 전자레인지가 있으면 버튼음을 먼저 재생한 뒤 0.3초 후 작동
+        //yield return (dir.magnitude <= 1.5f && dot > 0.8f ? new WaitForSeconds(0.3f) : new WaitForSeconds(2f));
+
         yield return new WaitForSeconds(2f);
 
         // TODO: 전자레인지 버튼음 재생
