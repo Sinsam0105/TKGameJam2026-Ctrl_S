@@ -1025,16 +1025,17 @@ public static class PrologueStageOneSetup
         return anchor;
     }
 
-    // 가구 정면샷 4개. 조각 12개를 여기에 나눠 담는다.
-    private static readonly (string key, string title, string prompt, Vector2 room, string[] pieceIds)[] FurnitureViews =
+    // 가구 정면샷 4개. 조각 12개를 여기에 나눠 담는다. background는 정면샷 아트 경로.
+    private const string ArtDirectory = "Assets/ControlS/Resources/Arts/";
+    private static readonly (string key, string title, string prompt, Vector2 room, string background, string[] pieceIds)[] FurnitureViews =
     {
-        ("Bed", "침대", "[E] 침대 살펴보기", new Vector2(3.9f, -2.7f),
+        ("Bed", "침대", "[E] 침대 살펴보기", new Vector2(3.9f, -2.7f), "FurnitureBed.png",
             new[] { "bed_01", "bed_02", "bed_top_01" }),
-        ("Desk", "컴퓨터 책상", "[E] 책상 살펴보기", new Vector2(4.5f, 1.2f),
+        ("Desk", "컴퓨터 책상", "[E] 책상 살펴보기", new Vector2(4.5f, 1.2f), "FurnitureDesk.png",
             new[] { "drawer_01", "drawer_02", "computer_piece_01", "computer_piece_02" }),
-        ("Shelf", "책장과 선반", "[E] 선반 살펴보기", new Vector2(-5.2f, 1.2f),
+        ("Shelf", "책장과 선반", "[E] 선반 살펴보기", new Vector2(0.35f, -3.6f), "FurnitureShelf.png",
             new[] { "book_01", "cup_01", "frame_01" }),
-        ("Balcony", "베란다 문 앞", "[E] 베란다 문 앞 살펴보기", new Vector2(6.1f, 0.4f),
+        ("Balcony", "베란다 문 앞", "[E] 베란다 문 앞 살펴보기", new Vector2(6.1f, 0.4f), "BalconyView_Normal.png",
             new[] { "balcony_01", "floor_01" }),
     };
 
@@ -1087,17 +1088,24 @@ public static class PrologueStageOneSetup
     }
 
     private static FurnitureViewWindow CreateFurnitureViewWindow(Transform canvasRoot,
-        (string key, string title, string prompt, Vector2 room, string[] pieceIds) view,
+        (string key, string title, string prompt, Vector2 room, string background, string[] pieceIds) view,
         Dictionary<string, Sprite> sprites, ref int pieceIndex)
     {
         RectTransform root = CreateRect(canvasRoot, $"Furniture View - {view.key}",
             Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
         CreatePanel(root, "Dim", Vector2.zero, Vector2.one, new Color(0f, 0f, 0f, 0.82f));
 
-        // 아트가 들어오기 전 플레이스홀더. SetBackground로 정면샷을 꽂으면 대체된다.
+        // 정면샷 아트를 배경으로. 아직 없으면 흰 박스 플레이스홀더로 둔다.
         Image background = CreateImage(root, "Furniture Shot", new Vector2(0.2f, 0.14f), new Vector2(0.8f, 0.86f),
             Vector2.zero, Vector2.zero, new Color(0.92f, 0.92f, 0.94f, 1f));
         background.raycastTarget = false;
+        Sprite shot = LoadFurnitureSprite(view.background);
+        if (shot != null)
+        {
+            background.sprite = shot;
+            background.color = Color.white;
+            background.preserveAspect = true;
+        }
 
         Text title = CreateText(root, "Title", new Vector2(0.2f, 0.87f), new Vector2(0.8f, 0.95f),
             Vector2.zero, Vector2.zero, view.title, 34, TextAnchor.MiddleLeft);
@@ -1119,14 +1127,14 @@ public static class PrologueStageOneSetup
 
             Button pieceButton = CreateButton(root, $"Piece - {view.pieceIds[slot]}",
                 new Vector2(minX, minY), new Vector2(maxX, minY + 0.16f),
-                view.pieceIds[slot], new Color(1f, 1f, 1f, 0.5f));
+                view.pieceIds[slot], Color.white);
 
             // 어떤 조각이 나올지 눈으로 확인할 수 있게 실제 조각 스프라이트를 미리보기로 깔아둔다.
             if (sprites.TryGetValue($"Stage1Photo_{pieceIndex:00}", out Sprite pieceSprite))
             {
                 Image pieceImage = pieceButton.GetComponent<Image>();
                 pieceImage.sprite = pieceSprite;
-                pieceImage.color = new Color(1f, 1f, 1f, 0.85f);
+                pieceImage.color = Color.white;
                 pieceImage.preserveAspect = true;
             }
 
@@ -1262,6 +1270,7 @@ public static class PrologueStageOneSetup
 
         leaveButton.interactable = false;
         ComputerWindowedUI desktopWindow = GetOrAdd<ComputerWindowedUI>(desktop);
+        ApplyDesktopScreenArt(desktop);
         ConfigureDesktopSpeaker(desktop, out GameObject speakerRoot);
         SerializedObject serialized = new SerializedObject(desktopWindow);
         serialized.FindProperty("openOnStart").boolValue = openOnStart;
@@ -1270,6 +1279,39 @@ public static class PrologueStageOneSetup
         serialized.FindProperty("desktopSpeaker").objectReferenceValue = speakerRoot;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         return desktopWindow;
+    }
+
+    // 데스크톱 화면 아트를 배경으로 깐다. 아트에 아이콘·팝업이 이미 그려져 있어
+    // 코드로 만든 임시 장식(아이콘/월페이퍼 라인)은 숨긴다.
+    private static void ApplyDesktopScreenArt(GameObject desktop)
+    {
+        Sprite screen = LoadFurnitureSprite("DesktopScreen.png");
+        if (screen == null)
+            return;
+
+        foreach (string name in new[] { "Desktop Icons", "Wallpaper line A", "Wallpaper line B" })
+        {
+            Transform stale = FindChild(desktop.transform, name);
+            if (stale != null)
+                stale.gameObject.SetActive(false);
+        }
+
+        Transform existing = FindChild(desktop.transform, "Desktop Screen Art");
+        Image art = existing != null
+            ? existing.GetComponent<Image>()
+            : null;
+        if (art == null)
+        {
+            RectTransform rect = CreateRect(desktop.transform, "Desktop Screen Art",
+                Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
+            art = rect.gameObject.AddComponent<Image>();
+            rect.SetAsFirstSibling(); // 최하단(배경)
+        }
+
+        art.sprite = screen;
+        art.color = Color.white;
+        art.preserveAspect = true;
+        art.raycastTarget = false;
     }
 
     private static void ConfigureDesktopSpeaker(GameObject desktop, out GameObject speakerRoot)
@@ -1425,6 +1467,30 @@ public static class PrologueStageOneSetup
         source.volume = volume;
         source.spatialBlend = 0f;
         return source;
+    }
+
+    // 정면샷 png를 UI 스프라이트로 임포트하고 로드한다. 없으면 흰 박스로 남는다.
+    private static Sprite LoadFurnitureSprite(string fileName)
+    {
+        if (string.IsNullOrEmpty(fileName))
+            return null;
+
+        string path = ArtDirectory + fileName;
+        TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (importer == null)
+        {
+            Debug.LogWarning($"[Control S] 정면샷 아트가 아직 없다: {fileName}");
+            return null;
+        }
+
+        if (importer.textureType != TextureImporterType.Sprite ||
+            importer.spriteImportMode != SpriteImportMode.Single)
+        {
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.SaveAndReimport();
+        }
+        return AssetDatabase.LoadAssetAtPath<Sprite>(path);
     }
 
     private static AudioClip LoadAudio(string fileName)

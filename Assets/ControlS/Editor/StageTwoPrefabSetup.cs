@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEditor.U2D.Sprites;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,6 +17,7 @@ public static class StageTwoPrefabSetup
     private const string PrefabPath = PrefabFolder + "/StageTwoSystem.prefab";
     private const string WhiteSpritePath = "Assets/ControlS/Resources/ControlS/WhitePixel.png";
     private const string AudioFolder = "Assets/ControlS/Resources/Audio/PrologueStage1/";
+    private const string ArtFolder = "Assets/ControlS/Resources/Arts/";
     private const string MicrowavePrefabPath = PrefabFolder + "/MicrowaveDirection.prefab";
     private const string WasherPrefabPath = PrefabFolder + "/WashingMachineDirection.prefab";
     private const string AutoRunKey = "ControlS.StageTwo.SerializedPrefab.0718.v2";
@@ -129,6 +131,20 @@ public static class StageTwoPrefabSetup
         if (whiteSprite == null)
             throw new InvalidOperationException("WhitePixel sprite is missing.");
 
+        // 소품 스프라이트 시트를 오브젝트별로 슬라이스한다. (문 열림/닫힘, 포스트잇, 시계 등)
+        SliceSheet(ArtFolder + "ClueWasher.png", new (string, Rect)[]
+        {
+            ("Washer_Open",   new Rect(490f, 590f, 910f, 1453f)),
+            ("Washer_Closed", new Rect(1610f, 590f, 875f, 1453f)),
+        });
+        SliceSheet(ArtFolder + "ClueMicrowaveSet.png", new (string, Rect)[]
+        {
+            ("Microwave_Closed", new Rect(315f, 1395f, 1260f, 945f)),
+            ("Microwave_Open",   new Rect(1890f, 1045f, 1435f, 1295f)),
+            ("PostIt",           new Rect(350f, 310f, 980f, 980f)),
+            ("Clock_0305",       new Rect(1750f, 100f, 1050f, 665f)),
+        });
+
         GameObject root = new GameObject("StageTwoSystem");
         try
         {
@@ -142,16 +158,20 @@ public static class StageTwoPrefabSetup
             FurnitureViewWindow microwaveView = CreateClueView(root.transform,
                 "Clue View - Microwave", "전자레인지",
                 StageTwoFlowController.MicrowaveActionId, "디스플레이 확인",
+                LoadSlice("ClueMicrowaveSet.png", "Microwave_Closed"),
                 new[] { (StageTwoFlowController.MicrowaveDoorActionId, "문 열기") });
             FurnitureViewWindow washerView = CreateClueView(root.transform,
                 "Clue View - Washer", "세탁기",
-                StageTwoFlowController.WasherDoorCloseActionId, "문 닫기");
+                StageTwoFlowController.WasherDoorCloseActionId, "문 닫기",
+                LoadSlice("ClueWasher.png", "Washer_Closed"));
             FurnitureViewWindow postItView = CreateClueView(root.transform,
                 "Clue View - PostIt", "포스트잇",
-                StageTwoFlowController.PostItActionId, "메모 읽기");
+                StageTwoFlowController.PostItActionId, "메모 읽기",
+                LoadSlice("ClueMicrowaveSet.png", "PostIt"));
             FurnitureViewWindow outsideClockView = CreateClueView(root.transform,
                 "Clue View - Outside Clock", "베란다 밖 디지털 시계",
-                StageTwoFlowController.OutsideClockActionId, "시계 확인");
+                StageTwoFlowController.OutsideClockActionId, "시계 확인",
+                LoadSlice("ClueMicrowaveSet.png", "Clock_0305"));
 
             StageTwoClueInteractable microwave = CreateClue(root.transform, whiteSprite,
                 "Clue - Microwave 03-12", StageTwoClueType.Microwave,
@@ -337,7 +357,7 @@ public static class StageTwoPrefabSetup
     /// 아트가 들어오기 전에는 흰 박스가 정면샷 자리를 대신한다.
     /// </summary>
     private static FurnitureViewWindow CreateClueView(Transform parent, string name, string title,
-        string actionId, string actionLabel,
+        string actionId, string actionLabel, Sprite backgroundSprite,
         (string id, string label)[] extraActions = null)
     {
         Image rootImage = CreateWindowRoot(parent, name, new Vector2(860f, 560f));
@@ -346,6 +366,12 @@ public static class StageTwoPrefabSetup
         Image background = CreateImage(rootImage.transform, "Clue Shot", new Vector2(0.08f, 0.16f),
             new Vector2(0.92f, 0.82f), new Color(0.92f, 0.92f, 0.94f, 1f));
         background.raycastTarget = false;
+        if (backgroundSprite != null)
+        {
+            background.sprite = backgroundSprite;
+            background.color = Color.white;
+            background.preserveAspect = true;
+        }
 
         Text titleText = CreateText(rootImage.transform, "Title", new Vector2(0.07f, 0.84f),
             new Vector2(0.78f, 0.96f), title, 34, TextAnchor.MiddleLeft, Color.white);
@@ -598,6 +624,57 @@ public static class StageTwoPrefabSetup
     private static AudioClip LoadAudio(string fileName)
     {
         return AssetDatabase.LoadAssetAtPath<AudioClip>(AudioFolder + fileName);
+    }
+
+    // 스프라이트 시트를 이름 붙인 조각들로 슬라이스한다. 좌표는 좌하단 원점(px).
+    private static void SliceSheet(string path, (string name, Rect rect)[] slices)
+    {
+        TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (importer == null)
+        {
+            Debug.LogWarning($"[Control S] 시트 아트가 아직 없다: {path}");
+            return;
+        }
+
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Multiple;
+        importer.mipmapEnabled = false;
+        importer.alphaIsTransparency = true;
+        importer.maxTextureSize = 4096;
+        importer.SaveAndReimport();
+
+        SpriteDataProviderFactories factories = new SpriteDataProviderFactories();
+        factories.Init();
+        ISpriteEditorDataProvider provider = factories.GetSpriteEditorDataProviderFromObject(importer);
+        provider.InitSpriteEditorDataProvider();
+
+        List<SpriteRect> rects = new List<SpriteRect>();
+        foreach ((string name, Rect rect) in slices)
+        {
+            rects.Add(new SpriteRect
+            {
+                name = name,
+                spriteID = GUID.Generate(),
+                rect = rect,
+                pivot = new Vector2(0.5f, 0.5f),
+                alignment = SpriteAlignment.Center,
+            });
+        }
+
+        provider.SetSpriteRects(rects.ToArray());
+        provider.Apply();
+        importer.SaveAndReimport();
+    }
+
+    // 슬라이스된 시트에서 이름으로 서브 스프라이트를 찾는다.
+    private static Sprite LoadSlice(string fileName, string spriteName)
+    {
+        Sprite sprite = AssetDatabase.LoadAllAssetsAtPath(ArtFolder + fileName)
+            .OfType<Sprite>()
+            .FirstOrDefault(s => s.name == spriteName);
+        if (sprite == null)
+            Debug.LogWarning($"[Control S] 슬라이스를 못 찾았다: {fileName} / {spriteName}");
+        return sprite;
     }
 
     private static void SetReference(SerializedObject serialized, string propertyName, Object value)

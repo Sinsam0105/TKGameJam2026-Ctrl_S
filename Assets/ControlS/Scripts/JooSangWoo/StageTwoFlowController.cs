@@ -62,6 +62,9 @@ public sealed class StageTwoFlowController : MonoBehaviour
     [SerializeField] private AudioClip washerDoorClip;      // 세탁기 문 개폐음
     [SerializeField] private AudioClip microwaveDoorClip;   // 전자레인지 문 개폐음
 
+    [Header("Stage 3 Link")]
+    [SerializeField] private StageThreeFlowController stageThreeFlow;
+
     [Header("Events")]
     [SerializeField] private UnityEvent onStageTwoCompleted = new();
 
@@ -114,6 +117,7 @@ public sealed class StageTwoFlowController : MonoBehaviour
             // 전자레인지 문을 열면 회전판이 멈추고, 베란다 쪽에서 세탁기 완료음이 울린다.
             case MicrowaveDoorActionId:
                 PlayEffect(microwaveDoorClip);
+                microwaveDirection?.OnOpened();
                 washingMachineDirection?.OnMicrowaveOpened();
                 break;
 
@@ -224,10 +228,12 @@ public sealed class StageTwoFlowController : MonoBehaviour
         if (objectiveText != null)
             objectiveText.text = "2단계 완료  ·  Recovery Progress: 40%";
 
-        // MicrowaveDirection은 Awake에서 바로 Play()가 돌기 때문에
-        // 활성화 시점 자체가 연출 시작 트리거다.
+        // 연출 오브젝트를 켠 뒤(Awake→Init) 전자레인지 연출을 명시적으로 시작한다.
         if (microwaveDirection != null)
+        {
             microwaveDirection.gameObject.SetActive(true);
+            microwaveDirection.OnAnswerValidated();
+        }
         if (washingMachineDirection != null)
             washingMachineDirection.gameObject.SetActive(true);
 
@@ -235,6 +241,8 @@ public sealed class StageTwoFlowController : MonoBehaviour
         if (!completionInvoked)
         {
             completionInvoked = true;
+            // 3단계 조사 지점(컴퓨터의 버전 기록, 백업 상자)을 연다.
+            stageThreeFlow?.BeginStage();
             onStageTwoCompleted?.Invoke();
         }
     }

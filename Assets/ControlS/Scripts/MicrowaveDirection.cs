@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 정답 입력 후 재생되는 전자레인지 납량 연출. => 나중에 전자레인지 상호작용 스크립트로 다 옮기면 될 것 같다
+/// [2단계] 정답 입력 후 재생되는 전자레인지 납량 연출.
 /// 대기 -> 버튼음 -> 조명 켜짐 -> 00:30초 동안 회전판 회전 -> 주인공 대사
 /// 플레이어가 전자레인지 문을 열면 즉시 멈춘다 -> 빈 내부를 확인한 조사 대사
 /// </summary>
@@ -14,7 +14,7 @@ public class MicrowaveDirection : MonoBehaviour
     /// <summary>
     /// 이벤트를 이미 봤는가 (중복 방지)
     /// </summary>
-    public bool HasSeenEvent { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
+    public bool Event_40_Played { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
 
     [SerializeField] LightController _light;
     [SerializeField] Text _display;  // TODO: TMP
@@ -34,13 +34,13 @@ public class MicrowaveDirection : MonoBehaviour
     private void Awake()
     {
         Init();
-        Play();
     }
 
     void Init()
     {
         _light ??= transform.GetComponentInChildren<LightController>();
         _light.Init();
+        _light.TurnOff();
 
         _display ??= transform.GetComponentInChildren<Text>();
         _audioSource ??= GetComponent<AudioSource>();
@@ -51,18 +51,27 @@ public class MicrowaveDirection : MonoBehaviour
         _originalTurntableScale = _turntable.localScale;
     }
 
-    void Play()
+    /// <summary>
+    /// 정답을 입력했다. => 전자레인지 버튼음 재생 / 불 켜짐 / 30초 타이머 동안 회전판 회전 후 연출 비활성화
+    /// </summary>
+    public void OnAnswerValidated()
     {
-        if (HasSeenEvent || _coPlay != null)
+        if (Event_40_Played || _coPlay != null)
             return;
 
-        HasSeenEvent = true;
         _coPlay = StartCoroutine(CoPlay());
     }
 
     IEnumerator CoPlay()
     {
-        _light.TurnOff();
+        //GameObject player = GameObject.FindGameObjectWithTag("Player");
+        //Vector3 dir = transform.position - player.transform.position;
+        //dir.y = 0f;
+        //float dot = Vector3.Dot(player.transform.forward, dir);
+
+        //// 플레이어 앞에 전자레인지가 있으면 버튼음을 먼저 재생한 뒤 0.3초 후 작동
+        //yield return (dir.magnitude <= 1.5f && dot > 0.8f ? new WaitForSeconds(0.3f) : new WaitForSeconds(2f));
+
         yield return new WaitForSeconds(2f);
 
         if (_audioSource != null && _buttonClip != null)
@@ -102,8 +111,11 @@ public class MicrowaveDirection : MonoBehaviour
             yield return null;
         }
 
+        //ScriptManager.Instance.Play(_investigationScriptName);    // TODO: 대본이 없다
+
         _turntable.localScale = _originalTurntableScale;
         StopRunningSound();
+        enabled = false;
     }
 
     // 작동음 루프를 멈춘다. 30초를 다 채우거나 플레이어가 문을 열면 호출된다.
@@ -117,9 +129,10 @@ public class MicrowaveDirection : MonoBehaviour
         _audioSource.clip = null;
     }
 
-    // 플레이어가 전자레인지 문을 열었다
-    // TODO: 전자레인지 상호작용 스크립트에서 이벤트 연결해줘용
-    void OnOpened()
+    /// <summary>
+    /// 플레이어가 전자레인지 문을 열었다 -> 회전 멈춤 / 전자레인지 연출 비활성화
+    /// </summary>
+    public void OnOpened()
     {
         if (_coPlay != null)
         {

@@ -97,13 +97,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e921ccd7521dd3249b3133c4184267fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerLightController
-  _defaultColor: {r: 0, g: 0, b: 0, a: 0}
-  _defaultIntensity: 0
-  _defaultInnerRadius: 0
-  _defaultOuterRadius: 0
-  _defaultFalloff: 0
-  _noiseSpeed: 0
-  _smoothSpeed: 0
-  _radiusVariation: 0
-  _minIntensity: 0
-  _maxIntensity: 0
+  _defaultColor: {r: 0.87843144, g: 0.67058825, b: 0.38431376, a: 1}
+  _defaultIntensity: 1.5
+  _defaultInnerRadius: 0.35
+  _defaultOuterRadius: 3.2
+  _defaultFalloff: 0.5
+  _noiseSpeed: 1
+  _smoothSpeed: 3
+  _radiusVariation: 0.35
+  _minIntensity: 1
+  _maxIntensity: 1.5

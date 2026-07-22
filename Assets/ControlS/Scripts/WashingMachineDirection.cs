@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 세탁기 납량 연출. => 상호작용 스크립트로 다 옮기면 될 것 같다
+/// [2단계] 세탁기 납량 연출.
 /// 전자레인지 확인 -> 베란다 위치에서 세탁기 완료음 3D 재생
 /// 세탁기 문을 닫으면 디스플레이 03:05 -> 0.5초 후 끄기 -> 컴퓨터 알림 재생
 /// </summary>
@@ -13,7 +13,7 @@ public class WashingMachineDirection : MonoBehaviour
     /// <summary>
     /// 이벤트를 이미 봤는가 (중복 방지)
     /// </summary>
-    public bool HasSeenEvent { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
+    public bool Event_40_Played { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
 
     [SerializeField] Text _display;   // TODO: TMP로 변경
     [SerializeField] AudioSource _audioSource;
@@ -42,9 +42,7 @@ public class WashingMachineDirection : MonoBehaviour
     }
 
     /// <summary>
-    /// 플레이어가 전자레인지을 확인하면 호출된다.
-    /// 베란다 위치에서 세탁기 완료음 3D 재생
-    /// TODO: 전자레인지 상호작용 스크립트에서 이벤트 연결해줘용
+    /// 플레이어가 전자레인지를 확인했다. => 베란다 위치에서 세탁기 완료음 3D 재생
     /// </summary>
     public void OnMicrowaveOpened()
     {
@@ -53,14 +51,16 @@ public class WashingMachineDirection : MonoBehaviour
             _audioSource.PlayOneShot(_finishClip);
     }
 
-    // 플레이어가 세탁기 문을 닫았다
-    // StageTwoFlowController가 세탁기 정면샷의 "문 닫기" 액션에서 호출한다.
+    /// <summary>
+    /// 플레이어가 세탁기 문을 닫았다. => 0.5초 동안 03:05 표시.
+    /// StageTwoFlowController가 세탁기 정면샷의 "문 닫기" 액션에서 호출한다.
+    /// </summary>
     public void OnClosed()
     {
-        if (HasSeenEvent)
+        if (Event_40_Played)
             return;
 
-        HasSeenEvent = true;
+        Event_40_Played = true;
         StartCoroutine(CoFlickerDisplay());
     }
 

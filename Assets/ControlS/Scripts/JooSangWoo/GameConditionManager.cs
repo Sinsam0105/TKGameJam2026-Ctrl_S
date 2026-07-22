@@ -14,9 +14,16 @@ public enum GameCondition
     Stage2PostItInvestigated = 1 << 5,
     Stage2OutsideClockInvestigated = 1 << 6,
     Stage2TimeSolved = 1 << 7,
+    Stage3VersionSolved = 1 << 8,
+    Stage3BoxOpened = 1 << 9,
+    Stage3UsbConnected = 1 << 10,
+    Stage3Version07Seen = 1 << 11,
+    Stage3KnockHeard = 1 << 12,
     All = Test | PrologueEnded | AllImageFound | ImagePuzzleCompleted
         | Stage2MicrowaveInvestigated | Stage2PostItInvestigated
-        | Stage2OutsideClockInvestigated | Stage2TimeSolved,
+        | Stage2OutsideClockInvestigated | Stage2TimeSolved
+        | Stage3VersionSolved | Stage3BoxOpened | Stage3UsbConnected
+        | Stage3Version07Seen | Stage3KnockHeard,
 }
 
 public enum RecoveryStage

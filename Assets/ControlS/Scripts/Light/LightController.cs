@@ -74,6 +74,7 @@ public class LightController : MonoBehaviour
         Owner ??= transform.parent;
         _light ??= GetComponent<Light2D>();
         transform.localPosition = Vector3.zero;
+        ResetToDefault();
     }
 
     public void ResetToDefault()
