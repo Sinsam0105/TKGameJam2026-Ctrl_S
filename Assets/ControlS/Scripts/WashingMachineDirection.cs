@@ -17,6 +17,7 @@ public class WashingMachineDirection : MonoBehaviour
 
     [SerializeField] Text _display;   // TODO: TMP로 변경
     [SerializeField] AudioSource _audioSource;
+    [SerializeField] AudioClip _finishClip;   // 세탁기 완료음
 
     void Awake()
     {
@@ -37,7 +38,7 @@ public class WashingMachineDirection : MonoBehaviour
 
         // 이건 소리 테스트 해봐야 알듯
         _audioSource.minDistance = 1f;  // Min Distance 밖부터 음량 감소
-        _audioSource.maxDistance = 500f;  // maxDistance부터 음량 0
+        _audioSource.maxDistance = 14f;  // maxDistance부터 음량 0 (방 가로가 약 15유닛)
     }
 
     /// <summary>
@@ -47,12 +48,14 @@ public class WashingMachineDirection : MonoBehaviour
     /// </summary>
     public void OnMicrowaveOpened()
     {
-        // TODO: 베란다 위치에서 세탁기 완료음 3D 재생
+        // 이 오브젝트가 베란다 옆에 있으므로 여기서 재생하면 그대로 3D 방향이 잡힌다.
+        if (_audioSource != null && _finishClip != null)
+            _audioSource.PlayOneShot(_finishClip);
     }
 
     // 플레이어가 세탁기 문을 닫았다
-    // TODO: 세탁기 상호작용 스크립트에서 이벤트 연결해줘용
-    void OnClosed()
+    // StageTwoFlowController가 세탁기 정면샷의 "문 닫기" 액션에서 호출한다.
+    public void OnClosed()
     {
         if (HasSeenEvent)
             return;

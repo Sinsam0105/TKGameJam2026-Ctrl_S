@@ -21,6 +21,11 @@ public class MicrowaveDirection : MonoBehaviour
     [SerializeField] Transform _turntable;
     Vector3 _originalTurntableScale;
 
+    [Header("사운드")]
+    [SerializeField] AudioSource _audioSource;
+    [SerializeField] AudioClip _buttonClip;    // 시작 버튼음 (원샷)
+    [SerializeField] AudioClip _runningClip;   // 작동음 (30초 동안 루프)
+
     [SerializeField] string _narrationScriptName;      // 주인공 대사 (돌아가는 동안)
     [SerializeField] string _investigationScriptName;  // 조사 대사 (문 열어서 빈 걸 확인한 뒤)
 
@@ -38,6 +43,10 @@ public class MicrowaveDirection : MonoBehaviour
         _light.Init();
 
         _display ??= transform.GetComponentInChildren<Text>();
+        _audioSource ??= GetComponent<AudioSource>();
+        if (_audioSource == null)
+            _audioSource = gameObject.AddComponent<AudioSource>();
+        _audioSource.playOnAwake = false;
         _turntable = transform.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "Turntable");
         _originalTurntableScale = _turntable.localScale;
     }
@@ -56,12 +65,22 @@ public class MicrowaveDirection : MonoBehaviour
         _light.TurnOff();
         yield return new WaitForSeconds(2f);
 
-        // TODO: 전자레인지 버튼음 재생
+        if (_audioSource != null && _buttonClip != null)
+            _audioSource.PlayOneShot(_buttonClip);
+
         _light.Intensity = 3f;
         _light.TurnOn();
         _display.text = "00:30";
 
         //ScriptManager.Instance.Play(_narrationScriptName);    // TODO: 대본이 없다
+
+        // 작동음은 30초 내내 이어지므로 루프로 돌린다.
+        if (_audioSource != null && _runningClip != null)
+        {
+            _audioSource.clip = _runningClip;
+            _audioSource.loop = true;
+            _audioSource.Play();
+        }
 
         float speed = 120f;
         float angle = 0f;
@@ -84,6 +103,18 @@ public class MicrowaveDirection : MonoBehaviour
         }
 
         _turntable.localScale = _originalTurntableScale;
+        StopRunningSound();
+    }
+
+    // 작동음 루프를 멈춘다. 30초를 다 채우거나 플레이어가 문을 열면 호출된다.
+    void StopRunningSound()
+    {
+        if (_audioSource == null || _audioSource.clip != _runningClip)
+            return;
+
+        _audioSource.Stop();
+        _audioSource.loop = false;
+        _audioSource.clip = null;
     }
 
     // 플레이어가 전자레인지 문을 열었다
@@ -96,6 +127,7 @@ public class MicrowaveDirection : MonoBehaviour
             _coPlay = null;
         }
 
+        StopRunningSound();
         _light.TurnOff();
         _display.text = "";
         _turntable.localScale = _originalTurntableScale;

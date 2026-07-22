@@ -27,6 +27,9 @@ public sealed class StageTwoFlowController : MonoBehaviour
     public const string MicrowaveActionId = "clue_microwave";
     public const string PostItActionId = "clue_postit";
     public const string OutsideClockActionId = "clue_outsideclock";
+    // 정민 선배 납량 연출(MicrowaveDirection / WashingMachineDirection) 연결용
+    public const string MicrowaveDoorActionId = "microwave_door";
+    public const string WasherDoorCloseActionId = "washer_door_close";
 
     [Header("Serialized Prefab Parts")]
     [SerializeField] private StageTwoClueInteractable microwaveClue;
@@ -34,6 +37,11 @@ public sealed class StageTwoFlowController : MonoBehaviour
     [SerializeField] private StageTwoClueInteractable outsideClockClue;
     [SerializeField] private List<FurnitureViewWindow> clueViews = new();
     [SerializeField] private StageTwoTimeInputWindow timeInputWindow;
+
+    [Header("납량 연출 (정민)")]
+    [SerializeField] private MicrowaveDirection microwaveDirection;
+    [SerializeField] private WashingMachineDirection washingMachineDirection;
+    [SerializeField] private RoomInteractable washerSpot;
     [SerializeField] private List<GameObject> clueHighlights = new();
 
     [Header("State")]
@@ -49,6 +57,10 @@ public sealed class StageTwoFlowController : MonoBehaviour
     [SerializeField] private AudioSource effectsSource;
     [SerializeField] private AudioClip inputFailedClip;
     [SerializeField] private AudioClip inputSucceededClip;
+    [SerializeField] private AudioClip stageCompleteClip;   // Recovery 40% 알림음
+    [SerializeField] private AudioClip stageStartClip;      // 단계 진입 알림음
+    [SerializeField] private AudioClip washerDoorClip;      // 세탁기 문 개폐음
+    [SerializeField] private AudioClip microwaveDoorClip;   // 전자레인지 문 개폐음
 
     [Header("Events")]
     [SerializeField] private UnityEvent onStageTwoCompleted = new();
@@ -98,6 +110,18 @@ public sealed class StageTwoFlowController : MonoBehaviour
             case OutsideClockActionId:
                 Investigate(StageTwoClueType.OutsideClock);
                 break;
+
+            // 전자레인지 문을 열면 회전판이 멈추고, 베란다 쪽에서 세탁기 완료음이 울린다.
+            case MicrowaveDoorActionId:
+                PlayEffect(microwaveDoorClip);
+                washingMachineDirection?.OnMicrowaveOpened();
+                break;
+
+            // 세탁기 문을 닫으면 디스플레이에 03:05가 0.5초 표시된다.
+            case WasherDoorCloseActionId:
+                PlayEffect(washerDoorClip);
+                washingMachineDirection?.OnClosed();
+                break;
         }
     }
 
@@ -110,6 +134,7 @@ public sealed class StageTwoFlowController : MonoBehaviour
         SetHighlights(failedAttemptCount >= 3 && !IsSolved);
         ConfigureComputer();
         RefreshObjective();
+        PlayEffect(stageStartClip);
     }
 
     public void ResetStage()
@@ -126,6 +151,11 @@ public sealed class StageTwoFlowController : MonoBehaviour
         foreach (FurnitureViewWindow view in clueViews)
             view?.ResetView();
         timeInputWindow?.ResetView();
+
+        if (microwaveDirection != null)
+            microwaveDirection.gameObject.SetActive(false);
+        if (washingMachineDirection != null)
+            washingMachineDirection.gameObject.SetActive(false);
     }
 
     public void Investigate(StageTwoClueType clueType)
@@ -165,7 +195,7 @@ public sealed class StageTwoFlowController : MonoBehaviour
         }
 
         failedAttemptCount++;
-        effectsSource?.PlayOneShot(inputFailedClip);
+        PlayEffect(inputFailedClip);
         bool highlightClues = failedAttemptCount >= 3;
         SetHighlights(highlightClues);
         timeInputWindow?.ShowAttemptState(failedAttemptCount, highlightClues);
@@ -186,12 +216,20 @@ public sealed class StageTwoFlowController : MonoBehaviour
 
         GameConditionManager.Instance?.SetCondition(GameCondition.Stage2TimeSolved);
         GameConditionManager.Instance?.SetRecoveryStage(RecoveryStage.ActivityLogRecovery);
-        effectsSource?.PlayOneShot(inputSucceededClip);
+        PlayEffect(inputSucceededClip);
+        PlayEffect(stageCompleteClip);
         SetHighlights(false);
         timeInputWindow?.ShowSolved();
 
         if (objectiveText != null)
             objectiveText.text = "2단계 완료  ·  Recovery Progress: 40%";
+
+        // MicrowaveDirection은 Awake에서 바로 Play()가 돌기 때문에
+        // 활성화 시점 자체가 연출 시작 트리거다.
+        if (microwaveDirection != null)
+            microwaveDirection.gameObject.SetActive(true);
+        if (washingMachineDirection != null)
+            washingMachineDirection.gameObject.SetActive(true);
 
         PlayScript(scriptIds.TimeSolved);
         if (!completionInvoked)
@@ -248,6 +286,13 @@ public sealed class StageTwoFlowController : MonoBehaviour
         };
     }
 
+    // 클립이 비어 있으면 Unity가 경고를 뱉으므로 여기서 걸러낸다.
+    private void PlayEffect(AudioClip clip)
+    {
+        if (effectsSource != null && clip != null)
+            effectsSource.PlayOneShot(clip);
+    }
+
     private static void PlayScript(string id)
     {
         if (!string.IsNullOrWhiteSpace(id))
@@ -259,6 +304,15 @@ public sealed class StageTwoFlowController : MonoBehaviour
         microwaveClue?.SetStageEnabled(value);
         postItClue?.SetStageEnabled(value);
         outsideClockClue?.SetStageEnabled(value);
+
+        // 세탁기는 단서가 아니라 납량 연출용이라 별도로 켠다.
+        if (washerSpot != null)
+        {
+            washerSpot.ResetInteraction();
+            washerSpot.enabled = value;
+            foreach (Collider2D collider in washerSpot.GetComponents<Collider2D>())
+                collider.enabled = value;
+        }
     }
 
     private void SetHighlights(bool value)

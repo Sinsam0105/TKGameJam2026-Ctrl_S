@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Stage1Photo_0
+      name: Stage1Photo_Full
       rect:
         serializedVersion: 2
         x: 0
@@ -121,15 +121,279 @@ TextureImporter:
         width: 1064
         height: 755
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: f3b72b4887e1094f0800000000000000
-      internalID: -824125228837602497
+      spriteID: 7587789a279e52b4eaaa94d43d3b09a5
+      internalID: 1729853730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_00
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 503
+        width: 266
+        height: 252
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 466c56825c632044da5f49f6cdd8b30c
+      internalID: -1860716695
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_01
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 503
+        width: 266
+        height: 252
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d815d0d8654443647b40371aafd01a0f
+      internalID: 2074337731
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_02
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 503
+        width: 266
+        height: 252
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6de6061bc4a3f2042b8781378e205dc3
+      internalID: -1205298371
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_03
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 503
+        width: 266
+        height: 252
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a23b370820558d5428656a9ce2831fa0
+      internalID: 1982577725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_04
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 252
+        width: 266
+        height: 251
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9272b118e33e0a049b975d6f90c770f7
+      internalID: 1394064950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_05
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 252
+        width: 266
+        height: 251
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 492f3a630442f384793c64e64c672079
+      internalID: -648963390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_06
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 252
+        width: 266
+        height: 251
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 127ea2eccb14bc94aa70933bec8b247f
+      internalID: -279084389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_07
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 252
+        width: 266
+        height: 251
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fd5714fc85ba4146a785008f6800f7c
+      internalID: 1714447921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_08
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 266
+        height: 252
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d918f1ef7aea17e469cd36c23a7bce11
+      internalID: -1826418887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_09
+      rect:
+        serializedVersion: 2
+        x: 266
+        y: 0
+        width: 266
+        height: 252
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6b6d84b2feae3bb41835086a483ba4fc
+      internalID: 905458403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_10
+      rect:
+        serializedVersion: 2
+        x: 532
+        y: 0
+        width: 266
+        height: 252
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03eaf5b3fd095e14297ae37071c7146d
+      internalID: 1293647357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Stage1Photo_11
+      rect:
+        serializedVersion: 2
+        x: 798
+        y: 0
+        width: 266
+        height: 252
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9953e052840d7004ba3a234ecc72fa53
+      internalID: 455032399
       vertices: []
       indices: 
       edges: []
@@ -138,7 +402,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e300e25ce91274f479558d5ad406700e
     internalID: 0
     vertices: []
     indices: 
@@ -149,6 +413,19 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Stage1Photo_0: -824125228837602497
+      Stage1Photo_00: -1860716695
+      Stage1Photo_01: 2074337731
+      Stage1Photo_02: -1205298371
+      Stage1Photo_03: 1982577725
+      Stage1Photo_04: 1394064950
+      Stage1Photo_05: -648963390
+      Stage1Photo_06: -279084389
+      Stage1Photo_07: 1714447921
+      Stage1Photo_08: -1826418887
+      Stage1Photo_09: 905458403
+      Stage1Photo_10: 1293647357
+      Stage1Photo_11: 455032399
+      Stage1Photo_Full: 1729853730
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

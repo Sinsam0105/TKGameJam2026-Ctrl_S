@@ -16,6 +16,8 @@ public static class StageTwoPrefabSetup
     private const string PrefabPath = PrefabFolder + "/StageTwoSystem.prefab";
     private const string WhiteSpritePath = "Assets/ControlS/Resources/ControlS/WhitePixel.png";
     private const string AudioFolder = "Assets/ControlS/Resources/Audio/PrologueStage1/";
+    private const string MicrowavePrefabPath = PrefabFolder + "/MicrowaveDirection.prefab";
+    private const string WasherPrefabPath = PrefabFolder + "/WashingMachineDirection.prefab";
     private const string AutoRunKey = "ControlS.StageTwo.SerializedPrefab.0718.v2";
 
     static StageTwoPrefabSetup()
@@ -82,7 +84,8 @@ public static class StageTwoPrefabSetup
         int missingScripts = prefab.GetComponentsInChildren<Transform>(true)
             .Sum(child => GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(child.gameObject));
 
-        if (flow == null || clues.Length != 3 || clueViews.Length != 3 || input == null || missingScripts != 0)
+        // 단서 3 + 세탁기 1
+        if (flow == null || clues.Length != 3 || clueViews.Length != 4 || input == null || missingScripts != 0)
             throw new InvalidOperationException("StageTwoSystem.prefab has an incomplete serialized hierarchy.");
 
         SerializedObject flowSerialized = new SerializedObject(flow);
@@ -138,7 +141,11 @@ public static class StageTwoPrefabSetup
 
             FurnitureViewWindow microwaveView = CreateClueView(root.transform,
                 "Clue View - Microwave", "전자레인지",
-                StageTwoFlowController.MicrowaveActionId, "디스플레이 확인");
+                StageTwoFlowController.MicrowaveActionId, "디스플레이 확인",
+                new[] { (StageTwoFlowController.MicrowaveDoorActionId, "문 열기") });
+            FurnitureViewWindow washerView = CreateClueView(root.transform,
+                "Clue View - Washer", "세탁기",
+                StageTwoFlowController.WasherDoorCloseActionId, "문 닫기");
             FurnitureViewWindow postItView = CreateClueView(root.transform,
                 "Clue View - PostIt", "포스트잇",
                 StageTwoFlowController.PostItActionId, "메모 읽기");
@@ -155,6 +162,15 @@ public static class StageTwoPrefabSetup
             StageTwoClueInteractable outsideClock = CreateClue(root.transform, whiteSprite,
                 "Clue - Outside Clock 03-05", StageTwoClueType.OutsideClock,
                 new Vector2(7.62f, 1.15f), "outside_clock_stage2", "[E] 외부 디지털 시계 조사", outsideClockView);
+            // 세탁기 조사 지점. 완료음을 베란다 쪽에서 3D로 들려주므로 베란다 옆에 둔다.
+            RoomInteractable washerSpot = CreateWasherSpot(root.transform, whiteSprite, washerView);
+
+            // 정민 연출 프리팹. 비활성으로 심어두고 2단계 정답 후 활성화한다.
+            MicrowaveDirection microwaveDirection = InstantiateDirection<MicrowaveDirection>(
+                root.transform, MicrowavePrefabPath, new Vector2(-4.7f, 1.28f));
+            WashingMachineDirection washingMachineDirection = InstantiateDirection<WashingMachineDirection>(
+                root.transform, WasherPrefabPath, new Vector2(6.5f, 1.2f));
+
             StageTwoTimeInputWindow timeInputWindow = CreateTimeInputWindow(root.transform, flow);
 
             SerializedObject serialized = new SerializedObject(flow);
@@ -162,9 +178,34 @@ public static class StageTwoPrefabSetup
             SetReference(serialized, "postItClue", postIt);
             SetReference(serialized, "outsideClockClue", outsideClock);
             SetReference(serialized, "timeInputWindow", timeInputWindow);
+            SetReference(serialized, "microwaveDirection", microwaveDirection);
+            SetReference(serialized, "washingMachineDirection", washingMachineDirection);
+            SetReference(serialized, "washerSpot", washerSpot);
+
+            // 정민 연출의 완료음 클립을 여기서 꽂아준다.
+            if (washingMachineDirection != null)
+            {
+                SerializedObject washerSerialized = new SerializedObject(washingMachineDirection);
+                SetReference(washerSerialized, "_finishClip", LoadAudio("WasherFinish.mp3"));
+                washerSerialized.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            if (microwaveDirection != null)
+            {
+                SerializedObject microwaveSerialized = new SerializedObject(microwaveDirection);
+                SetReference(microwaveSerialized, "_buttonClip", LoadAudio("MicrowaveButton.mp3"));
+                SetReference(microwaveSerialized, "_runningClip", LoadAudio("MicrowaveRunning.mp3"));
+                microwaveSerialized.ApplyModifiedPropertiesWithoutUndo();
+            }
+
+            // 2단계 진행 완료 알림음
+            SetReference(serialized, "stageCompleteClip", LoadAudio("RecoveryProgress40.mp3"));
+            SetReference(serialized, "stageStartClip", LoadAudio("Stage2Start.mp3"));
+            SetReference(serialized, "washerDoorClip", LoadAudio("WasherDoor.mp3"));
+            SetReference(serialized, "microwaveDoorClip", LoadAudio("MicrowaveDoor.mp3"));
 
             SerializedProperty views = serialized.FindProperty("clueViews");
-            FurnitureViewWindow[] viewObjects = { microwaveView, postItView, outsideClockView };
+            FurnitureViewWindow[] viewObjects = { microwaveView, postItView, outsideClockView, washerView };
             views.arraySize = viewObjects.Length;
             for (int index = 0; index < viewObjects.Length; index++)
                 views.GetArrayElementAtIndex(index).objectReferenceValue = viewObjects[index];
@@ -192,6 +233,54 @@ public static class StageTwoPrefabSetup
         }
     }
 
+    /// <summary>
+    /// 정민 연출 프리팹을 심는다. 프리팹이 아직 없으면 건너뛴다(추출 전이어도 셋업이 죽지 않게).
+    /// </summary>
+    private static T InstantiateDirection<T>(Transform parent, string prefabPath, Vector2 position)
+        where T : Component
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        if (prefab == null)
+        {
+            Debug.LogWarning($"[Control S] 연출 프리팹이 없다: {prefabPath}. " +
+                             "Control S > Setup > Extract Jeongmin Direction Prefabs를 먼저 실행할 것.");
+            return null;
+        }
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
+        instance.transform.localPosition = new Vector3(position.x, position.y, 0f);
+        // Awake에서 곧바로 Play()가 도는 구조라, 활성화 시점 자체를 트리거로 쓴다.
+        instance.SetActive(false);
+        return instance.GetComponent<T>();
+    }
+
+    private static RoomInteractable CreateWasherSpot(Transform parent, Sprite whiteSprite,
+        FurnitureViewWindow washerView)
+    {
+        GameObject spot = new GameObject("Interact - Washer");
+        spot.transform.SetParent(parent, false);
+        spot.transform.localPosition = new Vector3(6.5f, 1.2f, 0f);
+
+        CircleCollider2D trigger = spot.AddComponent<CircleCollider2D>();
+        trigger.isTrigger = true;
+        trigger.radius = 0.7f;
+        trigger.enabled = false;
+
+        RoomInteractable interactable = spot.AddComponent<RoomInteractable>();
+        interactable.Configure("washer_stage2", "[E] 세탁기 조사", false);
+        interactable.puzzleAction = new PuzzleAction
+        {
+            Conditions = new List<GameCondition> { GameCondition.Stage2TimeSolved },
+            OpeningUI = washerView,
+            NarrationID = new List<string>(),
+            ChagingConditions = new List<GameCondition>(),
+            CollectCollectionType = CollectionType.None,
+            StartCollectionType = CollectionType.None,
+        };
+        interactable.enabled = false;
+        return interactable;
+    }
+
     private static StageTwoClueInteractable CreateClue(Transform parent, Sprite whiteSprite, string name,
         StageTwoClueType clueType, Vector2 position, string interactionId, string prompt,
         FurnitureViewWindow clueView)
@@ -202,7 +291,7 @@ public static class StageTwoPrefabSetup
 
         CircleCollider2D trigger = clueObject.AddComponent<CircleCollider2D>();
         trigger.isTrigger = true;
-        trigger.radius = clueType == StageTwoClueType.OutsideClock ? 0.72f : 0.9f;
+        trigger.radius = clueType == StageTwoClueType.OutsideClock ? 0.55f : 0.7f;
         trigger.enabled = false;
 
         RoomInteractable roomInteractable = clueObject.AddComponent<RoomInteractable>();
@@ -248,7 +337,8 @@ public static class StageTwoPrefabSetup
     /// 아트가 들어오기 전에는 흰 박스가 정면샷 자리를 대신한다.
     /// </summary>
     private static FurnitureViewWindow CreateClueView(Transform parent, string name, string title,
-        string actionId, string actionLabel)
+        string actionId, string actionLabel,
+        (string id, string label)[] extraActions = null)
     {
         Image rootImage = CreateWindowRoot(parent, name, new Vector2(860f, 560f));
         rootImage.color = new Color(0f, 0f, 0f, 0.86f);
@@ -269,18 +359,37 @@ public static class StageTwoPrefabSetup
             new Vector2(0.38f, 0.4f), new Vector2(0.62f, 0.58f),
             actionLabel, new Color(0.2f, 0.6f, 0.75f, 0.9f));
 
+        List<FurnitureViewWindow.ActionSlot> actionSlots = new List<FurnitureViewWindow.ActionSlot>
+        {
+            new FurnitureViewWindow.ActionSlot
+            {
+                ActionId = actionId,
+                Button = action,
+                RequiredCondition = GameCondition.None,
+            },
+        };
+
+        // 납량 연출용 추가 버튼(문 열기/닫기)은 2단계 정답 이후에만 보인다.
+        if (extraActions != null)
+        {
+            for (int index = 0; index < extraActions.Length; index++)
+            {
+                float minY = 0.2f - index * 0.13f;
+                Button extra = CreateButton(rootImage.transform, $"Action - {extraActions[index].id}",
+                    new Vector2(0.66f, minY), new Vector2(0.9f, minY + 0.11f),
+                    extraActions[index].label, new Color(0.55f, 0.3f, 0.2f, 0.9f));
+                actionSlots.Add(new FurnitureViewWindow.ActionSlot
+                {
+                    ActionId = extraActions[index].id,
+                    Button = extra,
+                    RequiredCondition = GameCondition.Stage2TimeSolved,
+                });
+            }
+        }
+
         FurnitureViewWindow window = rootImage.gameObject.AddComponent<FurnitureViewWindow>();
         window.EditorBind(background, titleText, hintText,
-            new List<FurnitureViewWindow.PieceSlot>(),
-            new List<FurnitureViewWindow.ActionSlot>
-            {
-                new FurnitureViewWindow.ActionSlot
-                {
-                    ActionId = actionId,
-                    Button = action,
-                    RequiredCondition = GameCondition.None,
-                },
-            });
+            new List<FurnitureViewWindow.PieceSlot>(), actionSlots);
 
         SerializedObject serialized = new SerializedObject(window);
         SetReference(serialized, "closeButton", close);
@@ -331,6 +440,33 @@ public static class StageTwoPrefabSetup
         return window;
     }
 
+
+    // Unity 기본 LegacyRuntime.ttf(Arial)에는 한글 글리프가 없어서 네모로만 나온다.
+    // OS 한글 폰트를 동적으로 받아 쓴다. 실패하면 기본 폰트로 되돌린다.
+    private static Font _koreanFont;
+    private static Font KoreanFont
+    {
+        get
+        {
+            if (_koreanFont != null)
+                return _koreanFont;
+
+            string[] candidates = { "Malgun Gothic", "맑은 고딕", "NanumGothic", "Gulim", "Dotum", "AppleGothic" };
+            foreach (string name in candidates)
+            {
+                Font found = Font.CreateDynamicFontFromOSFont(name, 32);
+                if (found != null)
+                {
+                    _koreanFont = found;
+                    return _koreanFont;
+                }
+            }
+
+            _koreanFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            return _koreanFont;
+        }
+    }
+
     private static Image CreateWindowRoot(Transform parent, string name, Vector2 size)
     {
         RectTransform rect = CreateRect(parent, name, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f));
@@ -377,7 +513,7 @@ public static class StageTwoPrefabSetup
     {
         RectTransform rect = CreateRect(parent, name, anchorMin, anchorMax);
         Text text = rect.gameObject.AddComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        text.font = KoreanFont;
         text.text = value;
         text.fontSize = fontSize;
         text.alignment = alignment;

@@ -40,9 +40,9 @@ public sealed class StageOneFlowController : MonoBehaviour
 {
     private const int RequiredPhotoCount = 12;
     private const string ScannerActionId = "scanner";
+    private const string ComputerActionId = "computer";
 
     [Header("Existing UI and Prefabs")]
-    [SerializeField] private Text clockText;
     [SerializeField] private Text objectiveText;
     [SerializeField] private Text actionText;
     [SerializeField] private Text recoveryBodyText;
@@ -194,7 +194,9 @@ public sealed class StageOneFlowController : MonoBehaviour
     // 책상 정면샷의 스캐너를 눌렀을 때. 조립이 끝난 뒤에만 통과한다.
     private void OnFurnitureAction(string actionId)
     {
-        if (!string.Equals(actionId, ScannerActionId, StringComparison.OrdinalIgnoreCase))
+        bool isScanner = string.Equals(actionId, ScannerActionId, StringComparison.OrdinalIgnoreCase);
+        bool isComputer = string.Equals(actionId, ComputerActionId, StringComparison.OrdinalIgnoreCase);
+        if (!isScanner && !isComputer)
             return;
 
         foreach (FurnitureViewWindow view in furnitureViews)
@@ -203,7 +205,10 @@ public sealed class StageOneFlowController : MonoBehaviour
                 view.CloseWindow();
         }
 
-        OnScanRequested();
+        if (isScanner)
+            OnScanRequested();
+        else
+            computerInteractable?.TryInteract();
     }
 
     private void ResetStage()
@@ -217,7 +222,6 @@ public sealed class StageOneFlowController : MonoBehaviour
         GameStateManager.Instance?.SetState(GameState.UI);
 
         SetPhase(StageOnePhase.Prologue);
-        SetText(clockText, "03:04");
         SetText(objectiveText, string.Empty);
         SetText(actionText, string.Empty);
         SetText(recoveryProgressText, "Recovery Progress: 0%");
@@ -269,7 +273,6 @@ public sealed class StageOneFlowController : MonoBehaviour
         yield return PlayScript(scriptIds.PrologueStudyBook);
         yield return PlayScript(scriptIds.PrologueFinish);
 
-        SetText(clockText, "03:05");
         SetText(objectiveText, "Ctrl 키를 눌러 저장");
 
         Keyboard keyboard = Keyboard.current;

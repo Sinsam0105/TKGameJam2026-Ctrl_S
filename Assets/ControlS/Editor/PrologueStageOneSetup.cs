@@ -39,6 +39,7 @@ public static class PrologueStageOneSetup
 
     // 책상 정면샷의 스캐너 버튼 id. StageOneFlowController가 같은 값을 본다.
     private const string ScannerActionId = "scanner";
+    private const string ComputerActionId = "computer";
 
     // CreatePhotoPieces가 만든 정면샷 창들. 플로우 컨트롤러에 꽂기 위해 들고 있는다.
     private static readonly List<FurnitureViewWindow> CreatedFurnitureViews = new List<FurnitureViewWindow>();
@@ -150,7 +151,7 @@ public static class PrologueStageOneSetup
                                            && ClipUsesPlayerSprites(PlayerAnimationDirectory + "IdleUp.anim", 1)
                                            && ClipUsesPlayerSprites(PlayerAnimationDirectory + "WalkUp.anim", 3);
         bool playerPresentationReady = player != null
-                                       && Mathf.Approximately(player.transform.localScale.x, 0.78f)
+                                       && Mathf.Approximately(player.transform.localScale.x, 0.95f)
                                        && playerLight != null
                                        && Mathf.Approximately(playerLight.pointLightOuterRadius, 3.2f);
         GameObject computer = FindByName(scene, "Computer");
@@ -376,7 +377,7 @@ public static class PrologueStageOneSetup
 
             renderer.sprite = sprites["PlayerFrontIdle"];
             renderer.flipX = false;
-            root.transform.localScale = Vector3.one * 0.78f;
+            root.transform.localScale = Vector3.one * 0.95f;
             SerializedObject serializedMove = new SerializedObject(playerMove);
             serializedMove.FindProperty("spriteRenderer").objectReferenceValue = renderer;
             serializedMove.ApplyModifiedPropertiesWithoutUndo();
@@ -479,7 +480,7 @@ public static class PrologueStageOneSetup
 
             CircleCollider2D trigger = GetOrAdd<CircleCollider2D>(root);
             trigger.isTrigger = true;
-            trigger.radius = 3.6f;
+            trigger.radius = 2.3f;   // 실효 반경 약 0.41 (프리팹 스케일 0.18)
 
             RoomInteractable interactable = GetOrAdd<RoomInteractable>(root);
             interactable.Configure("photo_piece", "[E] 사진 조각 줍기", true);
@@ -714,11 +715,7 @@ public static class PrologueStageOneSetup
             speechBubble = speechBubbleObject.GetComponent<SpeechBubbleController>();
         }
         speechBubble.gameObject.SetActive(true);
-        foreach (Image bubbleBackground in speechBubble.GetComponentsInChildren<Image>(true))
-        {
-            if (bubbleBackground.GetComponentInChildren<Text>(true) != null)
-                bubbleBackground.color = new Color(0.035f, 0.055f, 0.07f, 0.94f);
-        }
+        ConfigureSpeechBubbleOverlay(speechBubble);
 
         AudioListener[] listeners = FindComponents<AudioListener>(scene);
         AudioListener primaryListener = listeners.FirstOrDefault(item => item.gameObject.name == "Main Camera")
@@ -770,10 +767,6 @@ public static class PrologueStageOneSetup
         RectTransform hudRoot = CreateRect(hudCanvas.transform, "Prologue Stage 1 HUD",
             Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
 
-        Text clockText = CreateText(hudRoot, "Clock 03-05",
-            new Vector2(0.84f, 0.9f), new Vector2(0.97f, 0.98f),
-            Vector2.zero, Vector2.zero, "03:04", 34, TextAnchor.MiddleRight);
-        clockText.color = new Color(1f, 0.83f, 0.5f, 1f);
 
         Text objectiveText = CreateText(hudRoot, "Objective",
             new Vector2(0.03f, 0.88f), new Vector2(0.55f, 0.97f),
@@ -825,13 +818,13 @@ public static class PrologueStageOneSetup
         AudioSource fan = CreateAudioSource(audioRoot.transform, "Ambience - Computer Fan", LoadAudio("ComputerFan.mp3"), true, 0.18f);
         AudioSource fridge = CreateAudioSource(audioRoot.transform, "Ambience - Fridge", LoadAudio("FridgeAmbience.mp3"), true, 0.12f);
         AudioSource outdoor = CreateAudioSource(audioRoot.transform, "Ambience - Outside", LoadAudio("OutdoorAmbience.mp3"), true, 0.1f);
+        AudioSource balcony = CreateAudioSource(audioRoot.transform, "Ambience - Balcony", LoadAudio("BalconyAmbience.mp3"), true, 0.22f);
         AudioSource keyboard = CreateAudioSource(audioRoot.transform, "SFX - Keyboard Loop", LoadAudio("KeyboardLoop.mp3"), true, 0.24f);
         AudioSource keyPress = CreateAudioSource(audioRoot.transform, "SFX - Key Press", null, false, 0.7f);
         AudioSource effects = CreateAudioSource(audioRoot.transform, "SFX - Stage One", null, false, 0.8f);
 
         StageOneFlowController flow = FindComponent<StageOneFlowController>(scene) ?? controllerRoot.AddComponent<StageOneFlowController>();
         SerializedObject flowSerialized = new SerializedObject(flow);
-        flowSerialized.FindProperty("clockText").objectReferenceValue = clockText;
         flowSerialized.FindProperty("objectiveText").objectReferenceValue = objectiveText;
         flowSerialized.FindProperty("actionText").objectReferenceValue = actionText;
         flowSerialized.FindProperty("recoveryBodyText").objectReferenceValue = recoveryBody;
@@ -845,9 +838,11 @@ public static class PrologueStageOneSetup
         flowSerialized.FindProperty("computerScreenLight").objectReferenceValue = computerScreenLight;
         flowSerialized.FindProperty("balconyDoor").objectReferenceValue = balconyDoor.transform;
         // 오른쪽 벽에 붙었으니 문은 가로가 아니라 세로로 열린다.
-        flowSerialized.FindProperty("balconyDoorOpenOffset").vector3Value = new Vector3(0f, -1.15f, 0f);
+        flowSerialized.FindProperty("balconyDoorOpenOffset").vector3Value = new Vector3(0f, -1.9f, 0f);
         flowSerialized.FindProperty("balconyDoorOpenDuration").floatValue = 1.25f;
-        flowSerialized.FindProperty("balconyAmbienceSource").objectReferenceValue = outdoor;
+        // 전용 소스를 쓴다. outdoor를 그대로 쓰면 StartAmbience와 OpenBalconyDoor가
+        // 같은 AudioSource를 서로 Stop/Play 하면서 실외음이 끊긴다.
+        flowSerialized.FindProperty("balconyAmbienceSource").objectReferenceValue = balcony;
         flowSerialized.FindProperty("photoPuzzleWindow").objectReferenceValue = puzzleWindow;
         flowSerialized.FindProperty("pictureCollector").objectReferenceValue = collector;
         flowSerialized.FindProperty("computerInteractable").objectReferenceValue = computer;
@@ -896,11 +891,11 @@ public static class PrologueStageOneSetup
         balconyDoor.transform.SetParent(root, false);
         balconyDoor.transform.localPosition = new Vector3(6.98f, 0.4f, 0f);
         CreateVisualRect(balconyDoor.transform, "Balcony Glass", white, Vector2.zero,
-            new Vector2(1.48f, 1.52f), new Color(0.45f, 0.9f, 0.96f, 0.16f), -82);
-        CreateVisualRect(balconyDoor.transform, "Balcony Door Edge", white, new Vector2(0f, 0.72f),
-            new Vector2(1.52f, 0.055f), new Color(0.05f, 0.13f, 0.24f, 0.72f), -81);
-        CreateVisualRect(balconyDoor.transform, "Balcony Door Handle", white, new Vector2(-0.1f, 0.58f),
-            new Vector2(0.28f, 0.055f), new Color(0.95f, 0.3f, 0.75f, 0.9f), -80);
+            new Vector2(0.62f, 2.05f), new Color(0.45f, 0.9f, 0.96f, 0.16f), -82);
+        CreateVisualRect(balconyDoor.transform, "Balcony Door Edge", white, new Vector2(0f, 1.0f),
+            new Vector2(0.66f, 0.05f), new Color(0.05f, 0.13f, 0.24f, 0.72f), -81);
+        CreateVisualRect(balconyDoor.transform, "Balcony Door Handle", white, new Vector2(-0.22f, 0.35f),
+            new Vector2(0.06f, 0.24f), new Color(0.95f, 0.3f, 0.75f, 0.9f), -80);
 
         CreateCollisionRect(root, "Collision - Top Wall", new Vector2(0f, 5.02f), new Vector2(15.2f, 0.28f));
         CreateCollisionRect(root, "Collision - Bottom Wall", new Vector2(0f, -5.02f), new Vector2(15.2f, 0.28f));
@@ -1147,8 +1142,18 @@ public static class PrologueStageOneSetup
         List<FurnitureViewWindow.ActionSlot> actions = new List<FurnitureViewWindow.ActionSlot>();
         if (view.key == "Desk")
         {
+            Button computer = CreateButton(root, "Action - Computer",
+                new Vector2(0.28f, 0.62f), new Vector2(0.46f, 0.8f),
+                "컴퓨터", new Color(0.24f, 0.44f, 0.62f, 0.9f));
+            actions.Add(new FurnitureViewWindow.ActionSlot
+            {
+                ActionId = ComputerActionId,
+                Button = computer,
+                RequiredCondition = GameCondition.PrologueEnded,
+            });
+
             Button scanner = CreateButton(root, "Action - Scanner",
-                new Vector2(0.6f, 0.62f), new Vector2(0.76f, 0.78f),
+                new Vector2(0.6f, 0.62f), new Vector2(0.76f, 0.8f),
                 "스캐너", new Color(0.2f, 0.6f, 0.75f, 0.9f));
             actions.Add(new FurnitureViewWindow.ActionSlot
             {
@@ -1184,7 +1189,7 @@ public static class PrologueStageOneSetup
                                    ?? computer.AddComponent<CircleCollider2D>();
         trigger.enabled = true;
         trigger.isTrigger = true;
-        trigger.radius = 1.2f;
+        trigger.radius = 0.8f;
 
         RoomInteractable interactable = computer.GetComponent<RoomInteractable>() ?? computer.AddComponent<RoomInteractable>();
         interactable.Configure("computer_desktop", "[E] 컴퓨터 사용", false);
@@ -1430,6 +1435,85 @@ public static class PrologueStageOneSetup
         return clip;
     }
 
+    /// <summary>
+    /// 말풍선을 Screen Space - Overlay로 올린다. 월드 공간 캔버스는 sortingOrder와 무관하게
+    /// Overlay UI(데스크톱, 정면샷 창) 뒤에 깔려서 데스크톱 구간 대사가 안 보였다.
+    /// </summary>
+    private static void ConfigureSpeechBubbleOverlay(SpeechBubbleController speechBubble)
+    {
+        GameObject bubbleObject = speechBubble.gameObject;
+
+        Canvas canvas = GetOrAdd<Canvas>(bubbleObject);
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 200; // HUD 80, 정면샷 95, 데스크톱보다 위
+        canvas.overrideSorting = false;
+
+        CanvasScaler scaler = GetOrAdd<CanvasScaler>(bubbleObject);
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.matchWidthOrHeight = 0.5f;
+
+        // Overlay 루트는 화면 전체를 덮으므로 트랜스폼을 중립으로 되돌린다.
+        bubbleObject.transform.localPosition = Vector3.zero;
+        bubbleObject.transform.localRotation = Quaternion.identity;
+        bubbleObject.transform.localScale = Vector3.one;
+
+        foreach (Text bubbleText in speechBubble.GetComponentsInChildren<Text>(true))
+            bubbleText.font = KoreanFont;
+
+        RectTransform bubbleRoot = null;
+        foreach (Image bubbleBackground in speechBubble.GetComponentsInChildren<Image>(true))
+        {
+            if (bubbleBackground.GetComponentInChildren<Text>(true) == null)
+                continue;
+
+            bubbleBackground.color = new Color(0.035f, 0.055f, 0.07f, 0.94f);
+            bubbleBackground.raycastTarget = false;
+
+            // 말풍선 본체는 화면 좌표로 직접 옮기므로 앵커를 한 점으로 고정한다.
+            bubbleRoot = (RectTransform)bubbleBackground.transform;
+            bubbleRoot.anchorMin = bubbleRoot.anchorMax = new Vector2(0.5f, 0.5f);
+            bubbleRoot.pivot = new Vector2(0.5f, 0f);
+            if (bubbleRoot.sizeDelta.x < 1f || bubbleRoot.sizeDelta.y < 1f)
+                bubbleRoot.sizeDelta = new Vector2(460f, 150f);
+            break;
+        }
+
+        SerializedObject serialized = new SerializedObject(speechBubble);
+        serialized.FindProperty("_bubbleRoot").objectReferenceValue = bubbleRoot;
+        serialized.FindProperty("_worldHeadOffset").vector2Value = new Vector2(0f, 1.5f);
+        // 데스크톱이 열리면 우하단 일러(Seated Character: 앵커 0.98/0.03, 높이 270) 바로 위로 붙인다.
+        serialized.FindProperty("_desktopViewportAnchor").vector2Value = new Vector2(0.965f, 0.29f);
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+
+    // Unity 기본 LegacyRuntime.ttf(Arial)에는 한글 글리프가 없어서 네모로만 나온다.
+    // OS 한글 폰트를 동적으로 받아 쓴다. 실패하면 기본 폰트로 되돌린다.
+    private static Font _koreanFont;
+    private static Font KoreanFont
+    {
+        get
+        {
+            if (_koreanFont != null)
+                return _koreanFont;
+
+            string[] candidates = { "Malgun Gothic", "맑은 고딕", "NanumGothic", "Gulim", "Dotum", "AppleGothic" };
+            foreach (string name in candidates)
+            {
+                Font found = Font.CreateDynamicFontFromOSFont(name, 32);
+                if (found != null)
+                {
+                    _koreanFont = found;
+                    return _koreanFont;
+                }
+            }
+
+            _koreanFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            return _koreanFont;
+        }
+    }
+
     private static GameObject CreateScreenCanvas(Scene scene, string name, int sortingOrder)
     {
         GameObject canvasObject = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -1473,7 +1557,7 @@ public static class PrologueStageOneSetup
         rect.offsetMin = offsetMin;
         rect.offsetMax = offsetMax;
         Text text = rect.gameObject.AddComponent<Text>();
-        text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        text.font = KoreanFont;
         text.text = value;
         text.fontSize = fontSize;
         text.alignment = alignment;
