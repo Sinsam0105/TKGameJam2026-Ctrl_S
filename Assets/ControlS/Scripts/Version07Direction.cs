@@ -4,14 +4,14 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 /// <summary>
-/// D, B, F, A, E, C가 시간순으로 빠르게 재생된 뒤 목록에 없던 손상 버전이 0.5초 나타난다.
+/// [3단계] D, B, F, A, E, C가 시간순으로 빠르게 재생된 뒤 목록에 없던 손상 버전이 0.5초 나타난다.
 /// </summary>
 public class Version07Direction : MonoBehaviour
 {
     /// <summary>
     /// 이벤트를 이미 봤는가 (중복 방지)
     /// </summary>
-    public bool HasSeenEvent { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
+    public bool Event_60_Played { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
 
     [SerializeField] LightController _light;
     [SerializeField] TMP_Text _display;
@@ -31,16 +31,15 @@ public class Version07Direction : MonoBehaviour
 
         _display ??= transform.GetComponentInChildren<TMP_Text>();
         _display.text = "";
-        OnUSBConnected();
+        //OnUSBConnected();
     }
 
     /// <summary>
-    /// USB 연결 후, 복원 진행
-    /// => D, B, F, A, E, C 카드가 0.25초 간격으로 전체화면 재생
+    /// USB 연결 후, 복원을 진행했다 => 디스플레이에서 D, B, F, A, E, C 카드가 순서대로 등장
     /// </summary>
     public void OnUSBConnected()
     {
-        if (HasSeenEvent)
+        if (Event_60_Played)
             return;
 
         StartCoroutine(CoPlay());
@@ -48,13 +47,13 @@ public class Version07Direction : MonoBehaviour
 
     IEnumerator CoPlay()
     {
-        // TODO: 실제 UI에 띄워야 한다
+        // TODO: 실제 UI 화면을 띄워야 한다
         char[] code = { 'D', 'B', 'F', 'A', 'E', 'C' };
         _display.text += $"{code[0]}";
 
         for (int i = 1; i < code.Length; ++i)
         {
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.4f);
             _display.text += $" -> {code[i]}";
         }
 

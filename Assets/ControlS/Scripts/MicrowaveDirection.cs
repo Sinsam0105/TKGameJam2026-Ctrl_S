@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 정답 입력 후 재생되는 전자레인지 납량 연출. => 나중에 전자레인지 상호작용 스크립트로 다 옮기면 될 것 같다
+/// [2단계] 정답 입력 후 재생되는 전자레인지 납량 연출.
 /// 대기 -> 버튼음 -> 조명 켜짐 -> 00:30초 동안 회전판 회전 -> 주인공 대사
 /// 플레이어가 전자레인지 문을 열면 즉시 멈춘다 -> 빈 내부를 확인한 조사 대사
 /// </summary>
@@ -29,7 +29,6 @@ public class MicrowaveDirection : MonoBehaviour
     private void Awake()
     {
         Init();
-        Play();
     }
 
     void Init()
@@ -43,7 +42,10 @@ public class MicrowaveDirection : MonoBehaviour
         _originalTurntableScale = _turntable.localScale;
     }
 
-    void Play()
+    /// <summary>
+    /// 정답을 입력했다. => 전자레인지 버튼음 재생 / 불 켜짐 / 30초 타이머 동안 회전판 회전 후 연출 비활성화
+    /// </summary>
+    public void OnAnswerValidated()
     {
         if (Event_40_Played || _coPlay != null)
             return;
@@ -90,12 +92,16 @@ public class MicrowaveDirection : MonoBehaviour
             yield return null;
         }
 
+        //ScriptManager.Instance.Play(_investigationScriptName);    // TODO: 대본이 없다
+
         _turntable.localScale = _originalTurntableScale;
+        enabled = false;
     }
 
-    // 플레이어가 전자레인지 문을 열었다
-    // TODO: 전자레인지 상호작용 스크립트에서 이벤트 연결해줘용
-    void OnOpened()
+    /// <summary>
+    /// 플레이어가 전자레인지 문을 열었다 -> 회전 멈춤 / 전자레인지 연출 비활성화
+    /// </summary>
+    public void OnOpened()
     {
         if (_coPlay != null)
         {

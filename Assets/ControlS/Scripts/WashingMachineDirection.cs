@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 세탁기 납량 연출. => 상호작용 스크립트로 다 옮기면 될 것 같다
+/// [2단계] 세탁기 납량 연출.
 /// 전자레인지 확인 -> 베란다 위치에서 세탁기 완료음 3D 재생
 /// 세탁기 문을 닫으면 디스플레이 03:05 -> 0.5초 후 끄기 -> 컴퓨터 알림 재생
 /// </summary>
@@ -41,18 +41,17 @@ public class WashingMachineDirection : MonoBehaviour
     }
 
     /// <summary>
-    /// 플레이어가 전자레인지을 확인하면 호출된다.
-    /// 베란다 위치에서 세탁기 완료음 3D 재생
-    /// TODO: 전자레인지 상호작용 스크립트에서 이벤트 연결해줘용
+    /// 플레이어가 전자레인지를 확인했다. => 베란다 위치에서 세탁기 완료음 3D 재생
     /// </summary>
     public void OnMicrowaveOpened()
     {
         // TODO: 베란다 위치에서 세탁기 완료음 3D 재생
     }
 
-    // 플레이어가 세탁기 문을 닫았다
-    // TODO: 세탁기 상호작용 스크립트에서 이벤트 연결해줘용
-    void OnClosed()
+    /// <summary>
+    /// 플레이어가 세탁기 문을 닫았다. => 0.5초 동안 03:05 표시
+    /// </summary>
+    public void OnClosed()
     {
         if (Event_40_Played)
             return;

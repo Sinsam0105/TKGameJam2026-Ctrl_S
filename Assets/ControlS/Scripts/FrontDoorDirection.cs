@@ -4,17 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 이 코드도 연출만 있어서 그냥 상호작용 스크립트로 옮기면 될 것 같다
+/// [3단계] 현관문 연출.
 /// </summary>
 public class FrontDoorDirection : MonoBehaviour
 {
     /// <summary>
     /// 이벤트를 이미 봤는가 (중복 방지)
     /// </summary>
-    public bool HasSeenEvent { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
+    public bool Event_60_Played { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
 
     [SerializeField] string _narrationScriptName;   // TODO: 스크립트 매니저를 통해 말풍선이 끝날 때마다 이벤트 활성화
     [SerializeField] Transform _intercomScreen;
+    bool _isViewingIntercom = false;
 
     /// <summary>
     /// 픽셀 = _noiseResolution * _noiseResolution 
@@ -44,33 +45,40 @@ public class FrontDoorDirection : MonoBehaviour
         _noiseTexture.wrapMode = TextureWrapMode.Clamp;
 
         StopNoise();
-        OnIntercomInteracted(); // test
+        //OnIntercomInteracted(); // test
     }
 
     /// <summary>
-    /// Project Structure Restored 문구가 사라지고 다음 단계로 넘어가기 직전
-    /// TODO: 상호작용 스크립트랑 연결 필요
+    /// Project Structure Restored 문구가 사라지고 다음 단계로 넘어가기 직전에 호출된다
     /// </summary>
-    public void Onanjtlrl() // 이름 뭘로 하지..........
+    public void OnProjectStructureRestoredMessageFinished() // 이름 뭘로 하지..........
     {
-        if (HasSeenEvent)
+        if (Event_60_Played)
             return;
 
-        HasSeenEvent = true;
+        Event_60_Played = true;
 
         // TODO: 버전 체인 검증음과 같은 세 번의 강한 타격음이 울린다
+
         //ScriptManager.Instance.Play(_investigationScriptName);    // TODO: 대본이 없다
 
         // TODO: 짧은 정적 뒤 같은 문에서 세 번 더 두드리는 소리가 난다. 마지막 타격음은 비정상적으로 길게 울린다.
     }
 
     /// <summary>
-    /// 플레이어가 인터폰과 상호작용 할 때, 검은 노이즈만 표시
-    /// TODO: 상호작용 스크립트랑 연결 필요
+    /// 플레이어가 인터폰을 만졌다 => 인터폰을 볼 때는 검은 노이즈만 표시 / 이미 보고 있는 상태라면 인터폰 끄기
     /// </summary>
-    void OnIntercomInteracted()
+    public void OnIntercomInteracted()
     {
-        // 도어뷰 또는 간단한 인터폰 화면은 검은 노이즈만 표시
+        if (_isViewingIntercom)
+        {
+            _isViewingIntercom = false;
+            StopNoise();
+            _intercomScreen.gameObject.SetActive(false);
+            return;
+        }
+
+        _isViewingIntercom = true;
         _intercomScreen.gameObject.SetActive(true);
         _intercomImage.texture = _noiseTexture;
         _coPlayNoise = StartCoroutine(CoPlaynNoise());
@@ -80,7 +88,7 @@ public class FrontDoorDirection : MonoBehaviour
     /// 현관문을 닫으면 컴퓨터에서 정상적인 Workspace Recovery 알림음이 울린다
     /// TODO: 상호작용 스크립트 연결
     /// </summary>
-    void OnClosed()
+    public void OnClosed()
     {
         // TODO: 현관문을 닫으면 컴퓨터에서 정상적인 Workspace Recovery 알림음이 울린다
     }
