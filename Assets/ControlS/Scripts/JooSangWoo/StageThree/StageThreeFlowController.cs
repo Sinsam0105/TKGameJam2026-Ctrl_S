@@ -33,6 +33,7 @@ public sealed class StageThreeFlowController : MonoBehaviour
 
     [Header("Systems")]
     [SerializeField] private VersionChainPuzzle versionPuzzle;
+    [SerializeField] private PuzzleWindowedUI versionWindow;   // 버전 정렬 퍼즐이 들어 있는 창(컴퓨터가 연다)
     [SerializeField] private LetterLockWindow letterLock;
     [SerializeField] private FurnitureViewWindow usbView;
 
@@ -114,6 +115,7 @@ public sealed class StageThreeFlowController : MonoBehaviour
     public void BeginStage()
     {
         SetPhase(StageThreePhase.Sorting);
+        ConfigureComputer();
         SetInteractable(computerInteractable, true);
         SetInteractable(backupBoxInteractable, true);   // 상자는 게임 시작부터 보이되, 코드 전엔 못 연다
         SetInteractable(usbInteractable, false);
@@ -121,6 +123,19 @@ public sealed class StageThreeFlowController : MonoBehaviour
         SetText(objectiveText, "컴퓨터에서 버전 기록을 정렬한다");
         SetText(recoveryBodyText,
             "STEP 3\n\nVERSION HISTORY RECOVERY\n\nReconstruct the edit order\nof the recovered document.");
+    }
+
+    // 3단계에서는 컴퓨터가 버전 정렬 창을 연다. (1·2단계 재설정 이후이므로 여기서 다시 지정한다.)
+    private void ConfigureComputer()
+    {
+        if (computerInteractable == null || computerInteractable.puzzleAction == null || versionWindow == null)
+            return;
+
+        computerInteractable.Configure("computer_stage3_version", "[E] 버전 기록 정렬", false);
+        computerInteractable.puzzleAction.Conditions = new List<GameCondition> { GameCondition.PrologueEnded };
+        computerInteractable.puzzleAction.OpeningUI = versionWindow;
+        computerInteractable.puzzleAction.NarrationID = new List<string>();
+        computerInteractable.enabled = true;
     }
 
     private void OnVersionSolved()

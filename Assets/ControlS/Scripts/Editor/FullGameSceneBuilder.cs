@@ -13,12 +13,13 @@ using UnityEngine.UI;
 ///  - 스테이지 1~2는 이미 손으로 완성된 MainGameScene에 있으므로, 그 씬을 새 씬 파일로 복제해
 ///    확실히 동작하는 토대를 확보한 뒤 증분으로 4·5단계를 붙인다. (방 배경/가구/조각은 프리팹화되어
 ///    있지 않아 맨바닥에서 재현하면 깨지기 쉽다. 검증된 씬을 재사용하는 편이 안전하다.)
+///  - 3단계(Version History)는 버전 정렬 퍼즐 + 문자 잠금(ABCD) UI를 코드로 만들어 붙인다.
+///    단, USB 조사·Version05/노크 공포 연출·현관문은 아트/프리팹이 없어 생략하고 콘솔에 안내를 남긴다.
 ///  - 4단계(Workspace Recovery)는 "사진 퍼즐과 동일"하므로 PicturePuzzleCanvas 프리팹을 한 벌 더
 ///    인스턴스화해 재사용한다.
 ///  - 5단계(User Verification)는 전신거울(MirrorPlayer 아트) + 코드 입력 창을 코드로 만든다.
 ///  - SoundManager가 씬에 없으면 추가한다(효과음 통합 라우팅에 필요).
-///  - 3단계 버전 정렬/문자 잠금 UI는 프리팹이 없어 코드로 만들 수 없다. 씬에 자리만 잡고
-///    콘솔에 "Unity에서 마무리해야 할 것"을 남긴다.
+///  - 흐름 연결: 2→3→4→5를 코드로 이어 붙인다.
 ///
 /// 실행: 상단 메뉴 → Tools/ControlS/Build Full Game Scene (Stages 1-5)
 /// 결과: Assets/Scenes/FullGameScene.unity (원본 MainGameScene은 건드리지 않는다)
@@ -72,16 +73,20 @@ public static class FullGameSceneBuilder
         StageFourFlowController stage4 = BuildStageFour(gameController, shared);
         StageFiveFlowController stage5 = BuildStageFive(gameController, shared);
 
-        // 흐름 연결: 4→5, 그리고 (있다면) 3→4.
+        // 3단계(버전 정렬 + 문자 잠금)를 코드로 만든다.
+        StageThreeFlowController stage3 = BuildStageThree(gameController, shared, stage4);
+
+        // 흐름 연결: 4→5, 3→4, 2→3.
         if (stage4 != null && stage5 != null)
             SetObj(stage4, "stageFiveFlow", stage5);
-
-        StageThreeFlowController stage3 = Object.FindAnyObjectByType<StageThreeFlowController>(FindObjectsInactive.Include);
         if (stage3 != null && stage4 != null)
             SetObj(stage3, "stageFourFlow", stage4);
-        else if (stage3 == null)
-            Warn("3단계(StageThreeFlowController)가 씬에 없습니다. 버전 정렬/문자 잠금 UI는 Unity에서 " +
-                 "직접 구성한 뒤 StageThree→StageFour 연결과 StageTwo.stageThreeFlow 연결을 마무리하세요.");
+
+        StageTwoFlowController stage2 = Object.FindAnyObjectByType<StageTwoFlowController>(FindObjectsInactive.Include);
+        if (stage2 != null && stage3 != null)
+            SetObj(stage2, "stageThreeFlow", stage3);
+        else if (stage2 == null)
+            Warn("StageTwoFlowController를 찾지 못해 2→3단계 연결을 못 했습니다.");
 
         MarkDirtyAndSave(scene);
 
@@ -311,7 +316,198 @@ public static class FullGameSceneBuilder
         return window;
     }
 
+    // ── 3단계: Version History Recovery (버전 정렬 + 문자 잠금) ────────────────
+    private static StageThreeFlowController BuildStageThree(GameObject host, SharedRefs shared, StageFourFlowController stage4)
+    {
+        StageThreeFlowController stage3 = host.AddComponent<StageThreeFlowController>();
+
+        (PuzzleWindowedUI versionWindow, VersionChainPuzzle versionPuzzle) = BuildVersionPuzzle();
+        LetterLockWindow letterLock = BuildLetterLock();
+        RoomInteractable box = BuildBackupBox(shared, letterLock);
+
+        SetObj(stage3, "versionPuzzle", versionPuzzle);
+        SetObj(stage3, "versionWindow", versionWindow);
+        SetObj(stage3, "letterLock", letterLock);
+        SetObj(stage3, "computerInteractable", shared.ComputerInteractable);
+        SetObj(stage3, "backupBoxInteractable", box);
+        SetObj(stage3, "objectiveText", shared.ObjectiveText);
+        SetObj(stage3, "recoveryProgressText", shared.RecoveryProgressText);
+        SetObj(stage3, "recoveryWindow", shared.RecoveryWindow);
+        SetObj(stage3, "recoveryBodyText", shared.RecoveryBodyText);
+        if (stage4 != null)
+            SetObj(stage3, "stageFourFlow", stage4);
+
+        Warn("3단계: 버전 정렬/문자 잠금 UI는 생성했지만, USB 조사·Version05/노크 공포 연출·현관문은 " +
+             "아트/프리팹이 없어 생략했습니다. 문자 잠금 해제(OnBoxOpened) 이후 흐름(USB→60%→노크→현관)은 " +
+             "해당 오브젝트를 Unity에서 붙여 연결하세요.");
+        return stage3;
+    }
+
+    private static (PuzzleWindowedUI window, VersionChainPuzzle puzzle) BuildVersionPuzzle()
+    {
+        GameObject canvasGo = CreateOverlayCanvas("Stage3 Version Puzzle Canvas");
+        PuzzleWindowedUI window = canvasGo.AddComponent<PuzzleWindowedUI>();
+        VersionChainPuzzle puzzle = canvasGo.AddComponent<VersionChainPuzzle>();
+
+        GameObject panel = CreateUIChild(canvasGo.transform, "Panel", new Vector2(760f, 440f), Vector2.zero);
+        Image panelImage = panel.AddComponent<Image>();
+        panelImage.color = new Color(0.06f, 0.07f, 0.10f, 0.96f);
+
+        CreateText(panel.transform, "Title", "VERSION HISTORY RECOVERY", 24, new Vector2(0f, 185f), new Vector2(700f, 40f));
+
+        string[] ids = { "A", "B", "C", "D" };
+        const float startX = -255f;
+        const float step = 170f;
+
+        GameObject slotsRoot = CreateUIChild(panel.transform, "Slots", new Vector2(700f, 140f), new Vector2(0f, 55f));
+        List<Object> slots = new();
+        for (int i = 0; i < ids.Length; i++)
+        {
+            GameObject slot = CreateUIChild(slotsRoot.transform, $"Slot {i + 1}", new Vector2(150f, 130f), new Vector2(startX + step * i, 0f));
+            Image slotImage = slot.AddComponent<Image>();
+            slotImage.color = new Color(1f, 1f, 1f, 0.06f);
+            slotImage.raycastTarget = false;
+            slots.Add((RectTransform)slot.transform);
+        }
+
+        GameObject cardsRoot = CreateUIChild(panel.transform, "Cards", new Vector2(700f, 140f), new Vector2(0f, 55f));
+        List<Object> cards = new();
+        for (int i = 0; i < ids.Length; i++)
+            cards.Add(BuildVersionCard(cardsRoot.transform, puzzle, ids[i], i + 1, $"Version {ids[i]}"));
+
+        Button compare = CreateButton(panel.transform, "Compare", "Compare", new Vector2(160f, 46f), new Vector2(-180f, -160f));
+        Button submit = CreateButton(panel.transform, "Submit", "Submit", new Vector2(160f, 46f), new Vector2(180f, -160f));
+        Text resultText = CreateText(panel.transform, "Result", string.Empty, 18, new Vector2(0f, -105f), new Vector2(700f, 32f));
+        Text hintText = CreateText(panel.transform, "Hint", string.Empty, 16, new Vector2(0f, -130f), new Vector2(700f, 30f));
+        Text codeText = CreateText(panel.transform, "Code", string.Empty, 20, new Vector2(0f, -200f), new Vector2(700f, 34f));
+
+        SetObjList(puzzle, "slots", slots);
+        SetObjList(puzzle, "cards", cards);
+        SetObj(puzzle, "compareButton", compare);
+        SetObj(puzzle, "submitButton", submit);
+        SetObj(puzzle, "compareResultText", resultText);
+        SetObj(puzzle, "hintText", hintText);
+        SetObj(puzzle, "codeText", codeText);
+
+        canvasGo.SetActive(false);
+        return (window, puzzle);
+    }
+
+    private static VersionCard BuildVersionCard(Transform parent, VersionChainPuzzle puzzle, string id, int index, string label)
+    {
+        GameObject go = new GameObject($"Card {id}", typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        RectTransform rect = (RectTransform)go.transform;
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = new Vector2(150f, 130f);
+
+        Image background = go.AddComponent<Image>();     // 드래그/클릭 레이캐스트 타깃
+        background.color = new Color(0.85f, 0.86f, 0.92f, 1f);
+
+        VersionCard card = go.AddComponent<VersionCard>(); // RequireComponent로 CanvasGroup 자동 추가
+
+        Text labelText = CreateText(go.transform, "Label", label, 18, Vector2.zero, new Vector2(140f, 120f));
+        labelText.color = Color.black;
+        labelText.raycastTarget = false;
+        Image selection = CreateFrame(go.transform, "Selection", new Color(0.2f, 0.6f, 1f, 0.4f));
+        Image highlight = CreateFrame(go.transform, "Highlight", new Color(1f, 0.85f, 0.2f, 0.4f));
+
+        SetObj(card, "labelText", labelText);
+        SetObj(card, "selectionFrame", selection);
+        SetObj(card, "highlightFrame", highlight);
+        card.Configure(puzzle, id, index, label);
+        return card;
+    }
+
+    private static LetterLockWindow BuildLetterLock()
+    {
+        GameObject canvasGo = CreateOverlayCanvas("Stage3 Letter Lock Canvas");
+        LetterLockWindow lockWindow = canvasGo.AddComponent<LetterLockWindow>();
+
+        GameObject panel = CreateUIChild(canvasGo.transform, "Panel", new Vector2(540f, 360f), Vector2.zero);
+        Image panelImage = panel.AddComponent<Image>();
+        panelImage.color = new Color(0.06f, 0.07f, 0.10f, 0.96f);
+
+        CreateText(panel.transform, "Title", "BACKUP BOX LOCK", 24, new Vector2(0f, 140f), new Vector2(500f, 40f));
+        Text entry = CreateText(panel.transform, "Entry", string.Empty, 32, new Vector2(0f, 78f), new Vector2(500f, 46f));
+        Text feedback = CreateText(panel.transform, "Feedback", string.Empty, 18, new Vector2(0f, -130f), new Vector2(500f, 32f));
+
+        string[] labels = { "A", "B", "C", "D" };
+        const float startX = -180f;
+        const float step = 120f;
+        List<Object> buttons = new();
+        for (int i = 0; i < labels.Length; i++)
+            buttons.Add(CreateButton(panel.transform, $"Letter {labels[i]}", labels[i], new Vector2(90f, 64f), new Vector2(startX + step * i, -6f)));
+
+        Button clear = CreateButton(panel.transform, "Clear", "CLEAR", new Vector2(130f, 46f), new Vector2(0f, -74f));
+
+        SetObjList(lockWindow, "letterButtons", buttons);
+        SetObj(lockWindow, "entryText", entry);
+        SetObj(lockWindow, "feedbackText", feedback);
+        SetObj(lockWindow, "clearButton", clear);
+        // expectedCode/letterLabels는 기본값(ABCD)을 그대로 쓴다. StageThree가 정렬 결과로 덮어쓴다.
+
+        canvasGo.SetActive(false);
+        return lockWindow;
+    }
+
+    private static RoomInteractable BuildBackupBox(SharedRefs shared, LetterLockWindow letterLock)
+    {
+        GameObject go = new GameObject("Stage3 Backup Box");
+        if (shared.RoomRoot != null)
+            go.transform.position = shared.RoomRoot.position + new Vector3(-3f, 0f, 0f);
+
+        BoxCollider2D collider = go.AddComponent<BoxCollider2D>();
+        collider.isTrigger = true;
+        collider.size = new Vector2(2f, 2f);
+
+        RoomInteractable interactable = go.AddComponent<RoomInteractable>();
+        interactable.Configure("stage3_box", "[E] 백업 상자 열기", false);
+        // 버전 코드를 확보(Stage3VersionSolved)해야만 상자(문자 잠금)를 연다.
+        interactable.puzzleAction = new PuzzleAction
+        {
+            Conditions = new List<GameCondition> { GameCondition.Stage3VersionSolved },
+            NarrationID = new List<string>(),
+            ChagingConditions = new List<GameCondition>(),
+            OpeningUI = letterLock,
+        };
+        interactable.enabled = false;
+        collider.enabled = false;
+        return interactable;
+    }
+
     // ── uGUI 헬퍼 ────────────────────────────────────────────────────────────
+    private static GameObject CreateOverlayCanvas(string name)
+    {
+        GameObject go = new GameObject(name);
+        Canvas canvas = go.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        go.AddComponent<CanvasScaler>();
+        go.AddComponent<GraphicRaycaster>();
+        return go;
+    }
+
+    private static Button CreateButton(Transform parent, string name, string label, Vector2 size, Vector2 pos)
+    {
+        GameObject go = CreateUIChild(parent, name, size, pos);
+        Image image = go.AddComponent<Image>();
+        image.color = new Color(0.2f, 0.32f, 0.48f, 1f);
+        Button button = go.AddComponent<Button>();
+        Text text = CreateText(go.transform, "Text", label, 18, Vector2.zero, size);
+        text.raycastTarget = false;
+        return button;
+    }
+
+    private static Image CreateFrame(Transform parent, string name, Color color)
+    {
+        GameObject go = CreateUIChild(parent, name, new Vector2(150f, 130f), Vector2.zero);
+        Image image = go.AddComponent<Image>();
+        image.color = color;             // 테두리 대체용 반투명 오버레이. 스프라이트는 Unity에서 교체.
+        image.raycastTarget = false;
+        return image;
+    }
+
     private static GameObject CreateUIChild(Transform parent, string name, Vector2 size, Vector2 anchoredPos)
     {
         GameObject go = new GameObject(name, typeof(RectTransform));
@@ -352,6 +548,23 @@ public static class FullGameSceneBuilder
             return;
         }
         p.objectReferenceValue = value;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static void SetObjList(Component comp, string prop, IList<Object> values)
+    {
+        if (comp == null)
+            return;
+        SerializedObject so = new SerializedObject(comp);
+        SerializedProperty p = so.FindProperty(prop);
+        if (p == null)
+        {
+            Warn($"{comp.GetType().Name}.{prop} 리스트 필드를 찾지 못했습니다.");
+            return;
+        }
+        p.arraySize = values.Count;
+        for (int i = 0; i < values.Count; i++)
+            p.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
