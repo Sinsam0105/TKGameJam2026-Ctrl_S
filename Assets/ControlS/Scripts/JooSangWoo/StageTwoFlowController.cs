@@ -23,7 +23,7 @@ public sealed class StageTwoFlowController : MonoBehaviour
     private const string CorrectHour = "03";
     private const string CorrectMinute = "05";
 
-    // 정면샷 창의 액션 버튼 id. StageTwoPrefabSetup이 같은 값을 심는다.
+    // 정면샷 창의 액션 버튼 id. 프리팹에 저장된 버튼 id와 같은 값을 쓴다.
     public const string MicrowaveActionId = "clue_microwave";
     public const string PostItActionId = "clue_postit";
     public const string OutsideClockActionId = "clue_outsideclock";

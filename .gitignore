@@ -144,6 +144,11 @@ x86/
 *.nuget.props
 *.nuget.targets
 
+# Unity Package Manager manifest/lock files are project configuration, not restored NuGet packages.
+!/[Pp]ackages/
+!/[Pp]ackages/manifest.json
+!/[Pp]ackages/packages-lock.json
+
 # Publish Web Output
 *.[Pp]ublish.xml
 
