@@ -64,7 +64,8 @@ public class SpeechBubbleController : MonoBehaviour
     bool _desktopSearched;
 
     public Transform Owner { get; private set; }
-    Text _textUI;   // TODO: 추후 TMP로 변경 필요
+    Text _textUI;
+    TMP_Text _tmpTextUI;
 
     /// <summary>
     /// 대사 출력 중인가
@@ -93,17 +94,23 @@ public class SpeechBubbleController : MonoBehaviour
     public void Init()
     {
         //Debug.Log("SpeechBubbleController Init");
-        Owner = transform.parent.transform;
+        Owner = transform.parent;
         // 임시. TODO: 플레이어/몬스터/NPC 크리처들이 Base 컴포넌트를 상속하면 좋겠다
         // 또는, 태그를 활용한다던가..?
         {
-            if (Owner.GetComponent<PlayerMove>() != null)
+            if (Owner != null && Owner.GetComponent<PlayerMove>() != null)
                 _speaker = EObject.Player;
         }
 
-        _textUI = GetComponentInChildren<Text>();
+        ResolveTextUI();
         if (_bubbleRoot == null)
-            _bubbleRoot = _textUI != null ? _textUI.rectTransform.parent as RectTransform : null;
+        {
+            RectTransform textRect = GetTextRectTransform();
+            _bubbleRoot = textRect != null ? textRect.parent as RectTransform : null;
+        }
+
+        if (!HasTextUI())
+            Debug.LogError($"[SpeechBubbleController] {name}에서 Text 또는 TMP_Text 컴포넌트를 찾을 수 없습니다.");
 
         s_registry[_speaker] = this;
         gameObject.SetActive(false);
@@ -124,8 +131,8 @@ public class SpeechBubbleController : MonoBehaviour
             Vector2 systemPivot = new Vector2(0.5f, 1f);
             if (_bubbleRoot.pivot != systemPivot)
                 _bubbleRoot.pivot = systemPivot;
-            if (_textUI != null && _textUI.alignment != TextAnchor.UpperCenter)
-                _textUI.alignment = TextAnchor.UpperCenter;
+
+            SetTextAlignment(TextAnchor.UpperCenter, TextAlignmentOptions.Top);
 
             _bubbleRoot.position = new Vector3(
                 Screen.width * _systemViewportAnchor.x,
@@ -141,12 +148,9 @@ public class SpeechBubbleController : MonoBehaviour
         if (_bubbleRoot.pivot != pivot)
             _bubbleRoot.pivot = pivot;
 
-        if (_textUI != null)
-        {
-            TextAnchor anchor = desktop ? TextAnchor.LowerRight : TextAnchor.MiddleCenter;
-            if (_textUI.alignment != anchor)
-                _textUI.alignment = anchor;
-        }
+        SetTextAlignment(
+            desktop ? TextAnchor.LowerRight : TextAnchor.MiddleCenter,
+            desktop ? TextAlignmentOptions.BottomRight : TextAlignmentOptions.Center);
 
         _bubbleRoot.position = desktop
             ? new Vector3(Screen.width * _desktopViewportAnchor.x, Screen.height * _desktopViewportAnchor.y, 0f)
@@ -212,11 +216,23 @@ public class SpeechBubbleController : MonoBehaviour
             return;
         }
 
+        if (speechBubble == null || speechBubble.Count == 0)
+        {
+            Debug.LogWarning($"[SpeechBubbleController] {name}에 표시할 대사가 없습니다.");
+            return;
+        }
+
+        if (!ResolveTextUI())
+        {
+            Debug.LogError($"[SpeechBubbleController] {name}에서 Text 또는 TMP_Text 컴포넌트를 찾을 수 없어 대사를 표시할 수 없습니다.");
+            return;
+        }
+
         //Debug.Log($"Show SpeechBubbleInfo");
 
         _isAuto = isAuto;
         gameObject.SetActive(true);
-        _textUI.text = "";
+        SetText(string.Empty);
         IsTyping = true;
 
         StartCoroutine(CoShow(speechBubble));
@@ -246,7 +262,6 @@ public class SpeechBubbleController : MonoBehaviour
     IEnumerator CoShow(List<SpeechBubbleInfo> speechBubble)
     {
         // 대사 출력
-        // TODO: TMP로 변경 시, 변경 필요
         int range = speechBubble.Count - 1;
         for (int idx = 0; idx < range; idx++)
         {
@@ -291,15 +306,11 @@ public class SpeechBubbleController : MonoBehaviour
     /// <param name="isContinuing">이전 텍스트에 이어서 출력하는지 여부. 효과 단위로 글자를 분리했을 때 사용한다.</param>
     IEnumerator CoShow(SpeechBubbleInfo text, bool isContinuing = false)
     {
-        // TODO: TMP로 변경 시, 제거
-        {
-            _textUI.fontSize = text.FontSize;
-            _textUI.color = _overrideTextColorWhite ? Color.white : text.FontColor;
-        }
+        ApplyTextStyle(text);
 
         if (text.Speed == ESpeechBubbleSpeed.None)
         {
-            _textUI.text += text.Text;
+            AppendText(text.Text);
             yield break;
         }
 
@@ -318,10 +329,10 @@ public class SpeechBubbleController : MonoBehaviour
                 break;
             }
 
-            _textUI.text += text.Text[idx];
+            AppendText(text.Text[idx].ToString());
             yield return new WaitForSeconds(interval);
         }
-        _textUI.text += text.Text[range];   // 마지막 글자
+        AppendText(text.Text[range].ToString());   // 마지막 글자
 
         if (isContinuing)
             yield break;
@@ -343,19 +354,81 @@ public class SpeechBubbleController : MonoBehaviour
         // TODO: _isAuto가 false면, 대사 출력이 완료될 때 아이콘 추가 (ex. ▼)
     }
 
-    // TODO: TMP로 변경 시, 제거
     void Skip(SpeechBubbleInfo text, int idx = -1)  // 글자가 잘리지 않게 idx 전달한다. 그대로 출력하고 싶다면 -1
     {
         if (_isSkip == false || _isAuto)
             return;
 
         //Debug.Log($"Skip SpeechBubbleInfo {text.Text}");
-        // TODO: TMP로 변경 시, 제거
+        ApplyTextStyle(text);
+        AppendText(idx >= 0 ? text.Text[idx..] : text.Text);
+    }
+
+    bool ResolveTextUI()
+    {
+        if (_textUI == null)
+            _textUI = GetComponentInChildren<Text>(true);
+        if (_tmpTextUI == null)
+            _tmpTextUI = GetComponentInChildren<TMP_Text>(true);
+
+        return HasTextUI();
+    }
+
+    bool HasTextUI()
+    {
+        return _textUI != null || _tmpTextUI != null;
+    }
+
+    RectTransform GetTextRectTransform()
+    {
+        if (_textUI != null)
+            return _textUI.rectTransform;
+        return _tmpTextUI != null ? _tmpTextUI.rectTransform : null;
+    }
+
+    void SetText(string value)
+    {
+        if (_textUI != null)
+            _textUI.text = value;
+        else if (_tmpTextUI != null)
+            _tmpTextUI.text = value;
+    }
+
+    void AppendText(string value)
+    {
+        if (_textUI != null)
+            _textUI.text += value;
+        else if (_tmpTextUI != null)
+            _tmpTextUI.text += value;
+    }
+
+    void ApplyTextStyle(SpeechBubbleInfo text)
+    {
+        Color color = _overrideTextColorWhite ? Color.white : text.FontColor;
+
+        if (_textUI != null)
         {
             _textUI.fontSize = text.FontSize;
-            _textUI.color = _overrideTextColorWhite ? Color.white : text.FontColor;
+            _textUI.color = color;
         }
-        _textUI.text += (idx >= 0 ? text.Text[idx..] : text.Text);
+        else if (_tmpTextUI != null)
+        {
+            _tmpTextUI.fontSize = text.FontSize;
+            _tmpTextUI.color = color;
+        }
+    }
+
+    void SetTextAlignment(TextAnchor legacyAlignment, TextAlignmentOptions tmpAlignment)
+    {
+        if (_textUI != null)
+        {
+            if (_textUI.alignment != legacyAlignment)
+                _textUI.alignment = legacyAlignment;
+        }
+        else if (_tmpTextUI != null && _tmpTextUI.alignment != tmpAlignment)
+        {
+            _tmpTextUI.alignment = tmpAlignment;
+        }
     }
 
     float GetInterval(float speed)
