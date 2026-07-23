@@ -31,6 +31,6 @@ public class SystemSpeechBubbleController : SpeechBubbleController
 
     void OnChangeExpression(EExpression expression)
     {
-        _ownerImage.texture = Resources.Load<Texture>($"Arts/PrologueStage1/PlayerExpression_{expression.ToString()}");
+        _ownerImage.texture = Resources.Load<Texture>($"Arts/Expression/{expression.ToString()}");
     }
 }
