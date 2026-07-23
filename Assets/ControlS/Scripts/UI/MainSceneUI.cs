@@ -32,7 +32,7 @@ public class MainSceneUI : MonoBehaviour
     void OnStartButtonClicked()
     {
         Debug.Log("OnStartButtonClicked");
-        //SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("MainGameScene");
     }
 
     void OnOptionsButtonClicked()
