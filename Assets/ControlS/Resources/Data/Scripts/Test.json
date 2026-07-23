@@ -1,0 +1,30 @@
+{
+  "Description": "3단계 Version History Recovery의 버전 카드 비교 상황에 속한 대사 파일",
+  "IsAuto": true,
+  "Bubbles": [
+    {
+      "ObjectType": "System",
+      "Expression": "None",
+      "Bubble": [
+        {
+          "Text": "마지막으로 페이지 번호랑 색상 효과를 넣었네.",
+          "Speed": "Normal",
+          "FontSize": 30,
+          "R": 1.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        },
+        {
+          "Text": "근데… 사람은 어디 갔지?",
+          "Speed": "Slow",
+          "FontSize": 24,
+          "R": 0.0,
+          "G": 0.0,
+          "B": 0.0,
+          "A": 1.0
+        }
+      ]
+    }
+  ]
+}

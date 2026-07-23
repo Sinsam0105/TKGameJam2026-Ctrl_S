@@ -249,6 +249,30 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5856462288802420088, guid: 88bf317552ff70d4087b7456655fd1eb, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5856462288802420088, guid: 88bf317552ff70d4087b7456655fd1eb, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5856462288802420088, guid: 88bf317552ff70d4087b7456655fd1eb, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5856462288802420088, guid: 88bf317552ff70d4087b7456655fd1eb, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5856462288802420088, guid: 88bf317552ff70d4087b7456655fd1eb, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5856462288802420088, guid: 88bf317552ff70d4087b7456655fd1eb, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7321431598844139710, guid: 88bf317552ff70d4087b7456655fd1eb, type: 3}
       propertyPath: _speaker
       value: 1

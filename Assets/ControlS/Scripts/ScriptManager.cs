@@ -105,7 +105,7 @@ public class ScriptManager : MonoSingleton<ScriptManager>
 
         bubble.Closed += OnBubbleClosed;
         BubbleStarted?.Invoke(name, _index, data);
-        bubble.Show(data.Bubble, _current.IsAuto);  // CoShow 코루틴 실행 중
+        bubble.Show(data, _current.IsAuto);  // CoShow 코루틴 실행 중
 
         // 이 말풍선이 닫힐 때마다 다음 말풍선으로 넘어간다
         void OnBubbleClosed()

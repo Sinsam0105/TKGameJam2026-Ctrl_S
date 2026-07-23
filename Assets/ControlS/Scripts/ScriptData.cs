@@ -18,8 +18,24 @@ namespace ScriptData
     public enum EObject
     {
         None = 0,
+        System,
         Player,
         Monster,
+    }
+
+    public enum EExpression
+    {
+        None,           // 무표정
+        Smile,          // 웃기
+        Anxious,            // 불안
+        Sighing,            // 한숨
+        Suspicious,         // 의심
+        Angry,              // 화남
+        Working,            // 작업 중일 때 표정
+        Scared,             // 무서움
+        Dizzy,              // 어지러움
+        HoldingIntercom,    // 인터폰을 들고 있는 모습
+        PrayingForSave      // 저장되길 비는 모습
     }
 
     /// <summary>
@@ -39,6 +55,7 @@ namespace ScriptData
     public class SpeechBubbleData   // TODO: 구조 재설계
     {
         public EObject ObjectType;  // 누구의 말풍선
+        public EExpression Expression;  // 표정
         public List<SpeechBubbleInfo> Bubble;   // 말풍선 하나
     }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,7 +16,7 @@ public class WashingMachineDirection : MonoBehaviour
     /// </summary>
     public bool Event_40_Played { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
 
-    [SerializeField] Text _display;   // TODO: TMP로 변경
+    [SerializeField] TMP_Text _display;   // TODO: TMP로 변경
     [SerializeField] AudioSource _audioSource;
     [SerializeField] AudioClip _finishClip;   // 세탁기 완료음
 
@@ -26,7 +27,7 @@ public class WashingMachineDirection : MonoBehaviour
 
     void Init()
     {
-        _display ??= transform.GetComponentInChildren<Text>();
+        _display ??= transform.GetComponentInChildren<TMP_Text>();
         _display.text = "";
 
         _audioSource ??= transform.GetComponent<AudioSource>();
