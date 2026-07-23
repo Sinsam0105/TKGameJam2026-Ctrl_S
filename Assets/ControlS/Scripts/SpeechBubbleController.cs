@@ -17,6 +17,32 @@ public class SpeechBubbleController : MonoBehaviour
     /// <returns></returns>
     public static SpeechBubbleController Get(EObject speaker) => s_registry.GetValueOrDefault(speaker);
 
+    /// <summary>
+    /// 시스템 안내 문구를 System 말풍선으로 띄운다. (프롬프트/목표 텍스트 대체용)
+    /// System 말풍선이 씬에 없으면 조용히 넘어간다.
+    /// </summary>
+    public static void ShowSystem(string text, bool isAuto = false, int fontSize = 28)
+    {
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        SpeechBubbleController bubble = Get(EObject.System);
+        if (bubble == null)
+        {
+            Debug.LogWarning("[SpeechBubbleController] System 말풍선이 등록되어 있지 않습니다.");
+            return;
+        }
+
+        SpeechBubbleInfo info = new SpeechBubbleInfo
+        {
+            Text = text,
+            Speed = ESpeechBubbleSpeed.VeryFast,
+            FontSize = fontSize,
+            R = 1f, G = 1f, B = 1f, A = 1f,
+        };
+        bubble.Show(new List<SpeechBubbleInfo> { info }, isAuto);
+    }
+
     [SerializeField] EObject _speaker;    // 이 말풍선의 주인 (ex. Player/Monster/NPC)
 
     [Header("배치")]
@@ -26,6 +52,12 @@ public class SpeechBubbleController : MonoBehaviour
     [SerializeField] Vector2 _worldHeadOffset = new Vector2(0f, 1.5f);
     [Tooltip("데스크톱이 열렸을 때 붙을 화면 위치 (0~1 뷰포트). 우하단 일러 바로 위.")]
     [SerializeField] Vector2 _desktopViewportAnchor = new Vector2(0.97f, 0.30f);
+
+    [Tooltip("System 말풍선의 고정 화면 위치 (0~1 뷰포트). 화면 상단 중앙.")]
+    [SerializeField] Vector2 _systemViewportAnchor = new Vector2(0.5f, 0.92f);
+
+    [Tooltip("켜면 대사 색을 JSON 값과 무관하게 흰색으로 고정한다. (검은 말풍선 위 하얀 글씨)")]
+    [SerializeField] bool _overrideTextColorWhite = true;
 
     Camera _camera;
     ComputerWindowedUI _desktop;
@@ -85,6 +117,22 @@ public class SpeechBubbleController : MonoBehaviour
     {
         if (_bubbleRoot == null)
             return;
+
+        // System 말풍선은 화자를 따라가지 않고 화면 상단 중앙에 고정한다.
+        if (_speaker == EObject.System)
+        {
+            Vector2 systemPivot = new Vector2(0.5f, 1f);
+            if (_bubbleRoot.pivot != systemPivot)
+                _bubbleRoot.pivot = systemPivot;
+            if (_textUI != null && _textUI.alignment != TextAnchor.UpperCenter)
+                _textUI.alignment = TextAnchor.UpperCenter;
+
+            _bubbleRoot.position = new Vector3(
+                Screen.width * _systemViewportAnchor.x,
+                Screen.height * _systemViewportAnchor.y,
+                0f);
+            return;
+        }
 
         bool desktop = IsDesktopOpen();
 
@@ -180,6 +228,21 @@ public class SpeechBubbleController : MonoBehaviour
         Closed?.Invoke();
     }
 
+    /// <summary>
+    /// 조건 충족 등으로 말풍선을 강제로 닫는다. (System 안내를 코드로 내릴 때 사용)
+    /// </summary>
+    public void ForceClose()
+    {
+        if (!gameObject.activeSelf)
+            return;
+
+        StopAllCoroutines();
+        IsTyping = false;
+        _isSkip = false;
+        _isAuto = false;
+        OnClosed();
+    }
+
     IEnumerator CoShow(List<SpeechBubbleInfo> speechBubble)
     {
         // 대사 출력
@@ -228,7 +291,7 @@ public class SpeechBubbleController : MonoBehaviour
         // TODO: TMP로 변경 시, 제거
         {
             _textUI.fontSize = text.FontSize;
-            _textUI.color = text.FontColor;
+            _textUI.color = _overrideTextColorWhite ? Color.white : text.FontColor;
         }
 
         if (text.Speed == ESpeechBubbleSpeed.None)
@@ -284,7 +347,7 @@ public class SpeechBubbleController : MonoBehaviour
         // TODO: TMP로 변경 시, 제거
         {
             _textUI.fontSize = text.FontSize;
-            _textUI.color = text.FontColor;
+            _textUI.color = _overrideTextColorWhite ? Color.white : text.FontColor;
         }
         _textUI.text += (idx >= 0 ? text.Text[idx..] : text.Text);
     }

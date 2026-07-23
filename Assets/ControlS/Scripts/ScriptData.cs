@@ -20,6 +20,7 @@ namespace ScriptData
         None = 0,
         Player,
         Monster,
+        System,   // 시스템 안내 말풍선(플레이어 대사와 구분). 화면에 고정 표시된다.
     }
 
     /// <summary>

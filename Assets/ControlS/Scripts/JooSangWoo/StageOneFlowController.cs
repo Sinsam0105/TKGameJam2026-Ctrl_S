@@ -273,17 +273,24 @@ public sealed class StageOneFlowController : MonoBehaviour
         yield return PlayScript(scriptIds.PrologueStudyBook);
         yield return PlayScript(scriptIds.PrologueFinish);
 
-        SetText(objectiveText, "Ctrl 키를 눌러 저장");
+        // 저장 안내는 System 말풍선으로 띄운다. (목표 텍스트 대체)
+        SpeechBubbleController.ShowSystem("Ctrl + S 를 눌러 저장한다.");
 
         Keyboard keyboard = Keyboard.current;
-        while (keyboard == null ||
-               (!keyboard.leftCtrlKey.wasPressedThisFrame && !keyboard.rightCtrlKey.wasPressedThisFrame))
+        while (true)
         {
             keyboard = Keyboard.current;
+            if (keyboard != null)
+            {
+                bool ctrlHeld = keyboard.leftCtrlKey.isPressed || keyboard.rightCtrlKey.isPressed;
+                if (ctrlHeld && keyboard.sKey.wasPressedThisFrame)
+                    break;
+            }
             yield return null;
         }
 
         SetText(objectiveText, string.Empty);
+        SpeechBubbleController.Get(ScriptData.EObject.System)?.ForceClose();
         if (keyboardLoopSource != null)
             keyboardLoopSource.Stop();
 

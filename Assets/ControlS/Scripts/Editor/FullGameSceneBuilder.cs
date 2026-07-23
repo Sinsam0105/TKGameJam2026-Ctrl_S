@@ -35,8 +35,15 @@ public static class FullGameSceneBuilder
         "Assets/ControlS/Resources/Arts/MirrorPlayer.png";
     private const string WorkspaceRecoveryClipPath =
         "Assets/ControlS/Resources/Audio/컴퓨터 Workspace Recovery 알림음.mp3";
+    private const string UiFontPath =
+        "Assets/ControlS/Resources/Fonts/neodgm.ttf";
+    private const string CrashScreenSpritePath =
+        "Assets/ControlS/Resources/Arts/KakaoTalk_20260722_045008826_04.png";
+    private const string SpeechBubblePrefabPath =
+        "Assets/ControlS/Resources/Pefabs/UI/SpeechBubble.prefab";
 
     private static readonly List<string> Warnings = new();
+    private static Font _uiFont;
 
     [MenuItem("Tools/ControlS/Build Full Game Scene (Stages 1-5)")]
     public static void Build()
@@ -67,8 +74,10 @@ public static class FullGameSceneBuilder
         GameObject gameController = ResolveGameController(stageOne);
 
         EnsureSoundManager(gameController);
+        BuildSystemBubble(gameController);
 
         SharedRefs shared = ReadSharedRefs(stageOne);
+        BuildCrashScreen(stageOne);
 
         StageFourFlowController stage4 = BuildStageFour(gameController, shared);
         StageFiveFlowController stage5 = BuildStageFive(gameController, shared);
@@ -145,6 +154,69 @@ public static class FullGameSceneBuilder
         // 원곡 클립이 없으면 Start에서 에러 로그가 나므로 자동 재생을 끈다. SFX API는 그대로 동작한다.
         SetBool(sound, "playOnStart", false);
         Debug.Log("[FullGameSceneBuilder] SoundManager를 Game Controller에 추가했습니다. (playOnStart=false)");
+    }
+
+    // ── System 말풍선 ────────────────────────────────────────────────────────
+    private static void BuildSystemBubble(GameObject host)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SpeechBubblePrefabPath);
+        if (prefab == null)
+        {
+            Warn($"SpeechBubble 프리팹을 찾지 못했습니다({SpeechBubblePrefabPath}). System 말풍선을 만들지 못했습니다.");
+            return;
+        }
+
+        GameObject go = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        go.name = "System SpeechBubble";
+        // 부모가 null이면 런타임 Init에서 NRE가 나므로 Game Controller 아래에 둔다(플레이어가 아니라 System 유지).
+        go.transform.SetParent(host.transform, false);
+
+        SpeechBubbleController sbc = go.GetComponent<SpeechBubbleController>();
+        if (sbc == null)
+        {
+            Warn("System 말풍선 컴포넌트를 찾지 못했습니다.");
+            return;
+        }
+
+        SerializedObject so = new SerializedObject(sbc);
+        SerializedProperty speaker = so.FindProperty("_speaker");
+        if (speaker != null)
+        {
+            speaker.enumValueIndex = (int)ScriptData.EObject.System;
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+    }
+
+    // ── 프롤로그 크래시 화면 교체 (아트 + 크기) ───────────────────────────────
+    private static void BuildCrashScreen(StageOneFlowController stageOne)
+    {
+        if (stageOne == null)
+            return;
+
+        Image blackout = GetObj(stageOne, "monitorBlackout") as Image;
+        if (blackout == null)
+        {
+            Warn("monitorBlackout(크래시 화면 Image)을 찾지 못해 교체하지 못했습니다.");
+            return;
+        }
+
+        Sprite crash = AssetDatabase.LoadAssetAtPath<Sprite>(CrashScreenSpritePath);
+        if (crash == null)
+        {
+            Warn($"크래시 화면 스프라이트를 찾지 못했습니다({CrashScreenSpritePath}).");
+            return;
+        }
+
+        blackout.sprite = crash;
+        blackout.color = Color.white;
+        blackout.preserveAspect = true;
+
+        // 크기 조정: 화면(부모)을 꽉 채우도록 스트레치.
+        RectTransform rect = blackout.rectTransform;
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
     }
 
     // ── 공유 참조 ──────────────────────────────────────────────────────────
@@ -241,13 +313,24 @@ public static class FullGameSceneBuilder
         Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MirrorSpritePath);
         SpriteRenderer renderer = mirror.AddComponent<SpriteRenderer>();
         if (sprite != null)
+        {
             renderer.sprite = sprite;
+            // 스프라이트 원본 크기가 커서 화면을 덮지 않도록 높이 ≈ 3유닛으로 맞춘다.
+            float height = sprite.bounds.size.y;
+            if (height > 0.001f)
+            {
+                float scale = 3f / height;
+                mirror.transform.localScale = new Vector3(scale, scale, 1f);
+            }
+        }
         else
+        {
             Warn($"MirrorPlayer 스프라이트를 찾지 못했습니다({MirrorSpritePath}).");
+        }
 
         BoxCollider2D collider = mirror.AddComponent<BoxCollider2D>();
         collider.isTrigger = true;
-        collider.size = new Vector2(2f, 3f);
+        collider.size = new Vector2(1.6f, 3f);
 
         RoomInteractable interactable = mirror.AddComponent<RoomInteractable>();
         interactable.Configure("stage5_mirror", "[E] 전신거울 확인", false);
@@ -258,9 +341,10 @@ public static class FullGameSceneBuilder
             NarrationID = new List<string>(),
             ChagingConditions = new List<GameCondition>(),
         };
-        // 5단계 시작 전까지는 꺼둔다. StageFive.BeginStage가 켠다.
         interactable.enabled = false;
         collider.enabled = false;
+        // 5단계 시작 전까지 오브젝트 자체를 숨긴다. StageFive.BeginStage가 켠다.
+        mirror.SetActive(false);
 
         return interactable;
     }
@@ -478,6 +562,15 @@ public static class FullGameSceneBuilder
     }
 
     // ── uGUI 헬퍼 ────────────────────────────────────────────────────────────
+    private static Font ResolveUiFont()
+    {
+        if (_uiFont == null)
+            _uiFont = AssetDatabase.LoadAssetAtPath<Font>(UiFontPath);
+        if (_uiFont == null)
+            _uiFont = AssetDatabase.GetBuiltinExtraResource<Font>("LegacyRuntime.ttf");
+        return _uiFont;
+    }
+
     private static GameObject CreateOverlayCanvas(string name)
     {
         GameObject go = new GameObject(name);
@@ -528,10 +621,9 @@ public static class FullGameSceneBuilder
         text.fontSize = fontSize;
         text.alignment = TextAnchor.MiddleCenter;
         text.color = Color.white;
-        // 최신 Unity의 기본 런타임 폰트. 없으면 폰트는 Unity에서 지정한다.
-        Font builtin = AssetDatabase.GetBuiltinExtraResource<Font>("LegacyRuntime.ttf");
-        if (builtin != null)
-            text.font = builtin;
+        Font font = ResolveUiFont();
+        if (font != null)
+            text.font = font;
         return text;
     }
 
