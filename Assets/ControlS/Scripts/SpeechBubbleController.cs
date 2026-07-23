@@ -19,20 +19,8 @@ public class SpeechBubbleController : MonoBehaviour
 
     [SerializeField] EObject _speaker;    // 이 말풍선의 주인 (ex. Player/Monster/NPC)
 
-    [Header("배치")]
-    [Tooltip("실제로 움직이는 말풍선 본체. 루트는 화면 전체를 덮는 Overlay 캔버스라 건드리지 않는다.")]
-    [SerializeField] RectTransform _bubbleRoot;
-    [Tooltip("화자 기준 머리 위 오프셋 (월드 단위)")]
-    [SerializeField] Vector2 _worldHeadOffset = new Vector2(0f, 1.5f);
-    [Tooltip("데스크톱이 열렸을 때 붙을 화면 위치 (0~1 뷰포트). 우하단 일러 바로 위.")]
-    [SerializeField] Vector2 _desktopViewportAnchor = new Vector2(0.97f, 0.30f);
-
-    Camera _camera;
-    ComputerWindowedUI _desktop;
-    bool _desktopSearched;
-
     public Transform Owner { get; private set; }
-    Text _textUI;   // TODO: 추후 TMP로 변경 필요
+    TMP_Text _textUI;   // TODO: 추후 TMP로 변경 필요
 
     /// <summary>
     /// 대사 출력 중인가
@@ -69,65 +57,11 @@ public class SpeechBubbleController : MonoBehaviour
                 _speaker = EObject.Player;
         }
 
-        _textUI = GetComponentInChildren<Text>();
-        if (_bubbleRoot == null)
-            _bubbleRoot = _textUI != null ? _textUI.rectTransform.parent as RectTransform : null;
+        transform.localPosition = new Vector3(0, 1.5f, transform.localPosition.z);  // 머리 위 배치
+        _textUI = GetComponentInChildren<TMP_Text>();
 
         s_registry[_speaker] = this;
         gameObject.SetActive(false);
-    }
-
-    /// <summary>
-    /// 말풍선은 Overlay 캔버스라 데스크톱/정면샷 UI 위에 그려진다.
-    /// 대신 월드 좌표를 따라가지 않으므로 매 프레임 화면 좌표를 직접 계산한다.
-    /// </summary>
-    void LateUpdate()
-    {
-        if (_bubbleRoot == null)
-            return;
-
-        bool desktop = IsDesktopOpen();
-
-        // 데스크톱에서는 화면 오른쪽 끝에 붙으므로 피벗을 오른쪽으로 옮겨야 잘리지 않는다.
-        Vector2 pivot = desktop ? new Vector2(1f, 0f) : new Vector2(0.5f, 0f);
-        if (_bubbleRoot.pivot != pivot)
-            _bubbleRoot.pivot = pivot;
-
-        if (_textUI != null)
-        {
-            TextAnchor anchor = desktop ? TextAnchor.LowerRight : TextAnchor.MiddleCenter;
-            if (_textUI.alignment != anchor)
-                _textUI.alignment = anchor;
-        }
-
-        _bubbleRoot.position = desktop
-            ? new Vector3(Screen.width * _desktopViewportAnchor.x, Screen.height * _desktopViewportAnchor.y, 0f)
-            : GetOwnerHeadScreenPoint();
-    }
-
-    Vector3 GetOwnerHeadScreenPoint()
-    {
-        if (_camera == null)
-            _camera = Camera.main;
-        if (_camera == null || Owner == null)
-            return _bubbleRoot.position;
-
-        Vector3 head = Owner.position + (Vector3)_worldHeadOffset;
-        Vector3 point = _camera.WorldToScreenPoint(head);
-        point.z = 0f;
-        return point;
-    }
-
-    bool IsDesktopOpen()
-    {
-        // 비활성 상태로 시작할 수 있어서 한 번만 찾아 캐싱한다.
-        if (!_desktopSearched)
-        {
-            _desktop = FindAnyObjectByType<ComputerWindowedUI>(FindObjectsInactive.Include);
-            _desktopSearched = true;
-        }
-
-        return _desktop != null && _desktop.IsOpen;
     }
 
     void Update()

@@ -91,6 +91,7 @@ public class CollectionSystem : MonoSingleton<CollectionSystem>
     public void CollectionCompletion(CollectionType type)
     {
         GameConditionManager.Instance.SetCondition(CollectionProgress[type]);
+        CurrentCollection = CollectionType.None;
         OnCollectionCompleted?.Invoke(type);
     }
 

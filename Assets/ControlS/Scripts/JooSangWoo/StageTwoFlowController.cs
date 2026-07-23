@@ -255,7 +255,7 @@ public sealed class StageTwoFlowController : MonoBehaviour
         computerInteractable.Configure("computer_stage2_time", "[E] 시간 입력", false);
         computerInteractable.puzzleAction.Conditions = new List<GameCondition> { GameCondition.PrologueEnded };
         computerInteractable.puzzleAction.OpeningUI = timeInputWindow;
-        computerInteractable.puzzleAction.NarrationID = new List<string>();
+        computerInteractable.puzzleAction.SpeechID = new List<string>();
         computerInteractable.enabled = true;
     }
 

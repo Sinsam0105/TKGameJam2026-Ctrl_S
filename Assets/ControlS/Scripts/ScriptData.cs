@@ -18,6 +18,7 @@ namespace ScriptData
     public enum EObject
     {
         None = 0,
+        System,
         Player,
         Monster,
     }
