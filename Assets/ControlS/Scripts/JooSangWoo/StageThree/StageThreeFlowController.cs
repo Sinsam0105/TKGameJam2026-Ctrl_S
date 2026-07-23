@@ -55,6 +55,9 @@ public sealed class StageThreeFlowController : MonoBehaviour
     [Header("Dialogue")]
     [SerializeField] private StageThreeScriptIds scriptIds = new();
 
+    [Header("Stage 4 Link")]
+    [SerializeField] private StageFourFlowController stageFourFlow;
+
     [Header("Events")]
     [SerializeField] private UnityEvent onStageThreeCompleted = new();
 
@@ -177,6 +180,9 @@ public sealed class StageThreeFlowController : MonoBehaviour
 
         SetPhase(StageThreePhase.Complete);
         onStageThreeCompleted?.Invoke();
+
+        // 4단계(Workspace Recovery)로 이어진다.
+        stageFourFlow?.BeginStage();
     }
 
     private IEnumerator PlayScript(string id)
