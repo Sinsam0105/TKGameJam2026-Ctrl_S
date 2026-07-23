@@ -74,6 +74,9 @@ public sealed class StageFiveFlowController : MonoBehaviour
     {
         SetPhase(StageFivePhase.Idle);
         failedAttempts = 0;
+        // 전신거울은 5단계 전까지 숨겨 둔다.
+        if (mirrorInteractable != null)
+            mirrorInteractable.gameObject.SetActive(false);
         SetInteractable(mirrorInteractable, false);
         SetInteractable(computerInteractable, false);
         codeInputWindow?.ResetView();
@@ -85,6 +88,9 @@ public sealed class StageFiveFlowController : MonoBehaviour
     public void BeginStage()
     {
         SetPhase(StageFivePhase.Mirror);
+        // 5단계 진입 시 전신거울을 등장시킨다.
+        if (mirrorInteractable != null)
+            mirrorInteractable.gameObject.SetActive(true);
         SetInteractable(mirrorInteractable, true);
         SetInteractable(computerInteractable, false);
 

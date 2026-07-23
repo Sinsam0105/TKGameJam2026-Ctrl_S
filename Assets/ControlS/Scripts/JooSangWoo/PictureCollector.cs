@@ -42,6 +42,10 @@ public class PictureCollector : MonoBehaviour
 
     private void OnEnable()
     {
+        // 한 번 완성한 뒤 창을 다시 열어도 재조립되지 않도록 완성 상태를 유지한다.
+        if (completed)
+            return;
+
         ResetPuzzle();
     }
 

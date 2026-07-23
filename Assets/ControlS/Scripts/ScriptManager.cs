@@ -95,6 +95,11 @@ public class ScriptManager : MonoSingleton<ScriptManager>
 
         SpeechBubbleData data = _current.Bubbles[_index];
         SpeechBubbleController bubble = SpeechBubbleController.Get(data.ObjectType);    // 오브젝트 타입을 통해 화자의 말풍선을 찾는다
+
+        // 시스템 계열 화자(System/DoorLockSystem 등)는 전용 말풍선이 없으면 System 말풍선으로 표시한다.
+        if (bubble == null && IsSystemSpeaker(data.ObjectType))
+            bubble = SpeechBubbleController.Get(EObject.System);
+
         if (bubble == null)
         {
             Debug.LogError($"{data.ObjectType}의 말풍선을 찾을 수 없다. 대사를 건너뛴다: {name}[{_index}]");
@@ -117,6 +122,12 @@ public class ScriptManager : MonoSingleton<ScriptManager>
             OnBubbleFinished(name, finishedIndex);
             PlayNextBubble(name);
         }
+    }
+
+    // Player/Monster/None이 아닌 화자는 시스템 계열로 보고 System 말풍선으로 폴백한다.
+    static bool IsSystemSpeaker(EObject type)
+    {
+        return type != EObject.None && type != EObject.Player && type != EObject.Monster;
     }
 
     // ScriptFinished 이벤트를 발생시킨다

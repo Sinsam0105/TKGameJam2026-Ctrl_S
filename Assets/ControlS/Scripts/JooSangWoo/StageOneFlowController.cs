@@ -112,6 +112,8 @@ public sealed class StageOneFlowController : MonoBehaviour
 
     private void Awake()
     {
+        ApplyNewScriptIds();
+
         if (balconyDoor != null)
             balconyDoorClosedPosition = balconyDoor.localPosition;
         if (balconyAmbienceSource != null)
@@ -149,6 +151,23 @@ public sealed class StageOneFlowController : MonoBehaviour
     {
         ResetStage();
         sequenceRoutine = StartCoroutine(PrologueSequence());
+    }
+
+    // 새 대본(D0xx)을 적용한다. 씬에 직렬화된 옛 ID를 코드에서 새 ID로 덮어써
+    // 이후 모든 scriptIds.X 참조가 새 대본을 재생하도록 한다.
+    private void ApplyNewScriptIds()
+    {
+        scriptIds.PrologueOpening = "D001ProAssignment";
+        scriptIds.PrologueFinish = "D003ProSaveAttempt";
+        scriptIds.CrashReaction = "D004ProCrash";
+        scriptIds.RecoveryReaction = "D005ProRecovery";
+        scriptIds.Stage1Intro = "D006Stage1Start";
+        scriptIds.PickupBed = "D007Stage1PiecePicked";
+        scriptIds.PickupHalf = "D008Stage1HalfCollected";
+        scriptIds.CollectionComplete = "D009Stage1PhotoAssembled";
+        scriptIds.PhotoReveal = "D010Stage1PhotoReaction";
+        scriptIds.ScanComplete = "D011Stage1ScanComplete";
+        scriptIds.BalconyReaction = "D012Dialogue20BalconyDoorNoticed";
     }
 
     private void Update()
@@ -266,24 +285,29 @@ public sealed class StageOneFlowController : MonoBehaviour
         if (keyboardLoopSource != null)
             keyboardLoopSource.Play();
 
-        yield return PlayScript(scriptIds.PrologueOpening);
-        yield return ShowAction("휴대폰 검색: ‘올해 6평 난이도’", 1.5f);
-        yield return PlayScript(scriptIds.PrologueReturnToWork);
-        yield return ShowAction("책상 옆 수능특강을 잠깐 바라본다.", 1.2f);
-        yield return PlayScript(scriptIds.PrologueStudyBook);
-        yield return PlayScript(scriptIds.PrologueFinish);
+        // 새 대본: D001이 과제 투덜 3~6줄을 모두 담으므로 옛 Opening/Return/Study를 하나로 대체한다.
+        yield return PlayScript(scriptIds.PrologueOpening);   // D001ProAssignment
+        yield return PlayScript("D002ProComplete");          // 과제 완료 반응
+        yield return PlayScript(scriptIds.PrologueFinish);   // D003ProSaveAttempt: "이제 저장하고 자자"
 
-        SetText(objectiveText, "Ctrl 키를 눌러 저장");
+        // 저장 안내는 System 말풍선으로 띄운다. (목표 텍스트 대체)
+        SpeechBubbleController.ShowSystem("Ctrl + S 를 눌러 저장한다.");
 
         Keyboard keyboard = Keyboard.current;
-        while (keyboard == null ||
-               (!keyboard.leftCtrlKey.wasPressedThisFrame && !keyboard.rightCtrlKey.wasPressedThisFrame))
+        while (true)
         {
             keyboard = Keyboard.current;
+            if (keyboard != null)
+            {
+                bool ctrlHeld = keyboard.leftCtrlKey.isPressed || keyboard.rightCtrlKey.isPressed;
+                if (ctrlHeld && keyboard.sKey.wasPressedThisFrame)
+                    break;
+            }
             yield return null;
         }
 
         SetText(objectiveText, string.Empty);
+        SpeechBubbleController.Get(ScriptData.EObject.System)?.ForceClose();
         if (keyboardLoopSource != null)
             keyboardLoopSource.Stop();
 
