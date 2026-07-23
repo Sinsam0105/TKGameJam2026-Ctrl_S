@@ -80,6 +80,9 @@ public sealed class StageTwoFlowController : MonoBehaviour
 
     private void Awake()
     {
+        // 새 대본(D0xx) 적용: 시간 정답 대사를 새 ID로 덮어쓴다. (단서 구조가 달라 단서 대사는 유지)
+        scriptIds.TimeSolved = "D017Stage2TimeCorrect";
+
         SetCluesEnabled(false);
         SetHighlights(false);
 
@@ -139,6 +142,7 @@ public sealed class StageTwoFlowController : MonoBehaviour
         ConfigureComputer();
         RefreshObjective();
         PlayEffect(stageStartClip);
+        PlayScript("D013Stage2Start");
     }
 
     public void ResetStage()

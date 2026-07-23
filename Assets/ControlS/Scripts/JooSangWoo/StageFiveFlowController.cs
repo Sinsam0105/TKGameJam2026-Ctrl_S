@@ -46,8 +46,11 @@ public sealed class StageFiveFlowController : MonoBehaviour
     [SerializeField] private AudioClip verifySuccessClip;
 
     [Header("Dialogue")]
-    [SerializeField] private string mirrorScriptId = string.Empty;
-    [SerializeField] private string verifiedScriptId = string.Empty;
+    [SerializeField] private string mirrorScriptId = "D049Stage5Start";
+    [SerializeField] private string verifiedScriptId = "D052Stage5OwnerVerified";
+
+    [Header("Ending Link")]
+    [SerializeField] private FinalSequenceController finalSequence;
 
     [Header("Events")]
     [SerializeField] private UnityEvent onStageFiveCompleted = new();
@@ -188,6 +191,9 @@ public sealed class StageFiveFlowController : MonoBehaviour
 
         SetPhase(StageFivePhase.Complete);
         onStageFiveCompleted?.Invoke();
+
+        // 엔딩(최종 저장 시퀀스)으로 이어진다.
+        finalSequence?.BeginEnding();
     }
 
     private IEnumerator PlayScript(string id)
