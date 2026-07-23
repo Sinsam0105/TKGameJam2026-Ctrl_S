@@ -40,7 +40,13 @@ public class SpeechBubbleController : MonoBehaviour
             FontSize = fontSize,
             R = 1f, G = 1f, B = 1f, A = 1f,
         };
-        bubble.Show(new List<SpeechBubbleInfo> { info }, isAuto);
+        SpeechBubbleData data = new SpeechBubbleData
+        {
+            ObjectType = EObject.System,
+            Expression = EExpression.None,
+            Bubble = new List<SpeechBubbleInfo> { info },
+        };
+        bubble.Show(data, isAuto);
     }
 
     [SerializeField] EObject _speaker;    // 이 말풍선의 주인 (ex. Player/Monster/NPC)
@@ -218,7 +224,7 @@ public class SpeechBubbleController : MonoBehaviour
             return;
         }
 
-        if (speechBubble == null || speechBubble.Count == 0)
+        if (data.Bubble == null || data.Bubble.Count == 0)
         {
             Debug.LogWarning($"[SpeechBubbleController] {name}에 표시할 대사가 없습니다.");
             return;
@@ -262,14 +268,15 @@ public class SpeechBubbleController : MonoBehaviour
         OnClosed();
     }
 
-    IEnumerator CoShow(List<SpeechBubbleInfo> speechBubble)
+    IEnumerator CoShow(List<SpeechBubbleInfo> speechBubble, EExpression expression = EExpression.None)
     {
+        // 대사 시작 시 화자 표정을 한 번 바꾼다.
+        _changeExpression?.Invoke(expression);
+
         // 대사 출력
         int range = speechBubble.Count - 1;
         for (int idx = 0; idx < range; idx++)
         {
-            // 시스템 - 플레이어 표정 바뀜
-            _changeExpression?.Invoke(expression);
 
             // 즉시 출력
             if (_isSkip)
