@@ -21,7 +21,7 @@ public class MainSceneUI : MonoBehaviour
         _startButton ??= transform.GetComponentsInChildren<Button>(true).FirstOrDefault(t => t.name == "StartButton");
         _optionsButton ??= transform.GetComponentsInChildren<Button>(true).FirstOrDefault(t => t.name == "OptionsButton");
         _exitButton ??= transform.GetComponentsInChildren<Button>(true).FirstOrDefault(t => t.name == "ExitButton");
-        _optionsUI ??= transform.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "OptionsUI");
+        _optionsUI = GameObject.Find("OptionsUI").transform;
 
         _startButton.onClick.AddListener(OnStartButtonClicked);
         _optionsButton.onClick.AddListener(OnOptionsButtonClicked);
