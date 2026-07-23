@@ -18,7 +18,8 @@ public enum StageThreePhase
 [Serializable]
 public sealed class StageThreeScriptIds
 {
-    public string CardConfirmed = "Stage3CardConfirmed";
+    public string Start = "D021Stage3Start";
+    public string CardConfirmed = "D030Stage3Code";
 }
 
 /// <summary>
@@ -123,6 +124,8 @@ public sealed class StageThreeFlowController : MonoBehaviour
         SetText(objectiveText, "컴퓨터에서 버전 기록을 정렬한다");
         SetText(recoveryBodyText,
             "STEP 3\n\nVERSION HISTORY RECOVERY\n\nReconstruct the edit order\nof the recovered document.");
+
+        StartCoroutine(PlayScript(scriptIds.Start));   // D021Stage3Start
     }
 
     // 3단계에서는 컴퓨터가 버전 정렬 창을 연다. (1·2단계 재설정 이후이므로 여기서 다시 지정한다.)

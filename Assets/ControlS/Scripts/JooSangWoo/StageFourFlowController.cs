@@ -37,8 +37,8 @@ public sealed class StageFourFlowController : MonoBehaviour
     [SerializeField] private AudioClip workspaceRecoveryClip;       // "컴퓨터 Workspace Recovery 알림음"
 
     [Header("Dialogue")]
-    [SerializeField] private string reconstructScriptId = string.Empty;
-    [SerializeField] private string completeScriptId = string.Empty;
+    [SerializeField] private string reconstructScriptId = "D038Stage4Start";
+    [SerializeField] private string completeScriptId = "D045Stage4ToStage5";
 
     [Header("Stage 5 Link")]
     [SerializeField] private StageFiveFlowController stageFiveFlow;

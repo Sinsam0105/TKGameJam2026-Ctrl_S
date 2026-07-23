@@ -41,6 +41,8 @@ public static class FullGameSceneBuilder
         "Assets/ControlS/Resources/Arts/KakaoTalk_20260722_045008826_04.png";
     private const string SpeechBubblePrefabPath =
         "Assets/ControlS/Resources/Pefabs/UI/SpeechBubble.prefab";
+    private const string FullScreenGlitchPrefabPath =
+        "Assets/ControlS/Resources/Pefabs/FullScreenGlitch.prefab";
 
     private static readonly List<string> Warnings = new();
     private static Font _uiFont;
@@ -96,6 +98,14 @@ public static class FullGameSceneBuilder
             SetObj(stage2, "stageThreeFlow", stage3);
         else if (stage2 == null)
             Warn("StageTwoFlowController를 찾지 못해 2→3단계 연결을 못 했습니다.");
+
+        // 엔딩(최종 저장 시퀀스) + 5→엔딩 연결.
+        FinalSequenceController ending = BuildFinalSequence(gameController);
+        if (stage5 != null && ending != null)
+            SetObj(stage5, "finalSequence", ending);
+
+        // 챕터1: 휴지통 오브젝트 생성 + 컴퓨터 상호작용 위치 이동.
+        BuildTrashCan(shared);
 
         MarkDirtyAndSave(scene);
 
@@ -563,6 +573,77 @@ public static class FullGameSceneBuilder
     }
 
     // ── uGUI 헬퍼 ────────────────────────────────────────────────────────────
+    // ── 엔딩: 최종 저장 시퀀스 ────────────────────────────────────────────────
+    private static FinalSequenceController BuildFinalSequence(GameObject host)
+    {
+        FinalSequenceController final = host.AddComponent<FinalSequenceController>();
+
+        GameObject canvasGo = CreateOverlayCanvas("Ending Save Screen");
+        GameObject panel = CreateUIChild(canvasGo.transform, "Panel", new Vector2(620f, 260f), Vector2.zero);
+        Image panelImage = panel.AddComponent<Image>();
+        panelImage.color = new Color(0f, 0f, 0f, 0.92f);
+
+        Text progress = CreateText(panel.transform, "Progress", "SAVING...  0%", 28, new Vector2(0f, 45f), new Vector2(580f, 46f));
+
+        GameObject barBg = CreateUIChild(panel.transform, "Bar Bg", new Vector2(500f, 26f), new Vector2(0f, -35f));
+        Image barBgImage = barBg.AddComponent<Image>();
+        barBgImage.color = new Color(1f, 1f, 1f, 0.15f);
+
+        GameObject fillGo = CreateUIChild(barBg.transform, "Fill", new Vector2(500f, 26f), Vector2.zero);
+        Image fillImage = fillGo.AddComponent<Image>();
+        fillImage.color = new Color(0.3f, 0.7f, 1f, 1f);
+        Sprite uiSprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
+        if (uiSprite != null)
+        {
+            barBgImage.sprite = uiSprite;
+            fillImage.sprite = uiSprite;
+        }
+        fillImage.type = Image.Type.Filled;
+        fillImage.fillMethod = Image.FillMethod.Horizontal;
+        fillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
+        fillImage.fillAmount = 0f;
+
+        canvasGo.SetActive(false);
+
+        GameObject glitch = null;
+        GameObject glitchPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(FullScreenGlitchPrefabPath);
+        if (glitchPrefab != null)
+        {
+            glitch = (GameObject)PrefabUtility.InstantiatePrefab(glitchPrefab);
+            glitch.name = "Ending Glitch";
+            glitch.SetActive(false);
+        }
+        else
+        {
+            Warn($"FullScreenGlitch 프리팹을 찾지 못했습니다({FullScreenGlitchPrefabPath}). 트위스트 연출은 Unity에서 연결하세요.");
+        }
+
+        SetObj(final, "saveScreen", canvasGo);
+        SetObj(final, "saveProgressText", progress);
+        SetObj(final, "saveProgressFill", fillImage);
+        SetObj(final, "fullScreenGlitch", glitch);
+        return final;
+    }
+
+    // ── 챕터1: 휴지통 + 컴퓨터 상호작용 위치 이동 ─────────────────────────────
+    private static void BuildTrashCan(SharedRefs shared)
+    {
+        GameObject trash = new GameObject("Trash Can");
+        Vector3 basePos = shared.RoomRoot != null ? shared.RoomRoot.position : Vector3.zero;
+        trash.transform.position = basePos + new Vector3(-1.5f, -0.5f, 0f);   // 대략 위치. Unity에서 조정.
+
+        BoxCollider2D collider = trash.AddComponent<BoxCollider2D>();
+        collider.size = new Vector2(0.6f, 0.9f);
+
+        RoomInteractable computer = shared.ComputerInteractable as RoomInteractable;
+        if (computer != null)
+            computer.transform.position = trash.transform.position;
+        else
+            Warn("컴퓨터 RoomInteractable을 찾지 못해 휴지통 위치로 이동하지 못했습니다.");
+
+        Warn("휴지통(Trash Can)을 만들고 컴퓨터 상호작용을 그 위치로 옮겼습니다. 정확한 좌표/아트는 Unity에서 조정하세요.");
+    }
+
     private static Font ResolveUiFont()
     {
         if (_uiFont == null)
