@@ -174,7 +174,12 @@ public class PictureCollector : MonoBehaviour
 
     private void PlayClip(AudioClip clip)
     {
-        if (sfxSource != null && clip != null)
+        if (clip == null)
+            return;
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySfx(clip);
+        else if (sfxSource != null)
             sfxSource.PlayOneShot(clip);
     }
 }

@@ -5,8 +5,9 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 /// <summary>
-/// 3단계 버전 정렬 퍼즐. 카드 6장을 슬롯 6칸에 정답 순서(D→B→F→A→E→C)로 놓으면
-/// 접근 코드 DBFAEC가 도출된다. Compare로 두 카드의 편집 관계를 확인할 수 있다.
+/// 3단계 버전 정렬 퍼즐. 카드를 슬롯에 정답 순서(A→B→C→D)로 놓으면
+/// 접근 코드 ABCD가 도출된다(체크섬 없음). Compare로 두 카드의 편집 관계를 확인할 수 있다.
+/// 슬롯/카드 개수는 직렬화 데이터로 정하므로 코드는 개수에 의존하지 않는다.
 ///
 /// Compare 판정은 실제 이미지 비교가 아니라 정답 인덱스 산술로 처리한다.
 ///   diff = 나중에 고른 카드 - 먼저 고른 카드 (정답 인덱스 차)
@@ -302,7 +303,13 @@ public sealed class VersionChainPuzzle : MonoBehaviour
     // ── helpers ────────────────────────────────────────────────────
     private void PlayClip(AudioClip clip)
     {
-        if (sfxSource != null && clip != null)
+        if (clip == null)
+            return;
+
+        // 효과음은 일괄 SoundManager로 보낸다. 없으면 로컬 소스로 대체한다.
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySfx(clip);
+        else if (sfxSource != null)
             sfxSource.PlayOneShot(clip);
     }
 

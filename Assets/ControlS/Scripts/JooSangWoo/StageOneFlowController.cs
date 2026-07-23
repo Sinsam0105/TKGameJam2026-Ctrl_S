@@ -541,7 +541,10 @@ public sealed class StageOneFlowController : MonoBehaviour
         if (nearest == null || paperHintClip == null)
             return;
 
-        AudioSource.PlayClipAtPoint(paperHintClip, nearest.transform.position, 0.75f);
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySfxAt(paperHintClip, nearest.transform.position, 0.75f);
+        else
+            AudioSource.PlayClipAtPoint(paperHintClip, nearest.transform.position, 0.75f);
     }
 
     private void ConfigureComputerForDesktop(bool enabled)
@@ -616,7 +619,13 @@ public sealed class StageOneFlowController : MonoBehaviour
 
     private void PlayEffect(AudioClip clip)
     {
-        if (effectsSource != null && clip != null)
+        if (clip == null)
+            return;
+
+        // 효과음은 일괄 SoundManager로 보내고, 없으면 로컬 소스로 대체한다.
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySfx(clip);
+        else if (effectsSource != null)
             effectsSource.PlayOneShot(clip);
     }
 

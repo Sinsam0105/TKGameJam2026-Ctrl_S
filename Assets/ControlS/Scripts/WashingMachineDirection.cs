@@ -46,8 +46,13 @@ public class WashingMachineDirection : MonoBehaviour
     /// </summary>
     public void OnMicrowaveOpened()
     {
-        // 이 오브젝트가 베란다 옆에 있으므로 여기서 재생하면 그대로 3D 방향이 잡힌다.
-        if (_audioSource != null && _finishClip != null)
+        if (_finishClip == null)
+            return;
+
+        // 효과음은 일괄 SoundManager로 보내되, 베란다 위치의 3D 감쇠(최대 14유닛)를 그대로 유지한다.
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySfxAt(_finishClip, transform.position, 1f, 1f, 14f);
+        else if (_audioSource != null)
             _audioSource.PlayOneShot(_finishClip);
     }
 

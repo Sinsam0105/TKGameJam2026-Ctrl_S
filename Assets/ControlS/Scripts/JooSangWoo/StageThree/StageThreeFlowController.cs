@@ -123,6 +123,8 @@ public sealed class StageThreeFlowController : MonoBehaviour
     private void OnVersionSolved()
     {
         SetPhase(StageThreePhase.CodeAcquired);
+        // 정렬 결과(예: ABCD)를 그대로 문자 잠금의 정답으로 넘긴다. 체크섬 없음.
+        letterLock?.SetExpectedCode(versionPuzzle.AccessCode);
         SetText(objectiveText, $"백업 상자에 코드 입력: {versionPuzzle.AccessCode}");
         StartCoroutine(PlayScript(scriptIds.CardConfirmed));
     }

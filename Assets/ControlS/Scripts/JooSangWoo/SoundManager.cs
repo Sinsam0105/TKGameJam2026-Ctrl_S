@@ -564,4 +564,130 @@ public sealed class SoundManager : MonoSingleton<SoundManager>
     {
         return Mathf.Pow(2f, semitones / 12f);
     }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // 통합 SFX / 루프 API.
+    // 프로젝트의 모든 효과음·공간음·반복음을 이 매니저로 모으기 위한 진입점이다.
+    // BGM 그래프(위)는 건드리지 않고, 필요할 때 소스를 만들어 재사용한다.
+    // ─────────────────────────────────────────────────────────────────────
+
+    [Header("SFX")]
+    [SerializeField, Range(0f, 1f)] private float sfxVolume = 1f;
+
+    private AudioSource _sfx2D;
+    private readonly System.Collections.Generic.List<AudioSource> _oneShotPool = new();
+    private readonly System.Collections.Generic.Dictionary<int, AudioSource> _loops = new();
+    private int _nextLoopId = 1;
+
+    /// <summary>2D 효과음(원샷)을 재생한다. 화면 UI 클릭·성공/실패음 등에 쓴다.</summary>
+    public void PlaySfx(AudioClip clip, float volume = 1f)
+    {
+        if (clip == null)
+            return;
+
+        if (_sfx2D == null)
+            _sfx2D = CreateSfxSource("SFX - 2D OneShot", 0f);
+
+        _sfx2D.PlayOneShot(clip, Mathf.Clamp01(volume) * sfxVolume);
+    }
+
+    /// <summary>
+    /// 월드 좌표에서 나는 효과음(원샷). 근처에서 나는 단발성 소리에 쓴다.
+    /// maxDistance가 0보다 크면 로그 롤오프(minDistance 1)로 감쇠 거리를 맞춘다.
+    /// </summary>
+    public void PlaySfxAt(AudioClip clip, Vector3 worldPosition, float volume = 1f,
+        float spatialBlend = 1f, float maxDistance = 0f)
+    {
+        if (clip == null)
+            return;
+
+        AudioSource source = GetPooledOneShot();
+        source.transform.position = worldPosition;
+        source.spatialBlend = Mathf.Clamp01(spatialBlend);
+        ApplyRolloff(source, maxDistance);
+        source.clip = clip;
+        source.volume = Mathf.Clamp01(volume) * sfxVolume;
+        source.loop = false;
+        source.Play();
+    }
+
+    /// <summary>반복음(팬/작동음/앰비언스 등)을 시작하고 정지용 핸들을 돌려준다.</summary>
+    public int PlayLoop(AudioClip clip, float volume = 1f, Vector3 worldPosition = default,
+        float spatialBlend = 0f, float maxDistance = 0f)
+    {
+        if (clip == null)
+            return 0;
+
+        AudioSource source = CreateSfxSource($"SFX - Loop {_nextLoopId}", Mathf.Clamp01(spatialBlend));
+        source.transform.position = worldPosition;
+        ApplyRolloff(source, maxDistance);
+        source.clip = clip;
+        source.loop = true;
+        source.volume = Mathf.Clamp01(volume) * sfxVolume;
+        source.Play();
+
+        int id = _nextLoopId++;
+        _loops[id] = source;
+        return id;
+    }
+
+    private static void ApplyRolloff(AudioSource source, float maxDistance)
+    {
+        if (maxDistance <= 0f)
+            return;
+
+        source.dopplerLevel = 0f;
+        source.rolloffMode = AudioRolloffMode.Logarithmic;
+        source.minDistance = 1f;
+        source.maxDistance = maxDistance;
+    }
+
+    /// <summary>PlayLoop이 돌려준 핸들로 반복음을 멈춘다.</summary>
+    public void StopLoop(int loopId)
+    {
+        if (loopId <= 0 || !_loops.TryGetValue(loopId, out AudioSource source))
+            return;
+
+        if (source != null)
+        {
+            source.Stop();
+            Destroy(source.gameObject);
+        }
+        _loops.Remove(loopId);
+    }
+
+    /// <summary>재생 중인 반복음의 볼륨을 조절한다.</summary>
+    public void SetLoopVolume(int loopId, float volume)
+    {
+        if (loopId > 0 && _loops.TryGetValue(loopId, out AudioSource source) && source != null)
+            source.volume = Mathf.Clamp01(volume) * sfxVolume;
+    }
+
+    private AudioSource GetPooledOneShot()
+    {
+        foreach (AudioSource pooled in _oneShotPool)
+        {
+            if (pooled != null && !pooled.isPlaying)
+                return pooled;
+        }
+
+        AudioSource created = CreateSfxSource($"SFX - OneShot {_oneShotPool.Count}", 1f);
+        _oneShotPool.Add(created);
+        return created;
+    }
+
+    private AudioSource CreateSfxSource(string objectName, float spatialBlend)
+    {
+        GameObject child = new GameObject(objectName);
+        child.transform.SetParent(transform, false);
+
+        AudioSource source = child.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = false;
+        source.spatialBlend = Mathf.Clamp01(spatialBlend);
+        source.dopplerLevel = 0f;
+        source.priority = 128;
+        source.volume = 1f;
+        return source;
+    }
 }

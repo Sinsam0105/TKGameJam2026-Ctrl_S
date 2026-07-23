@@ -30,6 +30,7 @@ public class MicrowaveDirection : MonoBehaviour
     [SerializeField] string _investigationScriptName;  // 조사 대사 (문 열어서 빈 걸 확인한 뒤)
 
     Coroutine _coPlay;
+    int _runningLoopId;   // SoundManager 루프 핸들 (작동음)
 
     private void Awake()
     {
@@ -74,8 +75,14 @@ public class MicrowaveDirection : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        if (_audioSource != null && _buttonClip != null)
-            _audioSource.PlayOneShot(_buttonClip);
+        // 효과음은 일괄 SoundManager로 보내되, 없으면 로컬 소스로 대체한다.
+        if (_buttonClip != null)
+        {
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlaySfxAt(_buttonClip, transform.position, 1f, 1f, 14f);
+            else if (_audioSource != null)
+                _audioSource.PlayOneShot(_buttonClip);
+        }
 
         _light.Intensity = 3f;
         _light.TurnOn();
@@ -83,12 +90,17 @@ public class MicrowaveDirection : MonoBehaviour
 
         //ScriptManager.Instance.Play(_narrationScriptName);    // TODO: 대본이 없다
 
-        // 작동음은 30초 내내 이어지므로 루프로 돌린다.
-        if (_audioSource != null && _runningClip != null)
+        // 작동음은 30초 내내 이어지므로 루프로 돌린다. SoundManager 루프 핸들로 관리한다.
+        if (_runningClip != null)
         {
-            _audioSource.clip = _runningClip;
-            _audioSource.loop = true;
-            _audioSource.Play();
+            if (SoundManager.Instance != null)
+                _runningLoopId = SoundManager.Instance.PlayLoop(_runningClip, 1f, transform.position, 1f, 14f);
+            else if (_audioSource != null)
+            {
+                _audioSource.clip = _runningClip;
+                _audioSource.loop = true;
+                _audioSource.Play();
+            }
         }
 
         float speed = 120f;
@@ -121,6 +133,14 @@ public class MicrowaveDirection : MonoBehaviour
     // 작동음 루프를 멈춘다. 30초를 다 채우거나 플레이어가 문을 열면 호출된다.
     void StopRunningSound()
     {
+        // SoundManager 루프 핸들 정리
+        if (_runningLoopId != 0)
+        {
+            SoundManager.Instance?.StopLoop(_runningLoopId);
+            _runningLoopId = 0;
+        }
+
+        // 로컬 소스 대체 경로 정리
         if (_audioSource == null || _audioSource.clip != _runningClip)
             return;
 

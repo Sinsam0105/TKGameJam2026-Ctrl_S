@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 /// <summary>
-/// [3단계] D, B, F, A, E, C가 시간순으로 빠르게 재생된 뒤 목록에 없던 손상 버전이 0.5초 나타난다.
+/// [3단계] A, B, C, D가 시간순으로 빠르게 재생된 뒤 목록에 없던 손상 버전(Version05)이 0.5초 나타난다.
 /// </summary>
 public class Version07Direction : MonoBehaviour
 {
@@ -35,7 +35,7 @@ public class Version07Direction : MonoBehaviour
     }
 
     /// <summary>
-    /// USB 연결 후, 복원을 진행했다 => 디스플레이에서 D, B, F, A, E, C 카드가 순서대로 등장
+    /// USB 연결 후, 복원을 진행했다 => 디스플레이에서 A, B, C, D 카드가 순서대로 등장
     /// </summary>
     public void OnUSBConnected()
     {
@@ -48,7 +48,7 @@ public class Version07Direction : MonoBehaviour
     IEnumerator CoPlay()
     {
         // TODO: 실제 UI 화면을 띄워야 한다
-        char[] code = { 'D', 'B', 'F', 'A', 'E', 'C' };
+        char[] code = { 'A', 'B', 'C', 'D' };
         _display.text += $"{code[0]}";
 
         for (int i = 1; i < code.Length; ++i)
@@ -57,10 +57,11 @@ public class Version07Direction : MonoBehaviour
             _display.text += $" -> {code[i]}";
         }
 
-        // TODO: 목록에 없던 손상 버전이 0.5초 나타난다.
+        // 목록에 없던 손상 버전(Version05)이 0.5초 나타난다.
         // => 0.5초 동안 표시. 현재 방과 유사하지만 검은 형태가 사람인지 의자인지 판별 불가
-        // 기획자님께 허락 받았어요. 재량껏 지속 시간 조정해도 된대요
-        Debug.Log("Version07Direction => 손상 버전");
+        yield return new WaitForSeconds(0.4f);
+        _display.text += " -> Version05";
+        Debug.Log("Version07Direction => 손상 버전(Version05)");
 
         float elapsedTime = 0f;
         while (elapsedTime < 0.5f)

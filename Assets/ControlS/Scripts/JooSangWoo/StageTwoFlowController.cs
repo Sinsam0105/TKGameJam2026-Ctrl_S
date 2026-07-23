@@ -295,9 +295,15 @@ public sealed class StageTwoFlowController : MonoBehaviour
     }
 
     // 클립이 비어 있으면 Unity가 경고를 뱉으므로 여기서 걸러낸다.
+    // 효과음은 일괄 SoundManager로 보내고, 없으면 로컬 소스로 대체한다.
     private void PlayEffect(AudioClip clip)
     {
-        if (effectsSource != null && clip != null)
+        if (clip == null)
+            return;
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySfx(clip);
+        else if (effectsSource != null)
             effectsSource.PlayOneShot(clip);
     }
 

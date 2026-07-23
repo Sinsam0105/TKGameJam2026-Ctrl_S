@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public sealed class VersionCard : MonoBehaviour,
     IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
-    [SerializeField] private string fileId = "D";     // 파일 식별자 (D/B/F/A/E/C)
+    [SerializeField] private string fileId = "A";     // 파일 식별자 (A/B/C/D)
     [SerializeField] private int answerIndex = 1;     // 정답 순서 (1~6)
     [SerializeField] private Text labelText;          // 카드에 표시할 요소 설명
     [SerializeField] private Image selectionFrame;    // Compare 선택 테두리

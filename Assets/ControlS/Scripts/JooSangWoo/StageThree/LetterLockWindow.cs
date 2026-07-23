@@ -5,16 +5,19 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 
 /// <summary>
-/// 백업 상자의 A~F 문자 잠금. 정답 코드(DBFAEC)를 순서대로 누르면 상자가 열린다.
-/// 코드 자체는 3단계 정렬 퍼즐이 도출하지만, 판정용 정답은 여기에 고정으로 둔다.
+/// 백업 상자의 알파벳 문자 잠금. 정답 코드(기본 ABCD)를 순서대로 누르면 상자가 열린다.
+/// 코드는 3단계 정렬 퍼즐이 도출한 버전 순서 그대로이며(체크섬 없음),
+/// StageThreeFlowController가 SetExpectedCode로 넘겨준다.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class LetterLockWindow : PuzzleWindowedUI
 {
-    private const string CorrectCode = "DBFAEC";
-
     [Header("Letter Lock")]
-    [SerializeField] private List<Button> letterButtons = new();  // A~F 순서
+    [Tooltip("정답 코드. 3단계 정렬 퍼즐 결과(예: ABCD)를 그대로 쓴다. 체크섬 없음.")]
+    [SerializeField] private string expectedCode = "ABCD";
+    [Tooltip("버튼 순서에 대응하는 문자 라벨. 버튼 수와 개수를 맞춘다.")]
+    [SerializeField] private List<string> letterLabels = new() { "A", "B", "C", "D" };
+    [SerializeField] private List<Button> letterButtons = new();  // letterLabels 순서
     [SerializeField] private Text entryText;                      // 입력 중인 문자열
     [SerializeField] private Text feedbackText;
     [SerializeField] private Button clearButton;
@@ -31,16 +34,22 @@ public sealed class LetterLockWindow : PuzzleWindowedUI
     public UnityEvent OnBoxOpened => onBoxOpened;
     public bool IsOpened { get; private set; }
 
-    private static readonly string[] Letters = { "A", "B", "C", "D", "E", "F" };
     private readonly StringBuilder entry = new();
+
+    /// <summary>3단계 정렬 퍼즐이 도출한 코드를 정답으로 설정한다. (체크섬 없이 그대로)</summary>
+    public void SetExpectedCode(string code)
+    {
+        if (!string.IsNullOrWhiteSpace(code))
+            expectedCode = code.ToUpperInvariant();
+    }
 
     protected override void Awake()
     {
         base.Awake();
 
-        for (int i = 0; i < letterButtons.Count && i < Letters.Length; i++)
+        for (int i = 0; i < letterButtons.Count && i < letterLabels.Count; i++)
         {
-            string letter = Letters[i];
+            string letter = letterLabels[i];
             Button button = letterButtons[i];
             if (button != null)
                 button.onClick.AddListener(() => Press(letter));
@@ -55,7 +64,7 @@ public sealed class LetterLockWindow : PuzzleWindowedUI
         base.OpenWindow();
         if (IsOpened)
         {
-            SetText(entryText, CorrectCode);
+            SetText(entryText, expectedCode);
             SetText(feedbackText, "UNLOCKED");
             SetButtonsInteractable(false);
         }
@@ -75,17 +84,17 @@ public sealed class LetterLockWindow : PuzzleWindowedUI
 
     private void Press(string letter)
     {
-        if (IsOpened || entry.Length >= CorrectCode.Length)
+        if (IsOpened || entry.Length >= expectedCode.Length)
             return;
 
         entry.Append(letter);
         PlayClip(keyClip);
         SetText(entryText, entry.ToString());
 
-        if (entry.Length < CorrectCode.Length)
+        if (entry.Length < expectedCode.Length)
             return;
 
-        if (entry.ToString() == CorrectCode)
+        if (entry.ToString() == expectedCode)
             Open();
         else
             Fail();
@@ -130,7 +139,12 @@ public sealed class LetterLockWindow : PuzzleWindowedUI
 
     private void PlayClip(AudioClip clip)
     {
-        if (sfxSource != null && clip != null)
+        if (clip == null)
+            return;
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySfx(clip);
+        else if (sfxSource != null)
             sfxSource.PlayOneShot(clip);
     }
 
