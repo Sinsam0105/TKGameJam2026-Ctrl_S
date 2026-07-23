@@ -2323,7 +2323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e83167c2f1a347642b64de42f31a3d23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainSceneUI
-  _startButton: {fileID: 0}
+  _startButton: {fileID: 392415847}
   _optionsButton: {fileID: 0}
   _exitButton: {fileID: 0}
   _optionsUI: {fileID: 0}
