@@ -36,7 +36,8 @@ public sealed class JsonDataManager : Singleton<JsonDataManager>
     public Dictionary<string, ScriptData.ScriptData> LoadAllScripts()
     {
         Dictionary<string, ScriptData.ScriptData> dict = new Dictionary<string, ScriptData.ScriptData>();
-        TextAsset[] jsonFiles = Resources.LoadAll<TextAsset>($"Data/Scripts/");
+        // Data/Scripts(기존)와 Data 루트(새로 온 D0xx 대본)를 모두 재귀 로드한다.
+        TextAsset[] jsonFiles = Resources.LoadAll<TextAsset>($"Data");
 
         foreach (TextAsset f in jsonFiles)
         {
