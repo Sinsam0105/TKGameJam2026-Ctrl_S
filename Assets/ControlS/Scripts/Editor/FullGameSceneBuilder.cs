@@ -374,6 +374,7 @@ public static class FullGameSceneBuilder
         inputBg.color = new Color(1f, 1f, 1f, 0.12f);
         InputField input = inputGo.AddComponent<InputField>();
         Text inputText = CreateText(inputGo.transform, "Text", string.Empty, 24, Vector2.zero, new Vector2(300f, 40f));
+        inputText.supportRichText = false;  // InputField의 텍스트는 Rich Text 미지원.
         Text placeholder = CreateText(inputGo.transform, "Placeholder", "인증코드 입력", 24, Vector2.zero, new Vector2(300f, 40f));
         placeholder.color = new Color(1f, 1f, 1f, 0.4f);
         input.textComponent = inputText;
