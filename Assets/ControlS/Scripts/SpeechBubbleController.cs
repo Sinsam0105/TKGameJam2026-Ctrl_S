@@ -271,7 +271,10 @@ public class SpeechBubbleController : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
             _isAuto = false;
+            _isSkip = false;
+            IsTyping = false;
             OnClosed();
+            yield break;
         }
 
         // 대사 모두 출력한 후, 초기화
@@ -327,7 +330,10 @@ public class SpeechBubbleController : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f);
             _isAuto = false;
+            _isSkip = false;
+            IsTyping = false;
             OnClosed();
+            yield break;
         }
 
         // 대사 모두 출력한 후, 초기화
