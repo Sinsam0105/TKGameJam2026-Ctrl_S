@@ -4,11 +4,6 @@ using UnityEngine.Rendering.Universal;
 
 public class PlayerLightController : LightController
 {
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
     public override void Init()
     {
         base.Init();

@@ -62,11 +62,7 @@ public class LightController : MonoBehaviour
     [SerializeField] protected float _maxIntensity;
     #endregion
 
-    // Init을 직접 불러주지 않는 조명(컴퓨터 화면 등)도 있어서 여기서 보장한다.
-    protected virtual void Awake()
-    {
-        Init();
-    }
+    // Init을 직접 불러주지 않는 조명(컴퓨터 화면 등)도 있어서 여기서 보장한다
 
     public virtual void Init()
     {
