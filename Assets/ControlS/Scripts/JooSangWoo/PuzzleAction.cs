@@ -8,9 +8,15 @@ public class PuzzleAction
     public List<GameCondition> Conditions;
     [Header("실행")]
     public BaseWindowedUI OpeningUI;
-    public List<string> NarrationID;
-    public List<GameCondition> ChagingConditions;
+    [Header("스피치 버블")]
+    public List<string> SpeechID;
+    [Header("Prompt")]
+    public List<string> SystemID;
+    [Header("조건 변경")]
+    public List<GameCondition> ChangingConditions;
+    [Header("컬렉션 추가")]
     public CollectionType CollectCollectionType;
+    [Header("컬렉션 시작")]
     public CollectionType StartCollectionType;
     public int NeededCollectionCount;
 
@@ -27,13 +33,19 @@ public class PuzzleAction
         {
             OpeningUI.OpenWindow();
         }
-        foreach (var narrationID in NarrationID)
+        foreach (var narrationID in SpeechID)
         {
             //TODO: ScriptManager가 Play 하게
             if (!string.IsNullOrWhiteSpace(narrationID))
                 ScriptManager.Instance.Play(narrationID);
         }
-        foreach (var changingCondition in ChagingConditions)
+        foreach (var systemID in SystemID)
+        {
+            //TODO: ScriptManager가 Play 하게
+            if (!string.IsNullOrWhiteSpace(systemID))
+                ScriptManager.Instance.Play(systemID);
+        }
+        foreach (var changingCondition in ChangingConditions)
         {
             GameConditionManager.Instance.SetCondition(changingCondition);
         }

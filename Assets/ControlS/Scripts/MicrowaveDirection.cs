@@ -17,14 +17,9 @@ public class MicrowaveDirection : MonoBehaviour
     public bool Event_40_Played { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
 
     [SerializeField] LightController _light;
-    [SerializeField] Text _display;  // TODO: TMP
+    [SerializeField] TMP_Text _display;  // TODO: TMP
     [SerializeField] Transform _turntable;
     Vector3 _originalTurntableScale;
-
-    [Header("사운드")]
-    [SerializeField] AudioSource _audioSource;
-    [SerializeField] AudioClip _buttonClip;    // 시작 버튼음 (원샷)
-    [SerializeField] AudioClip _runningClip;   // 작동음 (30초 동안 루프)
 
     [SerializeField] string _narrationScriptName;      // 주인공 대사 (돌아가는 동안)
     [SerializeField] string _investigationScriptName;  // 조사 대사 (문 열어서 빈 걸 확인한 뒤)
@@ -43,11 +38,7 @@ public class MicrowaveDirection : MonoBehaviour
         _light.Init();
         _light.TurnOff();
 
-        _display ??= transform.GetComponentInChildren<Text>();
-        _audioSource ??= GetComponent<AudioSource>();
-        if (_audioSource == null)
-            _audioSource = gameObject.AddComponent<AudioSource>();
-        _audioSource.playOnAwake = false;
+        _display ??= transform.GetComponentInChildren<TMP_Text>();
         _turntable = transform.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "Turntable");
         _originalTurntableScale = _turntable.localScale;
     }
@@ -126,7 +117,6 @@ public class MicrowaveDirection : MonoBehaviour
         //ScriptManager.Instance.Play(_investigationScriptName);    // TODO: 대본이 없다
 
         _turntable.localScale = _originalTurntableScale;
-        StopRunningSound();
         enabled = false;
     }
 
@@ -160,7 +150,6 @@ public class MicrowaveDirection : MonoBehaviour
             _coPlay = null;
         }
 
-        StopRunningSound();
         _light.TurnOff();
         _display.text = "";
         _turntable.localScale = _originalTurntableScale;

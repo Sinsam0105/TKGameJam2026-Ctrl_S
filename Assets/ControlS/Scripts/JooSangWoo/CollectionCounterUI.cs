@@ -17,7 +17,6 @@ public sealed class CollectionCounterUI : MonoBehaviour
     {
         counterText = GetComponent<Text>();
     }
-
     private void Update()
     {
         CollectionSystem collectionSystem = CollectionSystem.Instance;
@@ -25,11 +24,9 @@ public sealed class CollectionCounterUI : MonoBehaviour
         {
             return;
         }
-
-        if (startCollectionOnEnable && !collectionStarted)
+        if (collectionType == CollectionType.None)
         {
-            collectionSystem.StartCollection(collectionType, fallbackTotalCount);
-            collectionStarted = true;
+            counterText.text = string.Empty;
         }
 
         int currentCount = collectionSystem.CurrentCollectionCounts.TryGetValue(collectionType, out int current)
