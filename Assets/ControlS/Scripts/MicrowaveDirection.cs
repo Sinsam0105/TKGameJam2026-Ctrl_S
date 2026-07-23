@@ -17,7 +17,7 @@ public class MicrowaveDirection : MonoBehaviour
     public bool Event_40_Played { get; set; } = false;  // TODO: 임의로 false 해뒀다. 다음에 게임 데이터 로드할 때 불러오도록 변경할 듯
 
     [SerializeField] LightController _light;
-    [SerializeField] Text _display;  // TODO: TMP
+    [SerializeField] TMP_Text _display;  // TODO: TMP
     [SerializeField] Transform _turntable;
     Vector3 _originalTurntableScale;
 
@@ -37,7 +37,7 @@ public class MicrowaveDirection : MonoBehaviour
         _light.Init();
         _light.TurnOff();
 
-        _display ??= transform.GetComponentInChildren<Text>();
+        _display ??= transform.GetComponentInChildren<TMP_Text>();
         _turntable = transform.GetComponentsInChildren<Transform>(true).FirstOrDefault(t => t.name == "Turntable");
         _originalTurntableScale = _turntable.localScale;
     }

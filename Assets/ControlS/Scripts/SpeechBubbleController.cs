@@ -20,7 +20,7 @@ public class SpeechBubbleController : MonoBehaviour
     [SerializeField] EObject _speaker;    // 이 말풍선의 주인 (ex. Player/Monster/NPC)
 
     public Transform Owner { get; private set; }
-    Text _textUI;   // TODO: 추후 TMP로 변경 필요
+    TMP_Text _textUI;   // TODO: 추후 TMP로 변경 필요
 
     /// <summary>
     /// 대사 출력 중인가
@@ -58,7 +58,7 @@ public class SpeechBubbleController : MonoBehaviour
         }
 
         transform.localPosition = new Vector3(0, 1.5f, transform.localPosition.z);  // 머리 위 배치
-        _textUI = GetComponentInChildren<Text>();
+        _textUI = GetComponentInChildren<TMP_Text>();
 
         s_registry[_speaker] = this;
         gameObject.SetActive(false);
